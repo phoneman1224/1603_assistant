@@ -1,0 +1,14 @@
+{
+  "version": "2025-10-05.2",
+  "groups": {
+    "discovery": ["RTRV-HDR_basic","RTRV-NMAP_all","RTRV-ATTR_multi_page"],
+    "alarms": ["RTRV-ALM-ALL_critical_filter"],
+    "loopback": ["Lpbk_T1_facility_bert"],
+    "cross_connect": ["ENT-CRS_VT_two_way","ring/orchestrated_pass_through"],
+    "oc12": ["RST-OC12_clear_LOS"],
+    "pm": ["RTRV-PM_24h"],
+    "software": ["ACT-SW_A"],
+    "file_ops": ["CPY-MEMFTP_db_backup"],
+    "errors": ["invalid_param_ipr","DENY_security","PRTL_cross_connect"]
+  }
+}

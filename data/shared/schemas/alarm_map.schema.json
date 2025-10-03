@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Alarm Map Schema",
+  "type": "object",
+  "required": ["version", "alarms"],
+  "properties": {
+    "version": { "type": "string" },
+    "alarms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["alarm_code","name","severity"],
+        "properties": {
+          "alarm_code": { "type": "string" },
+          "name": { "type": "string" },
+          "severity": { "type": "string" },
+          "service_affecting": { "type": "boolean" },
+          "tap": { "type": "string" },
+          "dlps": { "type": "array", "items": { "type": "string" } },
+          "diagnostic_cmds": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,144 @@
+[
+  {
+    "command_id": "RTRV-ATTR-NE_001",
+    "command_code": "RTRV-ATTR-NE",
+    "command_name": "Retrieve NE Attributes",
+    "category": "Administration",
+    "subcategory": "Attributes",
+    "applicable_models": [
+      "SM",
+      "SMX"
+    ],
+    "syntax": "RTRV-ATTR-NE:[tid]::[ctag]::[PARAMS];",
+    "parameters": {
+      "tid": {
+        "required": false,
+        "description": "Target ID"
+      },
+      "ctag": {
+        "required": false,
+        "auto_generate": true
+      },
+      "PARAMS": {
+        "required": false,
+        "description": "Optional filters"
+      }
+    },
+    "response_format": {
+      "header": "COMPLD + date/time",
+      "body_fields": [
+        "NEID",
+        "SWVER",
+        "TIMEZONE",
+        "LOCALE",
+        "SYNCSTATE"
+      ]
+    },
+    "safety_level": "safe",
+    "service_affecting": false
+  },
+  {
+    "command_id": "RTRV-ATTR-OC12_001",
+    "command_code": "RTRV-ATTR-OC12",
+    "command_name": "Retrieve OC12 Port Attributes",
+    "category": "Facilities",
+    "subcategory": "OC12",
+    "applicable_models": [
+      "SMX"
+    ],
+    "syntax": "RTRV-ATTR-OC12:[tid]:aid:[ctag]::[PARAMS];",
+    "parameters": {
+      "aid": {
+        "required": true,
+        "format": "OC12-{shelf}-{slot}",
+        "examples": [
+          "OC12-1-1"
+        ]
+      },
+      "PARAMS": {
+        "required": false
+      }
+    },
+    "response_format": {
+      "body_fields": [
+        "AID",
+        "ADMINSTATE",
+        "OPSTATE",
+        "TIMESLOT",
+        "WAVELEN",
+        "LOOPBACK"
+      ]
+    },
+    "safety_level": "safe",
+    "service_affecting": false
+  },
+  {
+    "command_id": "RTRV-ATTR-STS1_001",
+    "command_code": "RTRV-ATTR-STS1",
+    "command_name": "Retrieve STS-1 Attributes",
+    "category": "Cross-Connects",
+    "subcategory": "STS",
+    "applicable_models": [
+      "SM",
+      "SMX"
+    ],
+    "syntax": "RTRV-ATTR-STS1:[tid]:aid:[ctag]::[PARAMS];",
+    "parameters": {
+      "aid": {
+        "required": true,
+        "format": "STS1-{ocn}-{sts}"
+      }
+    }
+  },
+  {
+    "command_id": "RTRV-ATTR-T1_001",
+    "command_code": "RTRV-ATTR-T1",
+    "command_name": "Retrieve T1 Port Attributes",
+    "category": "Facilities",
+    "subcategory": "T1",
+    "applicable_models": [
+      "SM",
+      "SMX"
+    ],
+    "syntax": "RTRV-ATTR-T1:[tid]:aid:[ctag]::[PARAMS];",
+    "parameters": {
+      "aid": {
+        "required": true,
+        "format": "T1-{shelf}-{slot}-{port}",
+        "examples": [
+          "T1-1-1-1"
+        ]
+      }
+    },
+    "response_format": {
+      "body_fields": [
+        "AID",
+        "PST",
+        "FRT",
+        "LBKSTATE",
+        "LINECODE",
+        "FRAMING"
+      ]
+    },
+    "safety_level": "safe",
+    "service_affecting": false
+  },
+  {
+    "command_id": "RTRV-ATTR-VT1_001",
+    "command_code": "RTRV-ATTR-VT1",
+    "command_name": "Retrieve VT1.5 Attributes",
+    "category": "Cross-Connects",
+    "subcategory": "VT",
+    "applicable_models": [
+      "SM",
+      "SMX"
+    ],
+    "syntax": "RTRV-ATTR-VT1:[tid]:aid:[ctag]::[PARAMS];",
+    "parameters": {
+      "aid": {
+        "required": true,
+        "format": "VT1-{ocn}-{vtgroup}-{vt"
+      }
+    }
+  }
+]

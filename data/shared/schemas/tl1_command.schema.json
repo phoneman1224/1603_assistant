@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TL1 Command Catalog Schema",
+  "type": "object",
+  "required": ["version", "family", "commands"],
+  "properties": {
+    "version": { "type": "string" },
+    "family": { "type": "string" },
+    "commands": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "category", "models", "syntax"],
+        "properties": {
+          "id": { "type": "string" },
+          "category": { "type": "string" },
+          "subcategory": { "type": "string" },
+          "models": { "type": "array", "items": { "type": "string" } },
+          "service_affecting": { "type": "boolean" },
+          "safety_level": { "type": "string" },
+          "description": { "type": "string" },
+          "syntax": { "type": "string" },
+          "params": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "required": { "type": "boolean" },
+                "format": { "type": "string" },
+                "enum": { "type": "array", "items": { "type": "string" } },
+                "default": { "type": ["string","number","boolean","null"] }
+              }
+            }
+          },
+          "validation_rules": {
+            "type": "array",
+            "items": { "type": "object" }
+          },
+          "response": {
+            "type": "object",
+            "properties": {
+              "completion": { "type": "array", "items": { "type": "string" } },
+              "columns": { "type": "array", "items": { "type": "string" } }
+            },
+            "additionalProperties": true
+          },
+          "related": {
+            "type": "object",
+            "properties": {
+              "dlps": { "type": "array", "items": { "type": "string" } },
+              "taps": { "type": "array", "items": { "type": "string" } },
+              "see_also": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

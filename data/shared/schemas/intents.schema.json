@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NLP Intents Schema",
+  "type": "object",
+  "required": ["version","intents"],
+  "properties": {
+    "version": { "type": "string" },
+    "intents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["intent"],
+        "properties": {
+          "intent": { "type": "string" },
+          "patterns": { "type": "array", "items": { "type": "string" } },
+          "extractors": { "type": "object" },
+          "maps_to": { "type": "string" },
+          "maps_to_sequence": { "type": "array", "items": { "type": "string" } },
+          "plan": { "type": "array", "items": { "type": "object" } }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

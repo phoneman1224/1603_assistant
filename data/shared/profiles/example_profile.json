@@ -1,0 +1,9 @@
+{
+  "profile_name": "Site A - 1603 SMX",
+  "device_tid": "SITEA-SMX",
+  "equipment_type": "1603_SMX",
+  "connection": { "ip_address": "192.0.2.10", "port": 23, "protocol": "telnet" },
+  "credentials": { "username": "admin", "password_encrypted": "<redacted>", "store_password": false },
+  "auto_actions_on_connect": { "retrieve_alarms": true, "retrieve_system_info": true, "check_backup_status": false },
+  "session_settings": { "timeout_minutes": 30, "keep_alive_interval_seconds": 60 }
+}

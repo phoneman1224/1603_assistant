@@ -1,0 +1,10 @@
+{
+  "command": "RTRV-ATTR-VT",
+  "completion": "COMPLD",
+  "rows": [
+    {"AID":"VT1-1-1","ADMSTATE":"IS","PST":"IS-NR"},
+    {"AID":"VT1-1-2","ADMSTATE":"IS","PST":"OOS-AUMA"},
+    {"AID":"VT1-1-3","ADMSTATE":"IS","PST":"IS-NR"}
+  ],
+  "meta": { "pages": 2 }
+}

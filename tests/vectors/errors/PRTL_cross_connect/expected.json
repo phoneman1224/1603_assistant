@@ -1,0 +1,6 @@
+{
+  "command":"ENT-CRS-VT",
+  "completion":"PRTL",
+  "rows":[{"FROM":"VT1-1-1","TO":"VT1-1-3","DIR":"2W","STATE":"DOWN","ADMSTATE":"IS","PST":"IS-NR"}],
+  "notes":"Partial: cross-connect failed to come up"
+}

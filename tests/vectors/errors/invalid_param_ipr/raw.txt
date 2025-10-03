@@ -1,0 +1,2 @@
+ENT-CRS-VT::::FROM=VT1-1-1,TO=VT1-1-1,DIR=2W;
+   IPR;

@@ -1,0 +1,35 @@
+{
+  "version": "2025-10-05.P1",
+  "rules": [
+    {
+      "type": "explicit_approval",
+      "applies_to": ["RMV-*","ED-*","RST-*","ENT-CRS-*","ACT-*"],
+      "message": "This operation may impact service. Confirm to proceed."
+    },
+    {
+      "type": "rollback_present",
+      "applies_to": ["RMV-*","OPR-LPBK-*","ENT-CRS-*"],
+      "message": "A defined rollback command must be enqueued."
+    },
+    {
+      "type": "maintenance_window_only",
+      "applies_to": ["ACT-SW","ED-OC12","ED-DS3"],
+      "message": "Allowed only within configured maintenance windows."
+    },
+    {
+      "type": "critical_equipment_rules",
+      "applies_to": ["NEP","COA"],
+      "message": "CRITICAL equipment handling rules enforced"
+    },
+    {
+      "type": "resource_free",
+      "applies_to": ["ENT-CRS-*"],
+      "message": "Endpoints must be unoccupied/compatible before provisioning."
+    },
+    {
+      "type": "protect_policy",
+      "applies_to": ["ENT-CRS-*"],
+      "message": "Working/protect must be disjoint unless degraded_ok=true."
+    }
+  ]
+}

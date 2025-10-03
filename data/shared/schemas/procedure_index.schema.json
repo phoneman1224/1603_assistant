@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Procedure Index Schema (DLP/TAP list)",
+  "type": "object",
+  "required": ["version", "entries"],
+  "properties": {
+    "version": { "type": "string" },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "id", "title"],
+        "properties": {
+          "type": { "enum": ["dlp","tap"] },
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "applies_to": { "type": "array", "items": { "type": "string" } },
+          "severity": { "type": "string" },
+          "severity_classification": { "type": "string" },
+          "service_impact": { "type": "string" },
+          "auto_remediation": { "type": "boolean" },
+          "requires_approval": {
+            "type": "array",
+            "items": { "type": ["string","number"] }
+          },
+          "related_commands": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

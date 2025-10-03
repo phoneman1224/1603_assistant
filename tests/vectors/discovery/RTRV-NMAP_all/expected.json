@@ -1,0 +1,10 @@
+{
+  "command": "RTRV-NMAP",
+  "completion": "COMPLD",
+  "rows": [
+    {"NEID":"DG1-ATL","IP":"10.2.1.11","MODEL":"1603SMX","SW":"R12.4.7"},
+    {"NEID":"LG1-ATL","IP":"10.2.1.12","MODEL":"1603SMX","SW":"R12.4.6"},
+    {"NEID":"LG2-ATL","IP":"10.2.1.13","MODEL":"1603SM","SW":"R11.9.2"}
+  ],
+  "meta": { "timestamp": "2025-10-05 14:23:01" }
+}

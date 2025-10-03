@@ -1,0 +1,5 @@
+{
+  "command":"ENT-CRS-VT",
+  "completion":"IPR",
+  "error":{"code":"IPR","desc":"Invalid parameter","hint":"FROM and TO must not be identical"}
+}

@@ -1,0 +1,5 @@
+{
+  "command":"ACT-USER",
+  "completion":"DENY",
+  "error":{"code":"DENY","desc":"Access denied","hint":"Check credentials/permissions"}
+}

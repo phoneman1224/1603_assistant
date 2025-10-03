@@ -1,0 +1,37 @@
+[
+  {
+    "dlp_id": "DLP-103",
+    "title": "Create Two-Way VT1.5 Cross-Connect",
+    "category": "Provisioning",
+    "severity_classification": "medium",
+    "automation_mode": "semi_automatic",
+    "service_impact": "brief_outage",
+    "applicable_models": [
+      "SM",
+      "SMX"
+    ]
+  },
+  {
+    "dlp_id": "DLP-201",
+    "title": "Replace Line Interface Unit",
+    "category": "Maintenance",
+    "severity_classification": "high",
+    "automation_mode": "step_by_step",
+    "service_impact": "full_outage",
+    "applicable_models": [
+      "SMX"
+    ]
+  },
+  {
+    "dlp_id": "DLP-203",
+    "title": "Interface Reset for OC12/T1",
+    "category": "Maintenance",
+    "severity_classification": "low",
+    "automation_mode": "fully_automatic",
+    "service_impact": "none",
+    "applicable_models": [
+      "SM",
+      "SMX"
+    ]
+  }
+]

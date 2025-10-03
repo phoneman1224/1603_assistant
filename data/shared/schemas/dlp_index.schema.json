@@ -1,0 +1,19 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"DLP Index (array)",
+  "type":"array",
+  "items":{
+    "type":"object",
+    "required":["dlp_id","title","category","severity_classification","automation_mode","service_impact","applicable_models"],
+    "properties":{
+      "dlp_id":{"type":"string"},
+      "title":{"type":"string"},
+      "category":{"type":"string"},
+      "severity_classification":{"type":"string"},
+      "automation_mode":{"type":"string"},
+      "service_impact":{"type":"string"},
+      "applicable_models":{"type":"array","items":{"type":"string"}}
+    },
+    "additionalProperties":true
+  }
+}

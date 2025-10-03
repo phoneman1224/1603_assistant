@@ -1,0 +1,129 @@
+[
+  {
+    "command_id": "ED-DS3_001",
+    "command_code": "ED-DS3",
+    "command_name": "Edit DS3 attributes (framing, line code)",
+    "category": "Attributes",
+    "subcategory": "DS3",
+    "applicable_models": [
+      "SM",
+      "SMX"
+    ],
+    "syntax": "ED-DS3:[tid]:[aid]:[ctag]::FRM=[frm],LC=[lc];",
+    "parameters": {
+      "aid": {
+        "required": true,
+        "format": "DS3"
+      },
+      "FRM": {
+        "values": [
+          "M23",
+          "C-BIT"
+        ]
+      },
+      "LC": {
+        "values": [
+          "B3ZS",
+          "AMI"
+        ]
+      }
+    },
+    "response_format": {
+      "completion_codes": [
+        "COMPLD"
+      ],
+      "body_fields": null
+    },
+    "safety_level": "safe",
+    "service_affecting": false
+  },
+  {
+    "command_id": "RTRV-ATTR-DS3_001",
+    "command_code": "RTRV-ATTR-DS3",
+    "command_name": "Retrieve DS3 config/state",
+    "category": "Attributes",
+    "subcategory": "DS3",
+    "applicable_models": [
+      "SM",
+      "SMX"
+    ],
+    "syntax": "RTRV-ATTR-DS3:[tid]:[aid]:[ctag]::;",
+    "parameters": {
+      "aid": {
+        "required": true,
+        "format": "DS3"
+      }
+    },
+    "response_format": {
+      "completion_codes": [
+        "COMPLD",
+        "RTRV"
+      ],
+      "body_fields": [
+        "AID",
+        "FRM",
+        "LC",
+        "ADMSTATE",
+        "PST"
+      ]
+    },
+    "safety_level": "safe",
+    "service_affecting": false
+  },
+  {
+    "command_id": "OPR-LPBK-DS3_001",
+    "command_code": "OPR-LPBK-DS3",
+    "command_name": "Activate DS3 loopback",
+    "category": "Troubleshooting",
+    "subcategory": "DS3",
+    "applicable_models": [
+      "SM",
+      "SMX"
+    ],
+    "syntax": "OPR-LPBK-DS3:[tid]:[aid]:[ctag]::DIR=[dir];",
+    "parameters": {
+      "aid": {
+        "format": "DS3"
+      },
+      "DIR": {
+        "values": [
+          "FACILITY",
+          "TERMINAL"
+        ]
+      }
+    },
+    "response_format": {
+      "completion_codes": [
+        "COMPLD"
+      ],
+      "body_fields": null
+    },
+    "safety_level": "caution",
+    "service_affecting": true
+  },
+  {
+    "command_id": "RLS-LPBK-DS3_001",
+    "command_code": "RLS-LPBK-DS3",
+    "command_name": "Release DS3 loopback",
+    "category": "Troubleshooting",
+    "subcategory": "DS3",
+    "applicable_models": [
+      "SM",
+      "SMX"
+    ],
+    "syntax": "RLS-LPBK-DS3:[tid]:[aid]:[ctag]::;",
+    "parameters": {
+      "aid": {
+        "format": "DS3"
+      }
+    },
+    "response_format": {
+      "completion_codes": [
+        "COMPLD"
+      ],
+      "body_fields": null
+    },
+    "safety_level": "caution",
+    "service_affecting": true
+  }
+]

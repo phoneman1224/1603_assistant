@@ -1,0 +1,2 @@
+ACT-USER::baduser:1::pw123;
+   DENY;
