@@ -6,7 +6,6 @@ param(
     [int]$TimeoutMs = 1500
 )
 
-Add-Type -AssemblyName System.Net.Sockets
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RootDir   = Split-Path -Parent $ScriptDir
 $LogsDir   = Join-Path $RootDir "logs"

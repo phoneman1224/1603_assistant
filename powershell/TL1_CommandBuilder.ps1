@@ -312,7 +312,6 @@ $ConnectBtn.Add_Click({
   if ($PortBox.Text -and $PortBox.Text -match '^\d+$') { $destPort = [int]$PortBox.Text }
   if([string]::IsNullOrWhiteSpace($destHost)){ Write-Log "Host/IP is empty." "WARN"; return }
   try{
-    Add-Type -AssemblyName System.Net.Sockets
     $global:tl1_client = New-Object System.Net.Sockets.TcpClient
     $iar = $global:tl1_client.BeginConnect($destHost, $destPort, $null, $null)
     if (-not $iar.AsyncWaitHandle.WaitOne(1500, $false)) { throw "Connect timeout" }
