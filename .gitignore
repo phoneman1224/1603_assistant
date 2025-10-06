@@ -25,3 +25,5 @@ dist/
 .mypy_cache/
 .pytype/
 .pytest_cache/
+logs/
+*.bak-*

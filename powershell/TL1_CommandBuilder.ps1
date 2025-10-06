@@ -1,4 +1,4 @@
-# TL1_CommandBuilder.ps1 — Windows-only WPF TL1 GUI (Telnet) — robust XAML sizing, PS5.1/7 safe
+# TL1_CommandBuilder.ps1 — Windows WPF TL1 GUI (Telnet) — PS5/PS7-safe
 Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -7,39 +7,30 @@ $LogsDir   = Join-Path $RootDir "logs"
 if (!(Test-Path $LogsDir)) { New-Item -ItemType Directory -Path $LogsDir | Out-Null }
 $LogFile   = Join-Path $LogsDir ("app-{0}.log" -f (Get-Date -Format "yyyyMMdd"))
 
-# Settings
+# Settings (robust defaults)
 $SettingsPath = Join-Path $ScriptDir "appsettings.json"
 if (!(Test-Path $SettingsPath)) {
   $default = @{
-    LogDir           = "..\\logs"
-    DefaultHost      = ""
-    DefaultPort      = 23
-    AutoIncrementCTAG= $true
-    Window           = @{ Width = 1150; Height = 760 }
-    Debug            = $true
+    LogDir="..\\logs"; DefaultHost=""; DefaultPort=23; AutoIncrementCTAG=$true
+    Window=@{Width=1150;Height=760}; Debug=$true
   } | ConvertTo-Json -Depth 5
   $default | Out-File -FilePath $SettingsPath -Encoding UTF8
 }
 try { $Settings = Get-Content $SettingsPath -Raw | ConvertFrom-Json } catch {
-  $Settings = [pscustomobject]@{
-    LogDir="..\\logs"; DefaultHost=""; DefaultPort=23; AutoIncrementCTAG=$true
-    Window=@{Width=1150;Height=760}; Debug=$true
-  }
+  $Settings = [pscustomobject]@{ LogDir="..\\logs"; DefaultHost=""; DefaultPort=23; AutoIncrementCTAG=$true; Window=@{Width=1150;Height=760}; Debug=$true }
 }
 
-# Compute safe window size values (numbers only)
+# Safe window size numbers
 $WinWidth  = 1150
 $WinHeight = 760
 try {
   if ($Settings.Window -and $Settings.Window.Width) {
-    $w = $Settings.Window.Width -as [int]
-    if ($w -and $w -gt 0) { $WinWidth = $w }
+    $w = $Settings.Window.Width -as [int]; if ($w -and $w -gt 0) { $WinWidth = $w }
   }
   if ($Settings.Window -and $Settings.Window.Height) {
-    $h = $Settings.Window.Height -as [int]
-    if ($h -and $h -gt 0) { $WinHeight = $h }
+    $h = $Settings.Window.Height -as [int]; if ($h -and $h -gt 0) { $WinHeight = $h }
   }
-} catch { }
+} catch {}
 
 # Logging
 $global:ConsoleBox=$null
@@ -50,7 +41,7 @@ function Write-Log([string]$Message,[string]$Level="INFO"){
 }
 function Try-Do([scriptblock]$Block,[string]$Context="RUN"){ try{ & $Block }catch{ Write-Log "$Context failed: $($_.Exception.Message)" "ERROR" } }
 
-# Command registry (placeholder; [] optional honored by skipping blanks)
+# Command registry (placeholders)
 $Categories=[ordered]@{
   "System Settings/Maintenance"=@(
     @{Name="ALW-USER";Desc="Allow user";Optional=@("PRM","MASK")},
@@ -88,7 +79,7 @@ $Categories=[ordered]@{
   )
 }
 
-# UI XAML (uses numeric $WinWidth / $WinHeight to avoid empty width/height)
+# --- XAML (uses numeric $WinWidth/$WinHeight) ---
 [xml]$xaml=@"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         Title="TL1 Command Builder"
@@ -102,6 +93,7 @@ $Categories=[ordered]@{
         <TreeView Name="CategoryTree" Margin="8" Background="#0f1115" Foreground="#e5e7eb" BorderThickness="0"/>
       </StackPanel>
     </Border>
+
     <Grid Margin="10">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto"/>
@@ -109,6 +101,7 @@ $Categories=[ordered]@{
         <RowDefinition Height="160"/>
       </Grid.RowDefinitions>
 
+      <!-- Connection bar -->
       <Border Grid.Row="0" Background="#161a22" Padding="8" CornerRadius="8" BorderBrush="#2a2f3a" BorderThickness="1">
         <Grid>
           <Grid.ColumnDefinitions>
@@ -149,6 +142,7 @@ $Categories=[ordered]@{
         </Grid>
       </Border>
 
+      <!-- Builder -->
       <Border Grid.Row="1" Background="#161a22" Padding="8" CornerRadius="8" BorderBrush="#2a2f3a" BorderThickness="1" Margin="0,10,0,10">
         <Grid>
           <Grid.RowDefinitions>
@@ -192,6 +186,7 @@ $Categories=[ordered]@{
         </Grid>
       </Border>
 
+      <!-- Console -->
       <TextBox Name="ConsoleBox" Grid.Row="2" Background="#0b0e14" Foreground="#e5e7eb"
                FontFamily="Consolas" FontSize="12" TextWrapping="Wrap"
                VerticalScrollBarVisibility="Auto" IsReadOnly="True"/>
@@ -217,9 +212,9 @@ $ConsoleBox=$Window.FindName("ConsoleBox"); $CopyBtn=$Window.FindName("CopyBtn")
 $SendBtn=$Window.FindName("SendBtn"); $LogBtn=$Window.FindName("LogBtn")
 $global:ConsoleBox=$ConsoleBox
 
-# Init defaults (don’t trust settings blindly)
-$PortBox.Text = ([string]([int]($Settings.DefaultPort -as [int] )))  # numeric to string
-$HostBox.Text = [string]($Settings.DefaultHost)
+# Init defaults
+$PortBox.Text = ([string]([int]($Settings.DefaultPort -as [int])))
+$HostBox.Text = [string]$Settings.DefaultHost
 $StatusText.Text = "Disconnected"
 $DebugChk.IsChecked = [bool]$Settings.Debug
 
@@ -252,7 +247,6 @@ function Refresh-OptionalFields{
     $tb.Add_TextChanged({ Update-Preview })
   }
 }
-
 function Build-OptionalList{
   $pairs=@()
   foreach($child in $OptionalPanel.Children){
@@ -269,13 +263,10 @@ function Build-OptionalList{
 function Update-Preview{
   $cmd= if($CommandBox.SelectedItem){ $CommandBox.SelectedItem.Content } else { "" }
   $tid=$TidBox.Text; $aid=$AidBox.Text; $ctag=$CtagBox.Text
-
   if($Settings.AutoIncrementCTAG -and $CtagAuto.IsChecked -and [string]::IsNullOrWhiteSpace($ctag)){ $CtagBox.Text="1"; $ctag="1" }
-
   if ($null -eq $tid)  { $tid  = "" }
   if ($null -eq $aid)  { $aid  = "" }
   if ($null -eq $ctag) { $ctag = "" }
-
   $opt=Build-OptionalList
   $left = "$cmd::$($tid):$($aid):$($ctag)"
   $right = if([string]::IsNullOrWhiteSpace($opt)) { "" } else { "::" + $opt }
