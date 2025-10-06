@@ -609,6 +609,62 @@
                 ]
             }
         ],
+        "OC12 Operations": [
+            {
+                "command_code": "RST-OC12",
+                "description": "Restore OC12 Port",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "AID",
+                            "type": "string",
+                            "description": "Access Identifier",
+                            "validation": "^OC12-\\d+$",
+                            "example": "OC12-1"
+                        }
+                    ],
+                    "optional": []
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "RST-OC12::OC12-1::;",
+                        "description": "Restore OC12 port 1"
+                    }
+                ]
+            },
+            {
+                "command_code": "RTRV-COND-OC12",
+                "description": "Retrieve OC12 Port Conditions",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "AID",
+                            "type": "string",
+                            "description": "Access Identifier",
+                            "validation": "^OC12-\\d+$",
+                            "example": "OC12-1"
+                        }
+                    ],
+                    "optional": []
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD\n   \"<aid>:OPRSTATE=<state>,LPBKSTATE=<state>,RXPWR=<power>,TXPWR=<power>\"",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "RTRV-COND-OC12::OC12-1::;",
+                        "description": "Retrieve conditions for OC12 port 1"
+                    }
+                ]
+            }
+        ],
         "Discovery": [
             {
                 "command_code": "RTRV-NMAP",
