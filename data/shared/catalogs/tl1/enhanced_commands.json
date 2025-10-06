@@ -1,6 +1,50 @@
 {
     "schema_version": "1.0",
     "command_set": "1603_SM",
+        "Security Operations": [
+            {
+                "command_code": "SET-ATTR-SECUR",
+                "description": "Set Security Attributes",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "UID",
+                            "type": "string",
+                            "description": "User ID",
+                            "validation": "^[A-Za-z][A-Za-z0-9_]{2,10}$",
+                            "example": "ADMIN"
+                        }
+                    ],
+                    "optional": [
+                        {
+                            "name": "PRIVILEGE",
+                            "type": "string",
+                            "description": "User Privilege Level",
+                            "validation": "^(ADMIN|USER|GUEST)$",
+                            "example": "USER"
+                        },
+                        {
+                            "name": "TIMEOUT",
+                            "type": "string",
+                            "description": "Session Timeout (minutes)",
+                            "validation": "^\\d+$",
+                            "example": "30"
+                        }
+                    ]
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "SET-ATTR-SECUR::::UID=ADMIN,PRIVILEGE=ADMIN,TIMEOUT=30;",
+                        "description": "Set admin privileges and timeout"
+                    }
+                ]
+            }
+        ],
     "platforms": ["1603_SM", "16034_SMX"],
     "commands": {
         "System Management": [
