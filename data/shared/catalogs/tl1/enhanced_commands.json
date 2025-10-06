@@ -609,6 +609,155 @@
                 ]
             }
         ],
+        "File Operations": [
+            {
+                "command_code": "CPY-MEMFTP",
+                "description": "Copy Memory to FTP Server",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "SRC",
+                            "type": "string",
+                            "description": "Source Type",
+                            "validation": "^(DB|LOG|CONFIG)$",
+                            "example": "DB"
+                        },
+                        {
+                            "name": "DST",
+                            "type": "string",
+                            "description": "Destination Type",
+                            "validation": "^FTP$",
+                            "example": "FTP"
+                        },
+                        {
+                            "name": "SRCPATH",
+                            "type": "string",
+                            "description": "Source Path",
+                            "validation": "^/.*$",
+                            "example": "/db"
+                        },
+                        {
+                            "name": "DSTIP",
+                            "type": "string",
+                            "description": "Destination IP",
+                            "validation": "^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$",
+                            "example": "10.10.1.10"
+                        },
+                        {
+                            "name": "DSTPATH",
+                            "type": "string",
+                            "description": "Destination Path",
+                            "validation": "^/.*$",
+                            "example": "/backups/ne/db"
+                        },
+                        {
+                            "name": "USER",
+                            "type": "string",
+                            "description": "FTP Username",
+                            "validation": "^[A-Za-z0-9_-]+$",
+                            "example": "ops"
+                        },
+                        {
+                            "name": "PASS",
+                            "type": "string",
+                            "description": "FTP Password",
+                            "validation": "^.+$",
+                            "example": "********"
+                        }
+                    ],
+                    "optional": []
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "CPY-MEMFTP::::SRC=DB,DST=FTP,SRCPATH=/db,DSTIP=10.10.1.10,DSTPATH=/backups/ne/db,USER=ops,PASS=********;",
+                        "description": "Backup database to FTP server"
+                    }
+                ]
+            }
+        ],
+        "Ring Management": [
+            {
+                "command_code": "ENT-CRS-VT",
+                "description": "Enter VT Cross Connection",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "FROM",
+                            "type": "string",
+                            "description": "From VT Access Identifier",
+                            "validation": "^VT\\d+-\\d+-\\d+$",
+                            "example": "VT1-1-1"
+                        },
+                        {
+                            "name": "TO",
+                            "type": "string",
+                            "description": "To VT Access Identifier",
+                            "validation": "^VT\\d+-\\d+-\\d+$",
+                            "example": "VT1-1-2"
+                        }
+                    ],
+                    "optional": [
+                        {
+                            "name": "DIR",
+                            "type": "string",
+                            "description": "Direction",
+                            "validation": "^(1W|2W)$",
+                            "example": "2W"
+                        }
+                    ]
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "ENT-CRS-VT::::FROM=VT1-1-1,TO=VT1-1-2,DIR=2W;",
+                        "description": "Create two-way VT cross-connect"
+                    }
+                ]
+            },
+            {
+                "command_code": "DLT-CRS-VT",
+                "description": "Delete VT Cross Connection",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "FROM",
+                            "type": "string",
+                            "description": "From VT Access Identifier",
+                            "validation": "^VT\\d+-\\d+-\\d+$",
+                            "example": "VT1-1-1"
+                        },
+                        {
+                            "name": "TO",
+                            "type": "string",
+                            "description": "To VT Access Identifier",
+                            "validation": "^VT\\d+-\\d+-\\d+$",
+                            "example": "VT1-1-2"
+                        }
+                    ],
+                    "optional": []
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "DLT-CRS-VT::::FROM=VT1-1-1,TO=VT1-1-2;",
+                        "description": "Delete VT cross-connect"
+                    }
+                ]
+            }
+        ],
         "OC12 Operations": [
             {
                 "command_code": "RST-OC12",
