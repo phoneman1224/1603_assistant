@@ -1,6 +1,4 @@
-# TL1_CommandBuilder.ps1 — Windows-only WPF TL1 GUI (Telnet)
 Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase
-
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RootDir   = Split-Path -Parent $ScriptDir
 $LogsDir   = Join-Path $RootDir "logs"
@@ -11,14 +9,14 @@ $LogFile   = Join-Path $LogsDir ("app-{0}.log" -f (Get-Date -Format "yyyyMMdd"))
 $SettingsPath = Join-Path $ScriptDir "appsettings.json"
 if (!(Test-Path $SettingsPath)) {
   $default = @{ LogDir="..\\logs"; DefaultHost=""; DefaultPort=23; AutoIncrementCTAG=$true;
-                Window=@{Width=1150;Height=760}; Debug=$true } | ConvertTo-Json -Depth 5
+                SecureCRTPath=""; Window=@{Width=1150;Height=760}; Debug=$true } | ConvertTo-Json -Depth 5
   $default | Out-File -FilePath $SettingsPath -Encoding UTF8
 }
 try { $Settings = Get-Content $SettingsPath -Raw | ConvertFrom-Json } catch {
-  $Settings = [pscustomobject]@{ LogDir="..\\logs"; DefaultHost=""; DefaultPort=23; AutoIncrementCTAG=$true; Window=@{Width=1150;Height=760}; Debug=$true }
+  $Settings = [pscustomobject]@{ LogDir="..\\logs"; DefaultHost=""; DefaultPort=23; AutoIncrementCTAG=$true; SecureCRTPath=""; Window=@{Width=1150;Height=760}; Debug=$true }
 }
 
-# Logging
+# Logging helpers
 $global:ConsoleBox=$null
 function Write-Log([string]$Message,[string]$Level="INFO"){
   $line="[${((Get-Date).ToString('yyyy-MM-dd HH:mm:ss'))}] [$Level] $Message"
@@ -27,7 +25,7 @@ function Write-Log([string]$Message,[string]$Level="INFO"){
 }
 function Try-Do([scriptblock]$Block,[string]$Context="RUN"){ try{ & $Block }catch{ Write-Log "$Context failed: $($_.Exception.Message)" "ERROR" } }
 
-# Command registry (placeholder; [] optional is honored by skipping blanks)
+# Command registry (placeholder groups; [] optional honored by skipping blanks)
 $Categories=[ordered]@{
   "System Settings/Maintenance"=@(@{Name="ALW-USER";Desc="Allow user";Optional=@("PRM","MASK")},@{Name="INH-USER";Desc="Inhibit user";Optional=@("PRM","MASK")},@{Name="SET-ATTR";Desc="Set attribute";Optional=@("ATTR","VALUE")},@{Name="ABT-OPR";Desc="Abort operation";Optional=@("REASON")},@{Name="CONFIG-SYS";Desc="Configure system";Optional=@("MODE")},@{Name="CPY-CFG";Desc="Copy config";Optional=@("SRC","DST")})
   "Alarms"=@(@{Name="ALM-ACK";Desc="Acknowledge alarm";Optional=@("ALM","COND")},@{Name="COND-RPT";Desc="Condition report";Optional=@("TYPE")})
@@ -36,7 +34,7 @@ $Categories=[ordered]@{
   "Provisioning"=@(@{Name="ENT-SRVC";Desc="Enter service";Optional=@("BAND","OPT")},@{Name="ED-SRVC";Desc="Edit service";Optional=@("FIELD","VALUE")},@{Name="RMV-SRVC";Desc="Remove service";Optional=@("FORCE")},@{Name="RST-UNIT";Desc="Reset unit";Optional=@("SOFT","HARD")},@{Name="DLT-OBJ";Desc="Delete object";Optional=@("CONFIRM")})
 }
 
-# UI XAML
+# XAML UI
 [xml]$xaml=@"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Title="TL1 Command Builder" WindowStartupLocation="CenterScreen"
         Width="${($Settings.Window.Width)}" Height="${($Settings.Window.Height)}" Background="#0f1115">
@@ -84,17 +82,12 @@ $Categories=[ordered]@{
 $reader=(New-Object System.Xml.XmlNodeReader $xaml)
 $Window=[Windows.Markup.XamlReader]::Load($reader)
 
-# Bind controls
-$CategoryTree=$Window.FindName("CategoryTree"); $SystemBox=$Window.FindName("SystemBox")
-$HostBox=$Window.FindName("HostBox"); $PortBox=$Window.FindName("PortBox")
-$ConnectBtn=$Window.FindName("ConnectBtn"); $DisconnectBtn=$Window.FindName("DisconnectBtn")
-$DebugChk=$Window.FindName("DebugChk"); $StatusText=$Window.FindName("StatusText")
-$CommandBox=$Window.FindName("CommandBox"); $CmdDesc=$Window.FindName("CmdDesc")
-$TidBox=$Window.FindName("TidBox"); $AidBox=$Window.FindName("AidBox")
-$CtagBox=$Window.FindName("CtagBox"); $CtagAuto=$Window.FindName("CtagAuto")
-$OptionalPanel=$Window.FindName("OptionalPanel"); $PreviewBox=$Window.FindName("PreviewBox")
-$ConsoleBox=$Window.FindName("ConsoleBox"); $CopyBtn=$Window.FindName("CopyBtn")
-$SendBtn=$Window.FindName("SendBtn"); $LogBtn=$Window.FindName("LogBtn")
+# Bind
+$CategoryTree=$Window.FindName("CategoryTree"); $SystemBox=$Window.FindName("SystemBox"); $HostBox=$Window.FindName("HostBox"); $PortBox=$Window.FindName("PortBox")
+$ConnectBtn=$Window.FindName("ConnectBtn"); $DisconnectBtn=$Window.FindName("DisconnectBtn"); $DebugChk=$Window.FindName("DebugChk"); $StatusText=$Window.FindName("StatusText")
+$CommandBox=$Window.FindName("CommandBox"); $CmdDesc=$Window.FindName("CmdDesc"); $TidBox=$Window.FindName("TidBox"); $AidBox=$Window.FindName("AidBox")
+$CtagBox=$Window.FindName("CtagBox"); $CtagAuto=$Window.FindName("CtagAuto"); $OptionalPanel=$Window.FindName("OptionalPanel"); $PreviewBox=$Window.FindName("PreviewBox")
+$ConsoleBox=$Window.FindName("ConsoleBox"); $CopyBtn=$Window.FindName("CopyBtn"); $SendBtn=$Window.FindName("SendBtn"); $LogBtn=$Window.FindName("LogBtn")
 $global:ConsoleBox=$ConsoleBox
 
 # Init
@@ -107,7 +100,6 @@ $Categories.Keys | ForEach-Object {
   $CategoryTree.Items.Add($catNode) | Out-Null
 }
 
-# Optional fields rendering
 function Refresh-OptionalFields{
   $OptionalPanel.Children.Clear(); $sel=$CommandBox.SelectedItem; if(-not $sel){return}
   $entry=$sel.Tag; if(-not $entry){return}
@@ -119,7 +111,6 @@ function Refresh-OptionalFields{
     $tb.Add_TextChanged({ Update-Preview })
   }
 }
-
 function Build-OptionalList{
   $pairs=@()
   foreach($child in $OptionalPanel.Children){
@@ -131,8 +122,6 @@ function Build-OptionalList{
   }
   return ($pairs -join ",")
 }
-
-# Build TL1 string  <CMD>::<TID>:<AID>:<CTAG>::op1=val,...;
 function Update-Preview{
   $cmd= if($CommandBox.SelectedItem){ $CommandBox.SelectedItem.Content } else { "" }
   $tid=$TidBox.Text; $aid=$AidBox.Text; $ctag=$CtagBox.Text
@@ -144,7 +133,7 @@ function Update-Preview{
   $PreviewBox.Text="$left$right;"
 }
 
-# Selection events
+# Events
 $CategoryTree.Add_SelectedItemChanged({
   $item=$CategoryTree.SelectedItem
   if($item -and $item.Tag){
@@ -164,77 +153,25 @@ $CommandBox.Add_SelectionChanged({ $CmdDesc.Text= if($CommandBox.SelectedItem){ 
 $TidBox.Add_TextChanged({ Update-Preview }); $AidBox.Add_TextChanged({ Update-Preview }); $CtagBox.Add_TextChanged({ Update-Preview })
 $CtagAuto.Add_Click({ if($CtagAuto.IsChecked -and [string]::IsNullOrWhiteSpace($CtagBox.Text)){ $CtagBox.Text="1" }; Update-Preview })
 
-# ---- TELNET session state & handlers ----
-$global:tl1_client  = $null
-$global:tl1_stream  = $null
-$global:tl1_writer  = $null
-$global:tl1_reader  = $null
-
-# Connect
-$ConnectBtn.Add_Click({
-  $host=$HostBox.Text; $port = 23
-  if ($PortBox.Text -and $PortBox.Text -match '^\d+$') { $port=[int]$PortBox.Text }
+$ConnectBtn.Add_Click({ $host=$HostBox.Text; $port=$PortBox.Text
   if([string]::IsNullOrWhiteSpace($host)){ Write-Log "Host/IP is empty." "WARN"; return }
-  try{
-    Add-Type -AssemblyName System.Net.Sockets
-    $global:tl1_client = New-Object System.Net.Sockets.TcpClient
-    $iar = $global:tl1_client.BeginConnect($host, $port, $null, $null)
-    if (-not $iar.AsyncWaitHandle.WaitOne(1500, $false)) { throw "Connect timeout" }
-    $global:tl1_client.EndConnect($iar)
-    $global:tl1_stream = $global:tl1_client.GetStream()
-    $global:tl1_writer = New-Object System.IO.StreamWriter($global:tl1_stream)
-    $global:tl1_reader = New-Object System.IO.StreamReader($global:tl1_stream)
-    $global:tl1_writer.NewLine="`r`n"; $global:tl1_writer.AutoFlush=$true
-    Write-Log "Connected to $host:$port" "NET"
-    $StatusText.Text="Connected"; $StatusText.Foreground='LightGreen'
-  } catch {
-    Write-Log "Connect failed: $($_.Exception.Message)" "ERROR"
-    $StatusText.Text="Disconnected"; $StatusText.Foreground='#fca5a5'
-  }
+  Write-Log "Simulated connect to $host:$port" "NET"; $StatusText.Text="Connected (simulated)"; $StatusText.Foreground='LightGreen'
 })
+$DisconnectBtn.Add_Click({ Write-Log "Disconnected." "NET"; $StatusText.Text="Disconnected"; $StatusText.Foreground='#fca5a5' })
 
-# Send (session if connected; else one-shot helper)
+$CopyBtn.Add_Click({ Try-Do { Set-Clipboard -Value $PreviewBox.Text } "COPY"; Write-Log "Copied: $($PreviewBox.Text)" })
+$LogBtn.Add_Click({ Write-Log "LOG ONLY: $($PreviewBox.Text)" "LOG" })
 $SendBtn.Add_Click({
   $cmdText=$PreviewBox.Text
-  if (-not $global:tl1_client -or -not $global:tl1_client.Connected) {
-    Write-Log "Not connected. Using one-shot send helper..." "WARN"
-    try {
-      $sendScript=Join-Path $ScriptDir "send_tl1.ps1"
-      if (-not (Test-Path $sendScript)) { throw "send_tl1.ps1 missing" }
-      $resp = & powershell -NoProfile -ExecutionPolicy Bypass -Sta -File $sendScript -CommandText $cmdText -Host $HostBox.Text -Port ([int]$PortBox.Text)
-      if ($resp) { foreach($line in $resp -split "`r?`n"){ if($line){ $ConsoleBox.AppendText("$line`r`n") } } $ConsoleBox.ScrollToEnd() }
-      Write-Log "One-shot send complete." "SEND"
-    } catch {
-      Write-Log "Send failed: $($_.Exception.Message)" "ERROR"
-    }
-    return
-  }
-  try {
-    Write-Log "SEND: $cmdText" "SEND"
-    $null=$global:tl1_writer.WriteLine($cmdText)
-    $sw=[Diagnostics.Stopwatch]::StartNew()
-    while($sw.ElapsedMilliseconds -lt 1500){
-      if($global:tl1_stream.DataAvailable){
-        $line=$global:tl1_reader.ReadLine()
-        if($line -ne $null){ $ConsoleBox.AppendText("$line`r`n") }
-      } else { Start-Sleep -Milliseconds 50 }
-    }
-    $ConsoleBox.ScrollToEnd()
-  } catch {
-    Write-Log "Send failed: $($_.Exception.Message)" "ERROR"
-  }
-})
-
-# Disconnect
-$DisconnectBtn.Add_Click({
-  try{
-    if($global:tl1_client -and $global:tl1_client.Connected){ $global:tl1_client.Close() }
-    $global:tl1_client=$null; $global:tl1_stream=$null; $global:tl1_writer=$null; $global:tl1_reader=$null
-    Write-Log "Disconnected." "NET"
-  } finally {
-    $StatusText.Text="Disconnected"; $StatusText.Foreground='#fca5a5'
+  Write-Log "SEND: $cmdText" "SEND"
+  $crt=$Settings.SecureCRTPath
+  $sendScript=Join-Path $ScriptDir "send_tl1.ps1"
+  if(Test-Path $sendScript){
+    Try-Do { & powershell -NoProfile -ExecutionPolicy Bypass -File $sendScript -CommandText $cmdText -SecureCRTPath $crt } "SEND_HELPER"
+  } else {
+    Write-Log "send_tl1.ps1 not found; logged only." "WARN"
   }
 })
 
 Write-Log "=== TL1 Command Builder started ===" "BOOT"
-[void]$Window.ShowDialog()
+$Window.ShowDialog() | Out-Null
