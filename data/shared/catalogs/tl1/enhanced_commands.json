@@ -497,6 +497,33 @@
         ],
         "Performance Monitoring": [
             {
+                "command_code": "RTRV-PM-24H",
+                "description": "Retrieve 24-Hour Performance Monitoring Data",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [],
+                    "optional": [
+                        {
+                            "name": "DAYS",
+                            "type": "string",
+                            "description": "Number of Days",
+                            "validation": "^[1-7]$",
+                            "example": "1"
+                        }
+                    ]
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD\n   \"<aid>,DAY=<date>,ES=<count>,SES=<count>,UAS=<count>,CV=<count>,BES=<count>\"",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "RTRV-PM-24H::::DAYS=1;",
+                        "description": "Retrieve last 24 hours of PM data"
+                    }
+                ]
+            },
+            {
                 "command_code": "RTRV-PM-T1",
                 "description": "Retrieve T1 Performance Monitoring Data",
                 "platforms": ["1603_SM", "16034_SMX"],
