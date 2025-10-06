@@ -1,5 +1,27 @@
+# Error handling and logging setup
+$ErrorActionPreference = 'Stop'
+$DebugPreference = 'Continue'
+$VerbosePreference = 'Continue'
+
+# Version and environment checks
+Write-Debug "PowerShell Version: $($PSVersionTable.PSVersion)"
+Write-Debug "OS Version: $([System.Environment]::OSVersion.Version)"
+Write-Debug "Current Directory: $($PWD.Path)"
+
+if ($PSVersionTable.PSVersion.Major -gt 5) {
+    Write-Error "This script requires Windows PowerShell 5.1. Current version: $($PSVersionTable.PSVersion)"
+    Write-Error "Please run using 'Windows PowerShell' (blue icon) instead of 'PowerShell Core' (black icon)"
+    Start-Sleep -Seconds 5
+    exit 1
+}
+
 # --- STA guard for WPF ---
-try { $isSta = [System.Threading.Thread]::CurrentThread.ApartmentState -eq 'STA' } catch { $isSta = $false }
+try { 
+    $isSta = [System.Threading.Thread]::CurrentThread.ApartmentState -eq 'STA' 
+} catch { 
+    $isSta = $false 
+}
+
 if (-not $isSta) {
     $ps = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
     $argsList = @('-NoProfile','-ExecutionPolicy','Bypass','-STA','-File',('"{0}"' -f $PSCommandPath))
@@ -8,16 +30,40 @@ if (-not $isSta) {
 }
 # --- end STA guard ---
 
-# TL1_CommandBuilder.ps1 — Windows WPF TL1 GUI (Telnet) — Light Theme
-Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase
+# Load required assemblies
+try {
+    Write-Debug "Loading WPF assemblies..."
+    Add-Type -AssemblyName PresentationFramework
+    Add-Type -AssemblyName PresentationCore
+    Add-Type -AssemblyName WindowsBase
+    Write-Debug "WPF assemblies loaded successfully"
+} catch {
+    Write-Error "Failed to load WPF assemblies. Error: $_"
+    Write-Error "This might indicate Windows Desktop features are not installed."
+    Write-Debug "Stack Trace: $($_.Exception.StackTrace)"
+    Write-Host "Press any key to exit..."
+    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    exit 1
+}
 
+# Resolve paths relative to script location
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$RootDir   = Split-Path -Parent $ScriptDir
-$LogsDir   = Join-Path $RootDir "logs"
-if (!(Test-Path $LogsDir)) { New-Item -ItemType Directory -Path $LogsDir | Out-Null }
-$LogFile   = Join-Path $LogsDir ("app-{0}.log" -f (Get-Date -Format "yyyyMMdd"))
+$RootDir = Split-Path -Parent $ScriptDir
 
-# Settings with safe defaults
+# Ensure app data directory exists in user profile (for portable operation)
+$AppDataDir = Join-Path $env:LOCALAPPDATA "TL1_CommandBuilder"
+if (!(Test-Path $AppDataDir)) { 
+    New-Item -ItemType Directory -Path $AppDataDir | Out-Null 
+}
+
+# Set up logging
+$LogsDir = Join-Path $AppDataDir "logs"
+if (!(Test-Path $LogsDir)) { 
+    New-Item -ItemType Directory -Path $LogsDir | Out-Null 
+}
+$LogFile = Join-Path $LogsDir ("app-{0}.log" -f (Get-Date -Format "yyyyMMdd"))
+
+# Settings with safe defaults - store in script directory for portability
 $SettingsPath = Join-Path $ScriptDir "appsettings.json"
 if (!(Test-Path $SettingsPath)) {
   $default = @{
@@ -86,10 +132,11 @@ $Categories=[ordered]@{
 # -------------------- LIGHT THEME XAML --------------------
 $xaml=@"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        Title="TL1 Command Builder"
-        WindowStartupLocation="CenterScreen"
-        Width="${WinWidth}" Height="${WinHeight}"
-        Background="#ffffff">
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Title="TL1 Command Builder"
+  WindowStartupLocation="CenterScreen"
+  Width="${WinWidth}" Height="${WinHeight}"
+  Background="#ffffff">
   <Window.Resources>
     <SolidColorBrush x:Key="PanelBg" Color="#f5f7fb"/>
     <SolidColorBrush x:Key="PanelBorder" Color="#c7cdd9"/>
