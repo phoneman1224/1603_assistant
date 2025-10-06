@@ -1,0 +1,784 @@
+{
+    "schema_version": "1.0",
+    "command_set": "1603_SM",
+    "platforms": ["1603_SM", "16034_SMX"],
+    "commands": {
+        "System Management": [
+            {
+                "command_code": "ACT-USER",
+                "description": "Activate User",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "UID",
+                            "type": "string",
+                            "description": "User ID",
+                            "validation": "^[A-Za-z][A-Za-z0-9_]{2,10}$",
+                            "example": "ADMIN"
+                        }
+                    ],
+                    "optional": [
+                        {
+                            "name": "PID",
+                            "type": "string",
+                            "description": "Password",
+                            "validation": "^.{4,15}$",
+                            "example": "********"
+                        }
+                    ]
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "ACT-USER:TID:ADMIN:1::MYPASS;",
+                        "description": "Login as ADMIN user"
+                    }
+                ]
+            },
+            {
+                "command_code": "CANC-USER",
+                "description": "Cancel User Session",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "UID",
+                            "type": "string",
+                            "description": "User ID",
+                            "validation": "^[A-Za-z][A-Za-z0-9_]{2,10}$",
+                            "example": "ADMIN"
+                        }
+                    ],
+                    "optional": []
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "CANC-USER:TID:ADMIN:1;",
+                        "description": "Logout ADMIN user"
+                    }
+                ]
+            },
+            {
+                "command_code": "RTRV-HDR",
+                "description": "Retrieve Header",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [],
+                    "optional": []
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD\n   \"<system_info>\"",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "RTRV-HDR:::1;",
+                        "description": "Get system header information"
+                    }
+                ]
+            }
+        ],
+        "Configuration": [
+            {
+                "command_code": "ED-DAT",
+                "description": "Edit Date",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "DATE",
+                            "type": "string",
+                            "description": "Date and Time",
+                            "validation": "^\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{2}$",
+                            "example": "23-10-06-14-30"
+                        }
+                    ],
+                    "optional": []
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "ED-DAT:TID::1::23-10-06-14-30;",
+                        "description": "Set system date to October 6, 2023 14:30"
+                    }
+                ]
+            },
+            {
+                "command_code": "RTRV-EQPT",
+                "description": "Retrieve Equipment",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [],
+                    "optional": [
+                        {
+                            "name": "AID",
+                            "type": "string",
+                            "description": "Access Identifier",
+                            "validation": "^\\d+-\\d+(-\\d+)?$",
+                            "example": "1-1"
+                        }
+                    ]
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD\n   \"<aid>:<spec_block>\"",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "RTRV-EQPT:::1;",
+                        "description": "Retrieve all equipment information"
+                    },
+                    {
+                        "command": "RTRV-EQPT:::1::1-1;",
+                        "description": "Retrieve information for specific equipment"
+                    }
+                ]
+            },
+            {
+                "command_code": "CPY-MEM",
+                "description": "Copy Memory",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "FROM",
+                            "type": "string",
+                            "description": "Source Memory Type",
+                            "validation": "^(DBASE|CONFIG|LOG)$",
+                            "example": "DBASE"
+                        },
+                        {
+                            "name": "TO",
+                            "type": "string",
+                            "description": "Destination Memory Type",
+                            "validation": "^(DBASE|CONFIG|LOG)$",
+                            "example": "CONFIG"
+                        }
+                    ],
+                    "optional": []
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "CPY-MEM:::1::FROM=DBASE,TO=CONFIG;",
+                        "description": "Copy database to config"
+                    }
+                ]
+            }
+        ],
+        "Alarms & Status": [
+            {
+                "command_code": "RTRV-ALM-ALL",
+                "description": "Retrieve All Alarms",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [],
+                    "optional": [
+                        {
+                            "name": "NOTIFICATIONCODE",
+                            "type": "string",
+                            "description": "Notification Code Filter",
+                            "validation": "^(CR|MJ|MN|CL|ALL)$",
+                            "example": "CR"
+                        }
+                    ]
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD\n   \"<aid>:<ntfcncde>,<condition_type>\"",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "RTRV-ALM-ALL:::1;",
+                        "description": "Retrieve all alarms"
+                    },
+                    {
+                        "command": "RTRV-ALM-ALL:::1::NOTIFICATIONCODE=CR;",
+                        "description": "Retrieve critical alarms only"
+                    }
+                ]
+            },
+            {
+                "command_code": "RTRV-COND-ALL",
+                "description": "Retrieve All Conditions",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [],
+                    "optional": [
+                        {
+                            "name": "NOTIFICATIONCODE",
+                            "type": "string",
+                            "description": "Notification Code Filter",
+                            "validation": "^(CR|MJ|MN|CL|ALL)$",
+                            "example": "ALL"
+                        }
+                    ]
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD\n   \"<aid>:<ntfcncde>,<condition_type>\"",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "RTRV-COND-ALL:::1;",
+                        "description": "Retrieve all conditions"
+                    }
+                ]
+            }
+        ],
+        "Port Operations": [
+            {
+                "command_code": "RTRV-T1",
+                "description": "Retrieve T1 Status",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "AID",
+                            "type": "string",
+                            "description": "Access Identifier",
+                            "validation": "^\\d+-\\d+-\\d+$",
+                            "example": "1-1-1"
+                        }
+                    ],
+                    "optional": []
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD\n   \"<aid>:<spec_block>\"",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "RTRV-T1:::1::1-1-1;",
+                        "description": "Retrieve status of T1 port 1-1-1"
+                    }
+                ]
+            },
+            {
+                "command_code": "ED-T1",
+                "description": "Edit T1 Configuration",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "AID",
+                            "type": "string",
+                            "description": "Access Identifier",
+                            "validation": "^\\d+-\\d+-\\d+$",
+                            "example": "1-1-1"
+                        }
+                    ],
+                    "optional": [
+                        {
+                            "name": "LINECODING",
+                            "type": "string",
+                            "description": "Line Coding",
+                            "validation": "^(AMI|B8ZS)$",
+                            "example": "B8ZS"
+                        },
+                        {
+                            "name": "FMT",
+                            "type": "string",
+                            "description": "Frame Format",
+                            "validation": "^(ESF|SF|SLC96)$",
+                            "example": "ESF"
+                        },
+                        {
+                            "name": "YELLOW",
+                            "type": "string",
+                            "description": "Yellow Alarm",
+                            "validation": "^(Y|N)$",
+                            "example": "N"
+                        },
+                        {
+                            "name": "SENDA53",
+                            "type": "string",
+                            "description": "Send ANSI T1.403 Signal",
+                            "validation": "^(Y|N)$",
+                            "example": "Y"
+                        },
+                        {
+                            "name": "SENDB53",
+                            "type": "string",
+                            "description": "Send Bellcore TR-TSY-000053 Signal",
+                            "validation": "^(Y|N)$",
+                            "example": "N"
+                        }
+                    ]
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "ED-T1:::1::1-1-1:LINECODING=B8ZS,FMT=ESF;",
+                        "description": "Configure T1 port with B8ZS coding and ESF format"
+                    }
+                ]
+            }
+        ],
+        "Testing & Diagnostics": [
+            {
+                "command_code": "OPR-LPBK-T1",
+                "description": "Operate T1 Loopback",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "AID",
+                            "type": "string",
+                            "description": "Access Identifier",
+                            "validation": "^\\d+-\\d+-\\d+$",
+                            "example": "1-1-1"
+                        },
+                        {
+                            "name": "LPBKTYPE",
+                            "type": "string",
+                            "description": "Loopback Type",
+                            "validation": "^(PAYLOAD|LINE|NETWORK|TERMINAL)$",
+                            "example": "PAYLOAD"
+                        }
+                    ],
+                    "optional": [
+                        {
+                            "name": "DIRN",
+                            "type": "string",
+                            "description": "Direction",
+                            "validation": "^(BTH|RCV|TRMT)$",
+                            "example": "BTH"
+                        }
+                    ]
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "OPR-LPBK-T1:::1::1-1-1:LPBKTYPE=PAYLOAD,DIRN=BTH;",
+                        "description": "Activate payload loopback in both directions"
+                    }
+                ]
+            },
+            {
+                "command_code": "RLS-LPBK-T1",
+                "description": "Release T1 Loopback",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "AID",
+                            "type": "string",
+                            "description": "Access Identifier",
+                            "validation": "^\\d+-\\d+-\\d+$",
+                            "example": "1-1-1"
+                        },
+                        {
+                            "name": "LPBKTYPE",
+                            "type": "string",
+                            "description": "Loopback Type",
+                            "validation": "^(PAYLOAD|LINE|NETWORK|TERMINAL)$",
+                            "example": "PAYLOAD"
+                        }
+                    ],
+                    "optional": [
+                        {
+                            "name": "DIRN",
+                            "type": "string",
+                            "description": "Direction",
+                            "validation": "^(BTH|RCV|TRMT)$",
+                            "example": "BTH"
+                        }
+                    ]
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "RLS-LPBK-T1:::1::1-1-1:LPBKTYPE=PAYLOAD,DIRN=BTH;",
+                        "description": "Release payload loopback in both directions"
+                    }
+                ]
+            },
+            {
+                "command_code": "TEST-SGNL-T1",
+                "description": "Test T1 Signal",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "AID",
+                            "type": "string",
+                            "description": "Access Identifier",
+                            "validation": "^\\d+-\\d+-\\d+$",
+                            "example": "1-1-1"
+                        }
+                    ],
+                    "optional": [
+                        {
+                            "name": "TESTTYPE",
+                            "type": "string",
+                            "description": "Test Type",
+                            "validation": "^(BERT|PRBS|QRSS|3IN24|1IN8|1IN16)$",
+                            "example": "BERT"
+                        }
+                    ]
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "TEST-SGNL-T1:::1::1-1-1:TESTTYPE=BERT;",
+                        "description": "Run BERT test on T1 port"
+                    }
+                ]
+            },
+            {
+                "command_code": "OPR-BERT-T1",
+                "description": "Operate BERT Test on T1",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "AID",
+                            "type": "string",
+                            "description": "Access Identifier",
+                            "validation": "^\\d+-\\d+-\\d+$",
+                            "example": "1-1-1"
+                        }
+                    ],
+                    "optional": [
+                        {
+                            "name": "PATTERN",
+                            "type": "string",
+                            "description": "Test Pattern",
+                            "validation": "^(PRBS7|PRBS11|PRBS15|PRBS20|PRBS23|QRSS)$",
+                            "example": "PRBS7"
+                        },
+                        {
+                            "name": "DUR",
+                            "type": "string",
+                            "description": "Test Duration in Minutes",
+                            "validation": "^\\d+$",
+                            "example": "60"
+                        }
+                    ]
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "OPR-BERT-T1:::1::1-1-1:PATTERN=PRBS7,DUR=60;",
+                        "description": "Start BERT test with PRBS7 pattern for 60 minutes"
+                    }
+                ]
+            }
+        ],
+        "Performance Monitoring": [
+            {
+                "command_code": "RTRV-PM-T1",
+                "description": "Retrieve T1 Performance Monitoring Data",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "AID",
+                            "type": "string",
+                            "description": "Access Identifier",
+                            "validation": "^\\d+-\\d+-\\d+$",
+                            "example": "1-1-1"
+                        }
+                    ],
+                    "optional": [
+                        {
+                            "name": "MONTYPE",
+                            "type": "string",
+                            "description": "Monitor Type",
+                            "validation": "^(CVL|ESL|SESL|UASL|ALL)$",
+                            "example": "ALL"
+                        },
+                        {
+                            "name": "MONVAL",
+                            "type": "string",
+                            "description": "Monitor Value",
+                            "validation": "^(CURR|PREV|ALL)$",
+                            "example": "CURR"
+                        },
+                        {
+                            "name": "LOCN",
+                            "type": "string",
+                            "description": "Location",
+                            "validation": "^(NEND|FEND|BOTH)$",
+                            "example": "BOTH"
+                        },
+                        {
+                            "name": "DIRN",
+                            "type": "string",
+                            "description": "Direction",
+                            "validation": "^(BTH|RCV|TRMT)$",
+                            "example": "BTH"
+                        },
+                        {
+                            "name": "TMPER",
+                            "type": "string",
+                            "description": "Time Period",
+                            "validation": "^(15-MIN|1-DAY|ALL)$",
+                            "example": "15-MIN"
+                        }
+                    ]
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD\n   \"<aid>,<montype>,<monval>,<locn>,<dirn>,<tmper>:<result>\"",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "RTRV-PM-T1:::1::1-1-1:MONTYPE=ALL,TMPER=15-MIN;",
+                        "description": "Retrieve all current 15-minute PM data"
+                    }
+                ]
+            },
+            {
+                "command_code": "INIT-REG-T1",
+                "description": "Initialize T1 Registers",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "AID",
+                            "type": "string",
+                            "description": "Access Identifier",
+                            "validation": "^\\d+-\\d+-\\d+$",
+                            "example": "1-1-1"
+                        }
+                    ],
+                    "optional": [
+                        {
+                            "name": "MONTYPE",
+                            "type": "string",
+                            "description": "Monitor Type",
+                            "validation": "^(CVL|ESL|SESL|UASL|ALL)$",
+                            "example": "ALL"
+                        },
+                        {
+                            "name": "MONVAL",
+                            "type": "string",
+                            "description": "Monitor Value",
+                            "validation": "^(CURR|PREV|ALL)$",
+                            "example": "ALL"
+                        },
+                        {
+                            "name": "LOCN",
+                            "type": "string",
+                            "description": "Location",
+                            "validation": "^(NEND|FEND|BOTH)$",
+                            "example": "BOTH"
+                        }
+                    ]
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "INIT-REG-T1:::1::1-1-1:MONTYPE=ALL,MONVAL=ALL,LOCN=BOTH;",
+                        "description": "Initialize all registers for both directions"
+                    }
+                ]
+            }
+        ],
+        "Software Management": [
+            {
+                "command_code": "ACT-SW",
+                "description": "Activate Software Bank",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [],
+                    "optional": [
+                        {
+                            "name": "BANK",
+                            "type": "string",
+                            "description": "Software Bank",
+                            "validation": "^[AB]$",
+                            "example": "B"
+                        }
+                    ]
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "ACT-SW::::BANK=B;",
+                        "description": "Activate software in Bank B"
+                    }
+                ]
+            },
+            {
+                "command_code": "RTRV-SW",
+                "description": "Retrieve Software Status",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [],
+                    "optional": []
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD\n   ACTIVE=<bank>,STANDBY=<bank>,BOOT=<bank>,BANK=<bank>",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "RTRV-SW::::;",
+                        "description": "Retrieve current software bank status"
+                    }
+                ]
+            }
+        ],
+        "Cross Connects": [
+            {
+                "command_code": "ENT-CRS-T1",
+                "description": "Enter T1 Cross Connection",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "FROM",
+                            "type": "string",
+                            "description": "From Access Identifier",
+                            "validation": "^\\d+-\\d+-\\d+$",
+                            "example": "1-1-1"
+                        },
+                        {
+                            "name": "TO",
+                            "type": "string",
+                            "description": "To Access Identifier",
+                            "validation": "^\\d+-\\d+-\\d+$",
+                            "example": "1-2-1"
+                        }
+                    ],
+                    "optional": [
+                        {
+                            "name": "CCT",
+                            "type": "string",
+                            "description": "Connection Type",
+                            "validation": "^(1WAY|2WAY)$",
+                            "example": "2WAY"
+                        },
+                        {
+                            "name": "CKTID",
+                            "type": "string",
+                            "description": "Circuit Identifier",
+                            "validation": "^[A-Za-z0-9_-]{1,20}$",
+                            "example": "CKT-001"
+                        }
+                    ]
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "ENT-CRS-T1:::1::FROM=1-1-1,TO=1-2-1:CCT=2WAY,CKTID=CKT-001;",
+                        "description": "Create two-way cross-connect between ports"
+                    }
+                ]
+            },
+            {
+                "command_code": "DLT-CRS-T1",
+                "description": "Delete T1 Cross Connection",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [
+                        {
+                            "name": "FROM",
+                            "type": "string",
+                            "description": "From Access Identifier",
+                            "validation": "^\\d+-\\d+-\\d+$",
+                            "example": "1-1-1"
+                        },
+                        {
+                            "name": "TO",
+                            "type": "string",
+                            "description": "To Access Identifier",
+                            "validation": "^\\d+-\\d+-\\d+$",
+                            "example": "1-2-1"
+                        }
+                    ],
+                    "optional": []
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "DLT-CRS-T1:::1::FROM=1-1-1,TO=1-2-1;",
+                        "description": "Delete cross-connect between ports"
+                    }
+                ]
+            },
+            {
+                "command_code": "RTRV-CRS-T1",
+                "description": "Retrieve T1 Cross Connections",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [],
+                    "optional": [
+                        {
+                            "name": "FROM",
+                            "type": "string",
+                            "description": "From Access Identifier",
+                            "validation": "^\\d+-\\d+-\\d+$",
+                            "example": "1-1-1"
+                        },
+                        {
+                            "name": "TO",
+                            "type": "string",
+                            "description": "To Access Identifier",
+                            "validation": "^\\d+-\\d+-\\d+$",
+                            "example": "1-2-1"
+                        }
+                    ]
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD\n   \"<from>,<to>:<cct>,<cktid>\"",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "RTRV-CRS-T1:::1;",
+                        "description": "Retrieve all cross-connects"
+                    },
+                    {
+                        "command": "RTRV-CRS-T1:::1::FROM=1-1-1;",
+                        "description": "Retrieve cross-connects from specific port"
+                    }
+                ]
+            }
+        ]
+    }
+}
