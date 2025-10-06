@@ -753,6 +753,44 @@
         ],
         "Ring Management": [
             {
+                "command_code": "RTRV-CRS-VT",
+                "description": "Retrieve VT Cross Connections",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [],
+                    "optional": [
+                        {
+                            "name": "FROM",
+                            "type": "string",
+                            "description": "From VT Access Identifier",
+                            "validation": "^VT\\d+-\\d+-\\d+$",
+                            "example": "VT1-1-1"
+                        },
+                        {
+                            "name": "TO",
+                            "type": "string",
+                            "description": "To VT Access Identifier",
+                            "validation": "^VT\\d+-\\d+-\\d+$",
+                            "example": "VT1-1-2"
+                        }
+                    ]
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD\n   \"<from>,<to>:<dir>\"",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "RTRV-CRS-VT::::;",
+                        "description": "Retrieve all VT cross-connects"
+                    },
+                    {
+                        "command": "RTRV-CRS-VT::::FROM=VT1-1-1;",
+                        "description": "Retrieve cross-connects from specific VT"
+                    }
+                ]
+            },
+            {
                 "command_code": "ENT-CRS-VT",
                 "description": "Enter VT Cross Connection",
                 "platforms": ["1603_SM", "16034_SMX"],
