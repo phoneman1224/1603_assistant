@@ -609,6 +609,62 @@
                 ]
             }
         ],
+        "Discovery": [
+            {
+                "command_code": "RTRV-NMAP",
+                "description": "Retrieve Network Map",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [],
+                    "optional": [
+                        {
+                            "name": "L1ROU",
+                            "type": "string",
+                            "description": "Layer 1 Route Filter",
+                            "validation": "^(ALL|LOCAL|REMOTE)$",
+                            "example": "ALL"
+                        }
+                    ]
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD\n   NEID=<name>,IP=<address>,MODEL=<type>,SW=<version>",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "RTRV-NMAP::::L1ROU=ALL;",
+                        "description": "Retrieve complete network map"
+                    }
+                ]
+            },
+            {
+                "command_code": "RTRV-ATTR",
+                "description": "Retrieve Attributes",
+                "platforms": ["1603_SM", "16034_SMX"],
+                "parameters": {
+                    "required": [],
+                    "optional": [
+                        {
+                            "name": "AID",
+                            "type": "string",
+                            "description": "Access Identifier",
+                            "validation": "^\\d+-\\d+(-\\d+)?$",
+                            "example": "1-1-1"
+                        }
+                    ]
+                },
+                "response_format": {
+                    "success": "<TID> <DATE> <TIME> M <CTAG> COMPLD\n   \"<aid>:<attribute_block>\"",
+                    "error": "<TID> <DATE> <TIME> M <CTAG> DENY\n   ERCD=\"<code>\"\n   \"<text>\""
+                },
+                "examples": [
+                    {
+                        "command": "RTRV-ATTR::::;",
+                        "description": "Retrieve all system attributes"
+                    }
+                ]
+            }
+        ],
         "Software Management": [
             {
                 "command_code": "ACT-SW",
