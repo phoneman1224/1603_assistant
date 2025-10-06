@@ -1,0 +1,87 @@
+name: Scheduled Repository Cleanup
+
+on:
+  schedule:
+    # Run at 2 AM UTC every Sunday
+    - cron: '0 2 * * 0'
+  workflow_dispatch: # Allows manual trigger
+    inputs:
+      dryRun:
+        description: 'Run in dry-run mode (no deletions)'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Needed for pushing changes
+      
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better cleanup
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+
+      - name: Run Cleanup Script
+        run: |
+          # Make cleanup script executable
+          chmod +x scripts/cleanup.sh
+          
+          if [[ "${{ github.event.inputs.dryRun }}" == "true" ]]; then
+            echo "Running in dry-run mode..."
+            # Modify script to just print what would be deleted
+            sed -i 's/rm -rf/echo "Would delete:"/g' scripts/cleanup.sh
+            sed -i 's/rm -f/echo "Would delete:"/g' scripts/cleanup.sh
+          fi
+          
+          # Run cleanup with automatic yes
+          echo "y" | ./scripts/cleanup.sh
+
+      - name: Check for Changes
+        id: changes
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit Changes
+        if: steps.changes.outputs.changes == 'true'
+        run: |
+          # Create cleanup branch
+          cleanup_branch="cleanup/$(date +%Y%m%d_%H%M%S)"
+          git checkout -b $cleanup_branch
+          
+          # Commit changes
+          git add .
+          git commit -m "chore: Automated cleanup $(date +%Y-%m-%d)
+
+          Removed:
+          $(git status --porcelain | sed 's/^D /- Deleted: /')"
+          
+          # Create pull request
+          gh pr create \
+            --title "🧹 Automated Cleanup $(date +%Y-%m-%d)" \
+            --body "This PR was created by the automated cleanup workflow.
+
+          ### Changes
+          $(git status --porcelain | sed 's/^D /- Deleted: /')
+
+          ### Storage Saved
+          $(du -sh cleanup_backups 2>/dev/null || echo 'No backups created')
+
+          ### Validation
+          - [ ] Check that no important files were removed
+          - [ ] Verify backups are available if needed
+          - [ ] Test that everything still works as expected" \
+            --label "maintenance" \
+            --label "automated"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
