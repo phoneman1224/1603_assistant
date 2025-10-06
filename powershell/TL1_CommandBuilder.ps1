@@ -1,3 +1,13 @@
+# --- STA guard for WPF ---
+try { $isSta = [System.Threading.Thread]::CurrentThread.ApartmentState -eq 'STA' } catch { $isSta = $false }
+if (-not $isSta) {
+    $ps = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
+    $argsList = @('-NoProfile','-ExecutionPolicy','Bypass','-STA','-File',('"{0}"' -f $PSCommandPath))
+    Start-Process -FilePath $ps -ArgumentList $argsList -WorkingDirectory (Split-Path -Parent $PSCommandPath)
+    return
+}
+# --- end STA guard ---
+
 # TL1_CommandBuilder.ps1 — Windows WPF TL1 GUI (Telnet) — Light Theme
 Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase
 
@@ -74,7 +84,7 @@ $Categories=[ordered]@{
 }
 
 # -------------------- LIGHT THEME XAML --------------------
-[xml]$xaml=@"
+$xaml=@"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         Title="TL1 Command Builder"
         WindowStartupLocation="CenterScreen"
@@ -220,8 +230,7 @@ $Categories=[ordered]@{
 "@
 
 # ---- Build visual tree
-$reader = New-Object System.Xml.XmlNodeReader $xaml
-$Window = [Windows.Markup.XamlReader]::Load($reader)
+$Window = [Windows.Markup.XamlReader]::Parse($xaml)
 
 # ---- Bind controls
 $CategoryTree=$Window.FindName("CategoryTree"); $SystemBox=$Window.FindName("SystemBox")
