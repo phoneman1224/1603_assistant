@@ -194,7 +194,7 @@ $Categories=[ordered]@{
           </StackPanel>
 
           <StackPanel Grid.Row="2">
-            <TextBlock Text="Optional Parameters (skip freely — [] means optional):" Margin="0,0,0,6"/>
+            <TextBlock Text="Optional Parameters (skip freely - [] means optional):" Margin="0,0,0,6"/>
             <WrapPanel Name="OptionalPanel"/>
           </StackPanel>
 
