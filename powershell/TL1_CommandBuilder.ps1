@@ -36,7 +36,7 @@ function Write-Log([string]$Message,[string]$Level="INFO"){
   if($global:ConsoleBox){ $global:ConsoleBox.AppendText("$line`r`n"); $global:ConsoleBox.ScrollToEnd() }
 }
 
-# Command registry (placeholders — we can load real TL1 set later)
+# Command registry (placeholders)
 $Categories=[ordered]@{
   "System Settings/Maintenance"=@(
     @{Name="ALW-USER";Desc="Allow user";Optional=@("PRM","MASK")},
@@ -74,7 +74,7 @@ $Categories=[ordered]@{
   )
 }
 
-# XAML (high-contrast Button style; safe width/height numbers)
+# XAML (high-contrast Button style; widened button column so text never clips)
 [xml]$xaml=@"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         Title="TL1 Command Builder"
@@ -109,11 +109,11 @@ $Categories=[ordered]@{
       <Border Grid.Row="0" Background="#161a22" Padding="8" CornerRadius="8" BorderBrush="#2a2f3a" BorderThickness="1">
         <Grid>
           <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="160"/>
-            <ColumnDefinition Width="220"/>
-            <ColumnDefinition Width="120"/>
-            <ColumnDefinition Width="120"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="160"/>   <!-- System -->
+            <ColumnDefinition Width="220"/>   <!-- Host -->
+            <ColumnDefinition Width="120"/>   <!-- Port -->
+            <ColumnDefinition Width="220"/>   <!-- Buttons (widened from 120) -->
+            <ColumnDefinition Width="*"/>     <!-- Status/Debug -->
           </Grid.ColumnDefinitions>
 
           <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center" Margin="4,0">
@@ -135,8 +135,8 @@ $Categories=[ordered]@{
           </StackPanel>
 
           <StackPanel Orientation="Horizontal" Grid.Column="3" VerticalAlignment="Center" Margin="4,0">
-            <Button Name="ConnectBtn" Content="Connect" Width="80" Margin="0,0,6,0"/>
-            <Button Name="DisconnectBtn" Content="Disconnect" Width="90" Foreground="#e5e7eb"/>
+            <Button Name="ConnectBtn" Content="Connect" Width="90" Margin="0,0,6,0"/>
+            <Button Name="DisconnectBtn" Content="Disconnect" Width="110"/>
           </StackPanel>
 
           <StackPanel Orientation="Horizontal" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4,0">
@@ -236,7 +236,7 @@ $Categories.Keys | ForEach-Object {
   [void]$CategoryTree.Items.Add($catNode)
 }
 
-# Optional fields rendering
+# Optional fields
 function Refresh-OptionalFields{
   $OptionalPanel.Children.Clear()
   $sel=$CommandBox.SelectedItem
@@ -263,7 +263,7 @@ function Build-OptionalList{
   ($pairs -join ",")
 }
 
-# Build TL1 string  <CMD>::<TID>:<AID>:<CTAG>::op1=val,...;
+# Preview builder  <CMD>::<TID>:<AID>:<CTAG>::op1=val,...;
 function Update-Preview{
   $cmd= if($CommandBox.SelectedItem){ $CommandBox.SelectedItem.Content } else { "" }
   $tid=$TidBox.Text; $aid=$AidBox.Text; $ctag=$CtagBox.Text
