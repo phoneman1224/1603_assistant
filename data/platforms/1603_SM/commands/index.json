@@ -1,0 +1,372 @@
+{
+  "version": "1.0",
+  "platform": "1603_SM",
+  "categories": {
+    "alarms": {
+      "description": "Alarm management commands",
+      "commands": [
+        {
+          "file": "Command_ ALW-LPBK-T1.pdf",
+          "command": " ALW-LPBK-T1",
+          "schema_definition": "schemas/commands/ ALW-LPBK-T1.json",
+          "description": " ALW LPBK T1"
+        },
+        {
+          "file": "Command_ ALW-SWDX-EQPT.pdf",
+          "command": " ALW-SWDX-EQPT",
+          "schema_definition": "schemas/commands/ ALW-SWDX-EQPT.json",
+          "description": " ALW SWDX EQPT"
+        },
+        {
+          "file": "Command_ ALW-PM-VPL.pdf",
+          "command": " ALW-PM-VPL",
+          "schema_definition": "schemas/commands/ ALW-PM-VPL.json",
+          "description": " ALW PM VPL"
+        }
+      ]
+    },
+    "configuration": {
+      "description": "System configuration commands",
+      "commands": [
+        {
+          "file": "Command_ DLT-PORT.pdf",
+          "command": " DLT-PORT",
+          "schema_definition": "schemas/commands/ DLT-PORT.json",
+          "description": " DLT PORT"
+        },
+        {
+          "file": "Command_ ED-ATMPROC.pdf",
+          "command": " ED-ATMPROC",
+          "schema_definition": "schemas/commands/ ED-ATMPROC.json",
+          "description": " ED ATMPROC"
+        },
+        {
+          "file": "Command_ SET-ATTR-T1.pdf",
+          "command": " SET-ATTR-T1",
+          "schema_definition": "schemas/commands/ SET-ATTR-T1.json",
+          "description": " SET ATTR T1"
+        },
+        {
+          "file": "Command_ ED-SECU-USER.pdf",
+          "command": " ED-SECU-USER",
+          "schema_definition": "schemas/commands/ ED-SECU-USER.json",
+          "description": " ED SECU USER"
+        },
+        {
+          "file": "Command_ SET-SYNCN (1).pdf",
+          "command": " SET-SYNCN (1)",
+          "schema_definition": "schemas/commands/ SET-SYNCN (1).json",
+          "description": " SET SYNCN (1)"
+        },
+        {
+          "file": "Command_ DLT-OC12.pdf",
+          "command": " DLT-OC12",
+          "schema_definition": "schemas/commands/ DLT-OC12.json",
+          "description": " DLT OC12"
+        },
+        {
+          "file": "Command_ ED-FFP-STS3C.pdf",
+          "command": " ED-FFP-STS3C",
+          "schema_definition": "schemas/commands/ ED-FFP-STS3C.json",
+          "description": " ED FFP STS3C"
+        },
+        {
+          "file": "Command_ SET-ATTR-PORT.pdf",
+          "command": " SET-ATTR-PORT",
+          "schema_definition": "schemas/commands/ SET-ATTR-PORT.json",
+          "description": " SET ATTR PORT"
+        },
+        {
+          "file": "Command_ DLT-SML.pdf",
+          "command": " DLT-SML",
+          "schema_definition": "schemas/commands/ DLT-SML.json",
+          "description": " DLT SML"
+        },
+        {
+          "file": "Command_ ENT-PROFILE-TRAFDSC.pdf",
+          "command": " ENT-PROFILE-TRAFDSC",
+          "schema_definition": "schemas/commands/ ENT-PROFILE-TRAFDSC.json",
+          "description": " ENT PROFILE TRAFDSC"
+        },
+        {
+          "file": "Command_ ENT-AAL5.pdf",
+          "command": " ENT-AAL5",
+          "schema_definition": "schemas/commands/ ENT-AAL5.json",
+          "description": " ENT AAL5"
+        },
+        {
+          "file": "Command_ ED-LLSDCC.pdf",
+          "command": " ED-LLSDCC",
+          "schema_definition": "schemas/commands/ ED-LLSDCC.json",
+          "description": " ED LLSDCC"
+        },
+        {
+          "file": "Command_ SET-PMMODE-STS1.pdf",
+          "command": " SET-PMMODE-STS1",
+          "schema_definition": "schemas/commands/ SET-PMMODE-STS1.json",
+          "description": " SET PMMODE STS1"
+        },
+        {
+          "file": "Command_ SET-ATTR-LAN.pdf",
+          "command": " SET-ATTR-LAN",
+          "schema_definition": "schemas/commands/ SET-ATTR-LAN.json",
+          "description": " SET ATTR LAN"
+        },
+        {
+          "file": "Command_ ENT-OC12.pdf",
+          "command": " ENT-OC12",
+          "schema_definition": "schemas/commands/ ENT-OC12.json",
+          "description": " ENT OC12"
+        },
+        {
+          "file": "Command_ DLT-IPT.pdf",
+          "command": " DLT-IPT",
+          "schema_definition": "schemas/commands/ DLT-IPT.json",
+          "description": " DLT IPT"
+        },
+        {
+          "file": "Command_ ED-OC12.pdf",
+          "command": " ED-OC12",
+          "schema_definition": "schemas/commands/ ED-OC12.json",
+          "description": " ED OC12"
+        },
+        {
+          "file": "Command_ ENT-USRLAN.pdf",
+          "command": " ENT-USRLAN",
+          "schema_definition": "schemas/commands/ ENT-USRLAN.json",
+          "description": " ENT USRLAN"
+        },
+        {
+          "file": "Command_ DLT-IPAREA.pdf",
+          "command": " DLT-IPAREA",
+          "schema_definition": "schemas/commands/ DLT-IPAREA.json",
+          "description": " DLT IPAREA"
+        },
+        {
+          "file": "Command_ ED-STS3C.pdf",
+          "command": " ED-STS3C",
+          "schema_definition": "schemas/commands/ ED-STS3C.json",
+          "description": " ED STS3C"
+        },
+        {
+          "file": "Command_ ENT-BITS.pdf",
+          "command": " ENT-BITS",
+          "schema_definition": "schemas/commands/ ENT-BITS.json",
+          "description": " ENT BITS"
+        },
+        {
+          "file": "Command_ SET-ACO-COM.pdf",
+          "command": " SET-ACO-COM",
+          "schema_definition": "schemas/commands/ SET-ACO-COM.json",
+          "description": " SET ACO COM"
+        },
+        {
+          "file": "Command_ SET-TH-STS1.pdf",
+          "command": " SET-TH-STS1",
+          "schema_definition": "schemas/commands/ SET-TH-STS1.json",
+          "description": " SET TH STS1"
+        },
+        {
+          "file": "Command_ ED-SECU-PID.pdf",
+          "command": " ED-SECU-PID",
+          "schema_definition": "schemas/commands/ ED-SECU-PID.json",
+          "description": " ED SECU PID"
+        }
+      ]
+    },
+    "maintenance": {
+      "description": "Maintenance operations",
+      "commands": [
+        {
+          "file": "Command_ RLS-LPBK-OC48.pdf",
+          "command": " RLS-LPBK-OC48",
+          "schema_definition": "schemas/commands/ RLS-LPBK-OC48.json",
+          "description": " RLS LPBK OC48"
+        },
+        {
+          "file": "Command_ OPR-LPBK-T3.pdf",
+          "command": " OPR-LPBK-T3",
+          "schema_definition": "schemas/commands/ OPR-LPBK-T3.json",
+          "description": " OPR LPBK T3"
+        },
+        {
+          "file": "Command_ RLS-LPBK-T1.pdf",
+          "command": " RLS-LPBK-T1",
+          "schema_definition": "schemas/commands/ RLS-LPBK-T1.json",
+          "description": " RLS LPBK T1"
+        },
+        {
+          "file": "Command_ INIT-REG-T3.pdf",
+          "command": " INIT-REG-T3",
+          "schema_definition": "schemas/commands/ INIT-REG-T3.json",
+          "description": " INIT REG T3"
+        },
+        {
+          "file": "Command_ OPR-LPBK-T1.pdf",
+          "command": " OPR-LPBK-T1",
+          "schema_definition": "schemas/commands/ OPR-LPBK-T1.json",
+          "description": " OPR LPBK T1"
+        }
+      ]
+    },
+    "monitoring": {
+      "description": "Status and performance monitoring",
+      "commands": [
+        {
+          "file": "Command_ RTRV-AO.pdf",
+          "command": " RTRV-AO",
+          "schema_definition": "schemas/commands/ RTRV-AO.json",
+          "description": " RTRV AO"
+        },
+        {
+          "file": "Command_ RTRV-ALM-USRLAN.pdf",
+          "command": " RTRV-ALM-USRLAN",
+          "schema_definition": "schemas/commands/ RTRV-ALM-USRLAN.json",
+          "description": " RTRV ALM USRLAN"
+        },
+        {
+          "file": "Command_ RTRV-IPTABLE.pdf",
+          "command": " RTRV-IPTABLE",
+          "schema_definition": "schemas/commands/ RTRV-IPTABLE.json",
+          "description": " RTRV IPTABLE"
+        },
+        {
+          "file": "Command_ RTRV-ATTR-USRLAN.pdf",
+          "command": " RTRV-ATTR-USRLAN",
+          "schema_definition": "schemas/commands/ RTRV-ATTR-USRLAN.json",
+          "description": " RTRV ATTR USRLAN"
+        },
+        {
+          "file": "Command_ RTRV-ALM-TADRMAP.pdf",
+          "command": " RTRV-ALM-TADRMAP",
+          "schema_definition": "schemas/commands/ RTRV-ALM-TADRMAP.json",
+          "description": " RTRV ALM TADRMAP"
+        },
+        {
+          "file": "Command_ RTRV-ATTR-EC1.pdf",
+          "command": " RTRV-ATTR-EC1",
+          "schema_definition": "schemas/commands/ RTRV-ATTR-EC1.json",
+          "description": " RTRV ATTR EC1"
+        },
+        {
+          "file": "Command_ RTRV-COND-LAN.pdf",
+          "command": " RTRV-COND-LAN",
+          "schema_definition": "schemas/commands/ RTRV-COND-LAN.json",
+          "description": " RTRV COND LAN"
+        },
+        {
+          "file": "Command_ RTRV-PM-OC12.pdf",
+          "command": " RTRV-PM-OC12",
+          "schema_definition": "schemas/commands/ RTRV-PM-OC12.json",
+          "description": " RTRV PM OC12"
+        },
+        {
+          "file": "Command_ RTRV-ATTR-X25.pdf",
+          "command": " RTRV-ATTR-X25",
+          "schema_definition": "schemas/commands/ RTRV-ATTR-X25.json",
+          "description": " RTRV ATTR X25"
+        },
+        {
+          "file": "Command_ RTRV-VCL.pdf",
+          "command": " RTRV-VCL",
+          "schema_definition": "schemas/commands/ RTRV-VCL.json",
+          "description": " RTRV VCL"
+        },
+        {
+          "file": "Command_ RTRV-PMMODE-EQPT.pdf",
+          "command": " RTRV-PMMODE-EQPT",
+          "schema_definition": "schemas/commands/ RTRV-PMMODE-EQPT.json",
+          "description": " RTRV PMMODE EQPT"
+        },
+        {
+          "file": "Command_ RTRV-PM-ATMPORT.pdf",
+          "command": " RTRV-PM-ATMPORT",
+          "schema_definition": "schemas/commands/ RTRV-PM-ATMPORT.json",
+          "description": " RTRV PM ATMPORT"
+        },
+        {
+          "file": "Command_ RTRV-HDR.pdf",
+          "command": " RTRV-HDR",
+          "schema_definition": "schemas/commands/ RTRV-HDR.json",
+          "description": " RTRV HDR"
+        },
+        {
+          "file": "Command_ RTRV-COND-COM.pdf",
+          "command": " RTRV-COND-COM",
+          "schema_definition": "schemas/commands/ RTRV-COND-COM.json",
+          "description": " RTRV COND COM"
+        },
+        {
+          "file": "Command_ RTRV-SYNCN.pdf",
+          "command": " RTRV-SYNCN",
+          "schema_definition": "schemas/commands/ RTRV-SYNCN.json",
+          "description": " RTRV SYNCN"
+        },
+        {
+          "file": "Command_ RTRV-IP.pdf",
+          "command": " RTRV-IP",
+          "schema_definition": "schemas/commands/ RTRV-IP.json",
+          "description": " RTRV IP"
+        },
+        {
+          "file": "Command_ RTRV-TH-OC12.pdf",
+          "command": " RTRV-TH-OC12",
+          "schema_definition": "schemas/commands/ RTRV-TH-OC12.json",
+          "description": " RTRV TH OC12"
+        },
+        {
+          "file": "Command_ RTRV-PM-VPL.pdf",
+          "command": " RTRV-PM-VPL",
+          "schema_definition": "schemas/commands/ RTRV-PM-VPL.json",
+          "description": " RTRV PM VPL"
+        },
+        {
+          "file": "Command_ RTRV-SECU-CMD.pdf",
+          "command": " RTRV-SECU-CMD",
+          "schema_definition": "schemas/commands/ RTRV-SECU-CMD.json",
+          "description": " RTRV SECU CMD"
+        },
+        {
+          "file": "Command_ RTRV-FFP-OC12.pdf",
+          "command": " RTRV-FFP-OC12",
+          "schema_definition": "schemas/commands/ RTRV-FFP-OC12.json",
+          "description": " RTRV FFP OC12"
+        },
+        {
+          "file": "Command_ RTRV-PMMODE-T1.pdf",
+          "command": " RTRV-PMMODE-T1",
+          "schema_definition": "schemas/commands/ RTRV-PMMODE-T1.json",
+          "description": " RTRV PMMODE T1"
+        },
+        {
+          "file": "Command_ RTRV-NE-ATM.pdf",
+          "command": " RTRV-NE-ATM",
+          "schema_definition": "schemas/commands/ RTRV-NE-ATM.json",
+          "description": " RTRV NE ATM"
+        }
+      ]
+    },
+    "provisioning": {
+      "description": "Service provisioning commands",
+      "commands": [
+        {
+          "file": "Command_ DISC-TACC.pdf",
+          "command": " DISC-TACC",
+          "schema_definition": "schemas/commands/ DISC-TACC.json",
+          "description": " DISC TACC"
+        }
+      ]
+    },
+    "security": {
+      "description": "Security and user management",
+      "commands": [
+        {
+          "file": "Command_ CANC-USER.pdf",
+          "command": " CANC-USER",
+          "schema_definition": "schemas/commands/ CANC-USER.json",
+          "description": " CANC USER"
+        }
+      ]
+    }
+  }
+}
