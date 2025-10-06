@@ -1,4 +1,4 @@
-# TL1_CommandBuilder.ps1 — Windows WPF TL1 GUI (Telnet) — PS5/PS7-safe
+# TL1_CommandBuilder.ps1 — Windows WPF TL1 GUI (Telnet) — PS5/PS7 safe
 Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -24,12 +24,8 @@ try { $Settings = Get-Content $SettingsPath -Raw | ConvertFrom-Json } catch {
 $WinWidth  = 1150
 $WinHeight = 760
 try {
-  if ($Settings.Window -and $Settings.Window.Width) {
-    $w = $Settings.Window.Width -as [int]; if ($w -and $w -gt 0) { $WinWidth = $w }
-  }
-  if ($Settings.Window -and $Settings.Window.Height) {
-    $h = $Settings.Window.Height -as [int]; if ($h -and $h -gt 0) { $WinHeight = $h }
-  }
+  if ($Settings.Window -and $Settings.Window.Width)  { $w = $Settings.Window.Width -as [int]; if ($w -and $w -gt 0) { $WinWidth = $w } }
+  if ($Settings.Window -and $Settings.Window.Height) { $h = $Settings.Window.Height -as [int]; if ($h -and $h -gt 0) { $WinHeight = $h } }
 } catch {}
 
 # Logging
@@ -39,9 +35,8 @@ function Write-Log([string]$Message,[string]$Level="INFO"){
   Add-Content -Path $LogFile -Value $line
   if($global:ConsoleBox){ $global:ConsoleBox.AppendText("$line`r`n"); $global:ConsoleBox.ScrollToEnd() }
 }
-function Try-Do([scriptblock]$Block,[string]$Context="RUN"){ try{ & $Block }catch{ Write-Log "$Context failed: $($_.Exception.Message)" "ERROR" } }
 
-# Command registry (placeholders)
+# Command registry (placeholders — we can load real TL1 set later)
 $Categories=[ordered]@{
   "System Settings/Maintenance"=@(
     @{Name="ALW-USER";Desc="Allow user";Optional=@("PRM","MASK")},
@@ -79,13 +74,22 @@ $Categories=[ordered]@{
   )
 }
 
-# --- XAML (uses numeric $WinWidth/$WinHeight) ---
+# XAML (high-contrast Button style; safe width/height numbers)
 [xml]$xaml=@"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         Title="TL1 Command Builder"
         WindowStartupLocation="CenterScreen"
         Width="${WinWidth}" Height="${WinHeight}"
         Background="#0f1115">
+  <Window.Resources>
+    <Style TargetType="Button">
+      <Setter Property="Foreground" Value="#e5e7eb"/>
+      <Setter Property="Background" Value="#243040"/>
+      <Setter Property="BorderBrush" Value="#374151"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding" Value="6,4"/>
+    </Style>
+  </Window.Resources>
   <DockPanel LastChildFill="True">
     <Border DockPanel.Dock="Left" Width="270" Background="#161a22" BorderBrush="#2a2f3a" BorderThickness="0,0,1,0">
       <StackPanel>
@@ -132,7 +136,7 @@ $Categories=[ordered]@{
 
           <StackPanel Orientation="Horizontal" Grid.Column="3" VerticalAlignment="Center" Margin="4,0">
             <Button Name="ConnectBtn" Content="Connect" Width="80" Margin="0,0,6,0"/>
-            <Button Name="DisconnectBtn" Content="Disconnect" Width="90"/>
+            <Button Name="DisconnectBtn" Content="Disconnect" Width="90" Foreground="#e5e7eb"/>
           </StackPanel>
 
           <StackPanel Orientation="Horizontal" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4,0">
@@ -256,7 +260,7 @@ function Build-OptionalList{
       if($v -and $v.Trim() -ne ""){ $pairs+=("{0}={1}" -f $k,$v.Trim()) }
     }
   }
-  return ($pairs -join ",")
+  ($pairs -join ",")
 }
 
 # Build TL1 string  <CMD>::<TID>:<AID>:<CTAG>::op1=val,...;
@@ -273,37 +277,21 @@ function Update-Preview{
   $PreviewBox.Text = "$left$right;"
 }
 
-# Selection events
-$CategoryTree.Add_SelectedItemChanged({
-  $item=$CategoryTree.SelectedItem
-  if($item -and $item.Tag){
-    $CommandBox.Items.Clear()
-    $entry=$item.Tag
-    $cbItem=New-Object System.Windows.Controls.ComboBoxItem
-    $cbItem.Content=$entry.Name
-    $cbItem.Tag=$entry
-    [void]$CommandBox.Items.Add($cbItem)
-    $CommandBox.SelectedIndex=0
-    $CmdDesc.Text=$entry.Desc
-    Refresh-OptionalFields
-    Update-Preview
+# Telnet noise cleaner
+function Remove-TelnetNoise([byte[]]$bytes){
+  $result = New-Object System.Collections.Generic.List[byte]
+  for($i=0; $i -lt $bytes.Length; $i++){
+    $b = $bytes[$i]
+    if ($b -eq 255) { if ($i + 2 -lt $bytes.Length) { $i += 2 }; continue } # IAC + cmd + opt
+    if (($b -ge 32 -and $b -le 126) -or $b -in 9,10,13) { [void]$result.Add($b) }
   }
-})
-$CommandBox.Add_SelectionChanged({
-  $CmdDesc.Text= if($CommandBox.SelectedItem){ $CommandBox.SelectedItem.Tag.Desc } else { "" }
-  Refresh-OptionalFields
-  Update-Preview
-})
-$TidBox.Add_TextChanged({ Update-Preview })
-$AidBox.Add_TextChanged({ Update-Preview })
-$CtagBox.Add_TextChanged({ Update-Preview })
-$CtagAuto.Add_Click({ if($CtagAuto.IsChecked -and [string]::IsNullOrWhiteSpace($CtagBox.Text)){ $CtagBox.Text="1" }; Update-Preview })
+  ,$result.ToArray()
+}
 
 # ---- TELNET session state & handlers ----
 $global:tl1_client  = $null
 $global:tl1_stream  = $null
 $global:tl1_writer  = $null
-$global:tl1_reader  = $null
 
 # Connect
 $ConnectBtn.Add_Click({
@@ -312,13 +300,12 @@ $ConnectBtn.Add_Click({
   if ($PortBox.Text -and $PortBox.Text -match '^\d+$') { $destPort = [int]$PortBox.Text }
   if([string]::IsNullOrWhiteSpace($destHost)){ Write-Log "Host/IP is empty." "WARN"; return }
   try{
-    $global:tl1_client = New-Object System.Net.Sockets.TcpClient
+    $global:tl1_client = [System.Net.Sockets.TcpClient]::new()
     $iar = $global:tl1_client.BeginConnect($destHost, $destPort, $null, $null)
     if (-not $iar.AsyncWaitHandle.WaitOne(1500, $false)) { throw "Connect timeout" }
     $global:tl1_client.EndConnect($iar)
     $global:tl1_stream = $global:tl1_client.GetStream()
-    $global:tl1_writer = New-Object System.IO.StreamWriter($global:tl1_stream)
-    $global:tl1_reader = New-Object System.IO.StreamReader($global:tl1_stream)
+    $global:tl1_writer = New-Object System.IO.StreamWriter($global:tl1_stream, [Text.Encoding]::ASCII)
     $global:tl1_writer.NewLine="`r`n"; $global:tl1_writer.AutoFlush=$true
     Write-Log ("Connected to {0}:{1}" -f $destHost, $destPort) "NET"
     $StatusText.Text="Connected"; $StatusText.Foreground='LightGreen'
@@ -346,14 +333,23 @@ $SendBtn.Add_Click({
   }
   try {
     Write-Log ("SEND: {0}" -f $cmdText) "SEND"
-    $null=$global:tl1_writer.WriteLine($cmdText)
+    # send without newline
+    $null=$global:tl1_writer.Write($cmdText)
+    # read raw bytes briefly; clean telnet noise
     $sw=[Diagnostics.Stopwatch]::StartNew()
+    $ms = New-Object System.IO.MemoryStream
+    $tmp = New-Object byte[] 8192
     while($sw.ElapsedMilliseconds -lt 1500){
       if($global:tl1_stream.DataAvailable){
-        $line=$global:tl1_reader.ReadLine()
-        if($line -ne $null){ $ConsoleBox.AppendText("$line`r`n") }
+        $n=$global:tl1_stream.Read($tmp,0,$tmp.Length)
+        if($n -gt 0){ $ms.Write($tmp,0,$n) }
       } else { Start-Sleep -Milliseconds 50 }
     }
+    $raw = $ms.ToArray()
+    $clean = Remove-TelnetNoise $raw
+    $resp = [Text.Encoding]::ASCII.GetString($clean)
+    if([string]::IsNullOrWhiteSpace($resp)){ $resp = "<no response>" }
+    foreach($line in $resp -split "`r?`n"){ if($line){ $ConsoleBox.AppendText("$line`r`n") } }
     $ConsoleBox.ScrollToEnd()
   } catch {
     Write-Log ("Send failed: {0}" -f $_.Exception.Message) "ERROR"
@@ -364,7 +360,7 @@ $SendBtn.Add_Click({
 $DisconnectBtn.Add_Click({
   try{
     if($global:tl1_client -and $global:tl1_client.Connected){ $global:tl1_client.Close() }
-    $global:tl1_client=$null; $global:tl1_stream=$null; $global:tl1_writer=$null; $global:tl1_reader=$null
+    $global:tl1_client=$null; $global:tl1_stream=$null; $global:tl1_writer=$null
     Write-Log "Disconnected." "NET"
   } finally {
     $StatusText.Text="Disconnected"; $StatusText.Foreground='#fca5a5'
