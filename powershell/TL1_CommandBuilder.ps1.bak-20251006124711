@@ -1,4 +1,4 @@
-# TL1_CommandBuilder.ps1 — Windows-only WPF TL1 GUI (Telnet) — robust XAML sizing, PS5.1/7 safe
+# TL1_CommandBuilder.ps1 — Windows-only WPF TL1 GUI (Telnet) — PS5.1-safe
 Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -10,36 +10,13 @@ $LogFile   = Join-Path $LogsDir ("app-{0}.log" -f (Get-Date -Format "yyyyMMdd"))
 # Settings
 $SettingsPath = Join-Path $ScriptDir "appsettings.json"
 if (!(Test-Path $SettingsPath)) {
-  $default = @{
-    LogDir           = "..\\logs"
-    DefaultHost      = ""
-    DefaultPort      = 23
-    AutoIncrementCTAG= $true
-    Window           = @{ Width = 1150; Height = 760 }
-    Debug            = $true
-  } | ConvertTo-Json -Depth 5
+  $default = @{ LogDir="..\\logs"; DefaultHost=""; DefaultPort=23; AutoIncrementCTAG=$true;
+                Window=@{Width=1150;Height=760}; Debug=$true } | ConvertTo-Json -Depth 5
   $default | Out-File -FilePath $SettingsPath -Encoding UTF8
 }
 try { $Settings = Get-Content $SettingsPath -Raw | ConvertFrom-Json } catch {
-  $Settings = [pscustomobject]@{
-    LogDir="..\\logs"; DefaultHost=""; DefaultPort=23; AutoIncrementCTAG=$true
-    Window=@{Width=1150;Height=760}; Debug=$true
-  }
+  $Settings = [pscustomobject]@{ LogDir="..\\logs"; DefaultHost=""; DefaultPort=23; AutoIncrementCTAG=$true; Window=@{Width=1150;Height=760}; Debug=$true }
 }
-
-# Compute safe window size values (numbers only)
-$WinWidth  = 1150
-$WinHeight = 760
-try {
-  if ($Settings.Window -and $Settings.Window.Width) {
-    $w = $Settings.Window.Width -as [int]
-    if ($w -and $w -gt 0) { $WinWidth = $w }
-  }
-  if ($Settings.Window -and $Settings.Window.Height) {
-    $h = $Settings.Window.Height -as [int]
-    if ($h -and $h -gt 0) { $WinHeight = $h }
-  }
-} catch { }
 
 # Logging
 $global:ConsoleBox=$null
@@ -52,49 +29,17 @@ function Try-Do([scriptblock]$Block,[string]$Context="RUN"){ try{ & $Block }catc
 
 # Command registry (placeholder; [] optional honored by skipping blanks)
 $Categories=[ordered]@{
-  "System Settings/Maintenance"=@(
-    @{Name="ALW-USER";Desc="Allow user";Optional=@("PRM","MASK")},
-    @{Name="INH-USER";Desc="Inhibit user";Optional=@("PRM","MASK")},
-    @{Name="SET-ATTR";Desc="Set attribute";Optional=@("ATTR","VALUE")},
-    @{Name="ABT-OPR";Desc="Abort operation";Optional=@("REASON")},
-    @{Name="CONFIG-SYS";Desc="Configure system";Optional=@("MODE")},
-    @{Name="CPY-CFG";Desc="Copy config";Optional=@("SRC","DST")}
-  )
-  "Alarms"=@(
-    @{Name="ALM-ACK";Desc="Acknowledge alarm";Optional=@("ALM","COND")},
-    @{Name="COND-RPT";Desc="Condition report";Optional=@("TYPE")}
-  )
-  "Retrieve Information"=@(
-    @{Name="RTRV-STAT";Desc="Retrieve status";Optional=@("SCOPE","VERBOSITY")},
-    @{Name="RTRV-INV";Desc="Retrieve inventory";Optional=@("FILTER")}
-  )
-  "Troubleshooting"=@(
-    @{Name="CONN-LB";Desc="Loopback connect";Optional=@("TYPE","DUR")},
-    @{Name="DGN-PORT";Desc="Diagnostics port";Optional=@("TEST","DUR")},
-    @{Name="DISC-LB";Desc="Loopback disconnect";Optional=@("TYPE")},
-    @{Name="OPR-TEST";Desc="Operate test";Optional=@("TEST","PATTERN")},
-    @{Name="RLS-RES";Desc="Release resource";Optional=@("RES")},
-    @{Name="RD-REG";Desc="Read register";Optional=@("REG")},
-    @{Name="TST-LOOP";Desc="Test loop";Optional=@("PATTERN","DUR")},
-    @{Name="SW-TRAFF";Desc="Switch traffic";Optional=@("MODE")},
-    @{Name="CHG-ACCMD-T1";Desc="Change access cmd T1";Optional=@("LEVEL")}
-  )
-  "Provisioning"=@(
-    @{Name="ENT-SRVC";Desc="Enter service";Optional=@("BAND","OPT")},
-    @{Name="ED-SRVC";Desc="Edit service";Optional=@("FIELD","VALUE")},
-    @{Name="RMV-SRVC";Desc="Remove service";Optional=@("FORCE")},
-    @{Name="RST-UNIT";Desc="Reset unit";Optional=@("SOFT","HARD")},
-    @{Name="DLT-OBJ";Desc="Delete object";Optional=@("CONFIRM")}
-  )
+  "System Settings/Maintenance"=@(@{Name="ALW-USER";Desc="Allow user";Optional=@("PRM","MASK")},@{Name="INH-USER";Desc="Inhibit user";Optional=@("PRM","MASK")},@{Name="SET-ATTR";Desc="Set attribute";Optional=@("ATTR","VALUE")},@{Name="ABT-OPR";Desc="Abort operation";Optional=@("REASON")},@{Name="CONFIG-SYS";Desc="Configure system";Optional=@("MODE")},@{Name="CPY-CFG";Desc="Copy config";Optional=@("SRC","DST")})
+  "Alarms"=@(@{Name="ALM-ACK";Desc="Acknowledge alarm";Optional=@("ALM","COND")},@{Name="COND-RPT";Desc="Condition report";Optional=@("TYPE")})
+  "Retrieve Information"=@(@{Name="RTRV-STAT";Desc="Retrieve status";Optional=@("SCOPE","VERBOSITY")},@{Name="RTRV-INV";Desc="Retrieve inventory";Optional=@("FILTER")})
+  "Troubleshooting"=@(@{Name="CONN-LB";Desc="Loopback connect";Optional=@("TYPE","DUR")},@{Name="DGN-PORT";Desc="Diagnostics port";Optional=@("TEST","DUR")},@{Name="DISC-LB";Desc="Loopback disconnect";Optional=@("TYPE")},@{Name="OPR-TEST";Desc="Operate test";Optional=@("TEST","PATTERN")},@{Name="RLS-RES";Desc="Release resource";Optional=@("RES")},@{Name="RD-REG";Desc="Read register";Optional=@("REG")},@{Name="TST-LOOP";Desc="Test loop";Optional=@("PATTERN","DUR")},@{Name="SW-TRAFF";Desc="Switch traffic";Optional=@("MODE")},@{Name="CHG-ACCMD-T1";Desc="Change access cmd T1";Optional=@("LEVEL")})
+  "Provisioning"=@(@{Name="ENT-SRVC";Desc="Enter service";Optional=@("BAND","OPT")},@{Name="ED-SRVC";Desc="Edit service";Optional=@("FIELD","VALUE")},@{Name="RMV-SRVC";Desc="Remove service";Optional=@("FORCE")},@{Name="RST-UNIT";Desc="Reset unit";Optional=@("SOFT","HARD")},@{Name="DLT-OBJ";Desc="Delete object";Optional=@("CONFIRM")})
 }
 
-# UI XAML (uses numeric $WinWidth / $WinHeight to avoid empty width/height)
+# UI XAML
 [xml]$xaml=@"
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        Title="TL1 Command Builder"
-        WindowStartupLocation="CenterScreen"
-        Width="${WinWidth}" Height="${WinHeight}"
-        Background="#0f1115">
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Title="TL1 Command Builder" WindowStartupLocation="CenterScreen"
+        Width="${($Settings.Window.Width)}" Height="${($Settings.Window.Height)}" Background="#0f1115">
   <DockPanel LastChildFill="True">
     <Border DockPanel.Dock="Left" Width="270" Background="#161a22" BorderBrush="#2a2f3a" BorderThickness="0,0,1,0">
       <StackPanel>
@@ -103,106 +48,41 @@ $Categories=[ordered]@{
       </StackPanel>
     </Border>
     <Grid Margin="10">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="*"/>
-        <RowDefinition Height="160"/>
-      </Grid.RowDefinitions>
-
+      <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="160"/></Grid.RowDefinitions>
       <Border Grid.Row="0" Background="#161a22" Padding="8" CornerRadius="8" BorderBrush="#2a2f3a" BorderThickness="1">
         <Grid>
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="160"/>
-            <ColumnDefinition Width="220"/>
-            <ColumnDefinition Width="120"/>
-            <ColumnDefinition Width="120"/>
-            <ColumnDefinition Width="*"/>
-          </Grid.ColumnDefinitions>
-
+          <Grid.ColumnDefinitions><ColumnDefinition Width="160"/><ColumnDefinition Width="220"/><ColumnDefinition Width="120"/><ColumnDefinition Width="120"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
           <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center" Margin="4,0">
             <TextBlock Text="System:" Foreground="#cbd5e1" Margin="0,0,6,0"/>
-            <ComboBox Name="SystemBox" Width="110">
-              <ComboBoxItem Content="1603 SM"/>
-              <ComboBoxItem Content="16034 SMX"/>
-            </ComboBox>
+            <ComboBox Name="SystemBox" Width="110"><ComboBoxItem Content="1603 SM"/><ComboBoxItem Content="16034 SMX"/></ComboBox>
           </StackPanel>
-
-          <StackPanel Orientation="Horizontal" Grid.Column="1" VerticalAlignment="Center" Margin="4,0">
-            <TextBlock Text="Host/IP:" Foreground="#cbd5e1" Margin="0,0,6,0"/>
-            <TextBox Name="HostBox" Width="150"/>
-          </StackPanel>
-
-          <StackPanel Orientation="Horizontal" Grid.Column="2" VerticalAlignment="Center" Margin="4,0">
-            <TextBlock Text="Port:" Foreground="#cbd5e1" Margin="0,0,6,0"/>
-            <TextBox Name="PortBox" Width="60"/>
-          </StackPanel>
-
-          <StackPanel Orientation="Horizontal" Grid.Column="3" VerticalAlignment="Center" Margin="4,0">
-            <Button Name="ConnectBtn" Content="Connect" Width="80" Margin="0,0,6,0"/>
-            <Button Name="DisconnectBtn" Content="Disconnect" Width="90"/>
-          </StackPanel>
-
-          <StackPanel Orientation="Horizontal" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4,0">
-            <CheckBox Name="DebugChk" Content="Debug" Foreground="#cbd5e1"/>
-            <TextBlock Name="StatusText" Text="Disconnected" Foreground="#fca5a5" Margin="10,0,0,0"/>
-          </StackPanel>
+          <StackPanel Orientation="Horizontal" Grid.Column="1" VerticalAlignment="Center" Margin="4,0"><TextBlock Text="Host/IP:" Foreground="#cbd5e1" Margin="0,0,6,0"/><TextBox Name="HostBox" Width="150"/></StackPanel>
+          <StackPanel Orientation="Horizontal" Grid.Column="2" VerticalAlignment="Center" Margin="4,0"><TextBlock Text="Port:" Foreground="#cbd5e1" Margin="0,0,6,0"/><TextBox Name="PortBox" Width="60"/></StackPanel>
+          <StackPanel Orientation="Horizontal" Grid.Column="3" VerticalAlignment="Center" Margin="4,0"><Button Name="ConnectBtn" Content="Connect" Width="80" Margin="0,0,6,0"/><Button Name="DisconnectBtn" Content="Disconnect" Width="90"/></StackPanel>
+          <StackPanel Orientation="Horizontal" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4,0"><CheckBox Name="DebugChk" Content="Debug" Foreground="#cbd5e1" IsChecked="${$Settings.Debug}"/><TextBlock Name="StatusText" Text="Disconnected" Foreground="#fca5a5" Margin="10,0,0,0"/></StackPanel>
         </Grid>
       </Border>
-
       <Border Grid.Row="1" Background="#161a22" Padding="8" CornerRadius="8" BorderBrush="#2a2f3a" BorderThickness="1" Margin="0,10,0,10">
         <Grid>
-          <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-          </Grid.RowDefinitions>
-
-          <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,8">
-            <TextBlock Text="Command:" Foreground="#cbd5e1" Margin="0,0,6,0"/>
-            <ComboBox Name="CommandBox" Width="240"/>
-            <TextBlock Text="Desc:" Foreground="#94a3b8" Margin="20,0,6,0"/>
-            <TextBlock Name="CmdDesc" Foreground="#94a3b8"/>
-          </StackPanel>
-
+          <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+          <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,8"><TextBlock Text="Command:" Foreground="#cbd5e1" Margin="0,0,6,0"/><ComboBox Name="CommandBox" Width="240"/><TextBlock Text="Desc:" Foreground="#94a3b8" Margin="20,0,6,0"/><TextBlock Name="CmdDesc" Foreground="#94a3b8"/></StackPanel>
           <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,0,0,8">
-            <TextBlock Text="TID:" Foreground="#cbd5e1"/>
-            <TextBox Name="TidBox" Width="100" Margin="6,0,20,0"/>
-            <TextBlock Text="AID:" Foreground="#cbd5e1"/>
-            <TextBox Name="AidBox" Width="120" Margin="6,0,20,0"/>
-            <TextBlock Text="CTAG:" Foreground="#cbd5e1"/>
-            <TextBox Name="CtagBox" Width="80" Margin="6,0,20,0"/>
+            <TextBlock Text="TID:" Foreground="#cbd5e1"/><TextBox Name="TidBox" Width="100" Margin="6,0,20,0"/>
+            <TextBlock Text="AID:" Foreground="#cbd5e1"/><TextBox Name="AidBox" Width="120" Margin="6,0,20,0"/>
+            <TextBlock Text="CTAG:" Foreground="#cbd5e1"/><TextBox Name="CtagBox" Width="80" Margin="6,0,20,0"/>
             <CheckBox Name="CtagAuto" Content="Auto-increment" Foreground="#cbd5e1" IsChecked="True"/>
           </StackPanel>
-
-          <StackPanel Grid.Row="2">
-            <TextBlock Text="Optional Parameters (skip freely — [] means optional):" Foreground="#cbd5e1" Margin="0,0,0,6"/>
-            <WrapPanel Name="OptionalPanel"/>
-          </StackPanel>
-
-          <StackPanel Grid.Row="3" Orientation="Vertical" Margin="0,10,0,0">
-            <TextBlock Text="Preview:" Foreground="#cbd5e1"/>
-            <TextBox Name="PreviewBox" Height="60" IsReadOnly="True" TextWrapping="Wrap" Background="#0f1115" Foreground="#e5e7eb"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
-              <Button Name="CopyBtn" Content="Copy" Width="90" Margin="6,0"/>
-              <Button Name="SendBtn" Content="Send" Width="90" Margin="6,0"/>
-              <Button Name="LogBtn" Content="Log Only" Width="90" Margin="6,0"/>
-            </StackPanel>
-          </StackPanel>
+          <StackPanel Grid.Row="2"><TextBlock Text="Optional Parameters (skip freely — [] means optional):" Foreground="#cbd5e1" Margin="0,0,0,6"/><WrapPanel Name="OptionalPanel"/></StackPanel>
+          <StackPanel Grid.Row="3" Orientation="Vertical" Margin="0,10,0,0"><TextBlock Text="Preview:" Foreground="#cbd5e1"/><TextBox Name="PreviewBox" Height="60" IsReadOnly="True" TextWrapping="Wrap" Background="#0f1115" Foreground="#e5e7eb"/><StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0"><Button Name="CopyBtn" Content="Copy" Width="90" Margin="6,0"/><Button Name="SendBtn" Content="Send" Width="90" Margin="6,0"/><Button Name="LogBtn" Content="Log Only" Width="90" Margin="6,0"/></StackPanel></StackPanel>
         </Grid>
       </Border>
-
-      <TextBox Name="ConsoleBox" Grid.Row="2" Background="#0b0e14" Foreground="#e5e7eb"
-               FontFamily="Consolas" FontSize="12" TextWrapping="Wrap"
-               VerticalScrollBarVisibility="Auto" IsReadOnly="True"/>
+      <TextBox Name="ConsoleBox" Grid.Row="2" Background="#0b0e14" Foreground="#e5e7eb" FontFamily="Consolas" FontSize="12" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" IsReadOnly="True"/>
     </Grid>
   </DockPanel>
 </Window>
 "@
-
-# Build visual tree
-$reader = New-Object System.Xml.XmlNodeReader $xaml
-$Window = [Windows.Markup.XamlReader]::Load($reader)
+$reader=(New-Object System.Xml.XmlNodeReader $xaml)
+$Window=[Windows.Markup.XamlReader]::Load($reader)
 
 # Bind controls
 $CategoryTree=$Window.FindName("CategoryTree"); $SystemBox=$Window.FindName("SystemBox")
@@ -217,38 +97,25 @@ $ConsoleBox=$Window.FindName("ConsoleBox"); $CopyBtn=$Window.FindName("CopyBtn")
 $SendBtn=$Window.FindName("SendBtn"); $LogBtn=$Window.FindName("LogBtn")
 $global:ConsoleBox=$ConsoleBox
 
-# Init defaults (don’t trust settings blindly)
-$PortBox.Text = ([string]([int]($Settings.DefaultPort -as [int] )))  # numeric to string
-$HostBox.Text = [string]($Settings.DefaultHost)
-$StatusText.Text = "Disconnected"
-$DebugChk.IsChecked = [bool]$Settings.Debug
+# Init
+$PortBox.Text="$($Settings.DefaultPort)"; $HostBox.Text="$($Settings.DefaultHost)"; $StatusText.Text="Disconnected"
 
 # Populate categories
 $Categories.Keys | ForEach-Object {
-  $cat=$_
-  $catNode=New-Object System.Windows.Controls.TreeViewItem
-  $catNode.Header=$cat
-  foreach($entry in $Categories[$cat]){
-    $cmdNode=New-Object System.Windows.Controls.TreeViewItem
-    $cmdNode.Header=$entry.Name
-    $cmdNode.Tag=$entry
-    [void]$catNode.Items.Add($cmdNode)
-  }
-  [void]$CategoryTree.Items.Add($catNode)
+  $cat=$_; $catNode=New-Object System.Windows.Controls.TreeViewItem; $catNode.Header=$cat
+  foreach($entry in $Categories[$cat]){ $cmdNode=New-Object System.Windows.Controls.TreeViewItem; $cmdNode.Header=$entry.Name; $cmdNode.Tag=$entry; $catNode.Items.Add($cmdNode) | Out-Null }
+  $CategoryTree.Items.Add($catNode) | Out-Null
 }
 
 # Optional fields rendering
 function Refresh-OptionalFields{
-  $OptionalPanel.Children.Clear()
-  $sel=$CommandBox.SelectedItem
-  if(-not $sel){return}
-  $entry=$sel.Tag
-  if(-not $entry){return}
+  $OptionalPanel.Children.Clear(); $sel=$CommandBox.SelectedItem; if(-not $sel){return}
+  $entry=$sel.Tag; if(-not $entry){return}
   foreach($name in ($entry.Optional | ForEach-Object { $_ })){
     $sp=New-Object System.Windows.Controls.StackPanel; $sp.Orientation="Horizontal"
     $lbl=New-Object System.Windows.Controls.TextBlock; $lbl.Text="$name="; $lbl.Foreground="White"
     $tb=New-Object System.Windows.Controls.TextBox; $tb.Width=140; $tb.Margin="6,0,12,6"
-    [void]$sp.Children.Add($lbl); [void]$sp.Children.Add($tb); [void]$OptionalPanel.Children.Add($sp)
+    $sp.Children.Add($lbl)|Out-Null; $sp.Children.Add($tb)|Out-Null; $OptionalPanel.Children.Add($sp)|Out-Null
     $tb.Add_TextChanged({ Update-Preview })
   }
 }
@@ -291,21 +158,15 @@ $CategoryTree.Add_SelectedItemChanged({
     $cbItem=New-Object System.Windows.Controls.ComboBoxItem
     $cbItem.Content=$entry.Name
     $cbItem.Tag=$entry
-    [void]$CommandBox.Items.Add($cbItem)
+    $CommandBox.Items.Add($cbItem)|Out-Null
     $CommandBox.SelectedIndex=0
     $CmdDesc.Text=$entry.Desc
     Refresh-OptionalFields
     Update-Preview
   }
 })
-$CommandBox.Add_SelectionChanged({
-  $CmdDesc.Text= if($CommandBox.SelectedItem){ $CommandBox.SelectedItem.Tag.Desc } else { "" }
-  Refresh-OptionalFields
-  Update-Preview
-})
-$TidBox.Add_TextChanged({ Update-Preview })
-$AidBox.Add_TextChanged({ Update-Preview })
-$CtagBox.Add_TextChanged({ Update-Preview })
+$CommandBox.Add_SelectionChanged({ $CmdDesc.Text= if($CommandBox.SelectedItem){ $CommandBox.SelectedItem.Tag.Desc } else { "" }; Refresh-OptionalFields; Update-Preview })
+$TidBox.Add_TextChanged({ Update-Preview }); $AidBox.Add_TextChanged({ Update-Preview }); $CtagBox.Add_TextChanged({ Update-Preview })
 $CtagAuto.Add_Click({ if($CtagAuto.IsChecked -and [string]::IsNullOrWhiteSpace($CtagBox.Text)){ $CtagBox.Text="1" }; Update-Preview })
 
 # ---- TELNET session state & handlers ----
@@ -346,7 +207,7 @@ $SendBtn.Add_Click({
     try {
       $sendScript=Join-Path $ScriptDir "send_tl1.ps1"
       if (-not (Test-Path $sendScript)) { throw "send_tl1.ps1 missing" }
-      $resp = & powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -Sta -File $sendScript -CommandText $cmdText -Host $HostBox.Text -Port ([int]$PortBox.Text)
+      $resp = & powershell -NoProfile -ExecutionPolicy Bypass -Sta -File $sendScript -CommandText $cmdText -Host $HostBox.Text -Port ([int]$PortBox.Text)
       if ($resp) { foreach($line in $resp -split "`r?`n"){ if($line){ $ConsoleBox.AppendText("$line`r`n") } } $ConsoleBox.ScrollToEnd() }
       Write-Log "One-shot send complete." "SEND"
     } catch {
