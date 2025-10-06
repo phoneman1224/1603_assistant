@@ -1,4 +1,4 @@
-# TL1_CommandBuilder.ps1 — Windows WPF TL1 GUI (Telnet) — PS5/PS7 safe
+# TL1_CommandBuilder.ps1 — Windows WPF TL1 GUI (Telnet) — Light Theme
 Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -7,7 +7,7 @@ $LogsDir   = Join-Path $RootDir "logs"
 if (!(Test-Path $LogsDir)) { New-Item -ItemType Directory -Path $LogsDir | Out-Null }
 $LogFile   = Join-Path $LogsDir ("app-{0}.log" -f (Get-Date -Format "yyyyMMdd"))
 
-# Settings (robust defaults)
+# Settings with safe defaults
 $SettingsPath = Join-Path $ScriptDir "appsettings.json"
 if (!(Test-Path $SettingsPath)) {
   $default = @{
@@ -20,15 +20,14 @@ try { $Settings = Get-Content $SettingsPath -Raw | ConvertFrom-Json } catch {
   $Settings = [pscustomobject]@{ LogDir="..\\logs"; DefaultHost=""; DefaultPort=23; AutoIncrementCTAG=$true; Window=@{Width=1150;Height=760}; Debug=$true }
 }
 
-# Safe window size numbers
-$WinWidth  = 1150
-$WinHeight = 760
+# Safe numeric window size
+$WinWidth  = 1150; $WinHeight = 760
 try {
-  if ($Settings.Window -and $Settings.Window.Width)  { $w = $Settings.Window.Width -as [int]; if ($w -and $w -gt 0) { $WinWidth = $w } }
-  if ($Settings.Window -and $Settings.Window.Height) { $h = $Settings.Window.Height -as [int]; if ($h -and $h -gt 0) { $WinHeight = $h } }
+  if ($Settings.Window -and $Settings.Window.Width)  { $w = $Settings.Window.Width -as [int]; if ($w -gt 0) { $WinWidth = $w } }
+  if ($Settings.Window -and $Settings.Window.Height) { $h = $Settings.Window.Height -as [int]; if ($h -gt 0) { $WinHeight = $h } }
 } catch {}
 
-# Logging
+# Simple logger
 $global:ConsoleBox=$null
 function Write-Log([string]$Message,[string]$Level="INFO"){
   $line="[${((Get-Date).ToString('yyyy-MM-dd HH:mm:ss'))}] [$Level] $Message"
@@ -36,7 +35,7 @@ function Write-Log([string]$Message,[string]$Level="INFO"){
   if($global:ConsoleBox){ $global:ConsoleBox.AppendText("$line`r`n"); $global:ConsoleBox.ScrollToEnd() }
 }
 
-# Command registry (placeholders)
+# Command placeholders (we can load real set later)
 $Categories=[ordered]@{
   "System Settings/Maintenance"=@(
     @{Name="ALW-USER";Desc="Allow user";Optional=@("PRM","MASK")},
@@ -74,27 +73,48 @@ $Categories=[ordered]@{
   )
 }
 
-# XAML (high-contrast Button style; widened button column so text never clips)
+# -------------------- LIGHT THEME XAML --------------------
 [xml]$xaml=@"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         Title="TL1 Command Builder"
         WindowStartupLocation="CenterScreen"
         Width="${WinWidth}" Height="${WinHeight}"
-        Background="#0f1115">
+        Background="#ffffff">
   <Window.Resources>
+    <SolidColorBrush x:Key="PanelBg" Color="#f5f7fb"/>
+    <SolidColorBrush x:Key="PanelBorder" Color="#c7cdd9"/>
+    <SolidColorBrush x:Key="TextMain" Color="#111827"/>
+    <SolidColorBrush x:Key="TextMuted" Color="#374151"/>
+    <Style TargetType="TextBlock">
+      <Setter Property="Foreground" Value="{StaticResource TextMain}"/>
+    </Style>
+    <Style TargetType="TextBox">
+      <Setter Property="Foreground" Value="#111827"/>
+      <Setter Property="Background" Value="#ffffff"/>
+      <Setter Property="BorderBrush" Value="#c7cdd9"/>
+    </Style>
+    <Style TargetType="TreeView">
+      <Setter Property="Background" Value="#ffffff"/>
+      <Setter Property="Foreground" Value="#111827"/>
+      <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    <Style TargetType="TreeViewItem">
+      <Setter Property="Foreground" Value="#111827"/>
+    </Style>
     <Style TargetType="Button">
-      <Setter Property="Foreground" Value="#e5e7eb"/>
-      <Setter Property="Background" Value="#243040"/>
-      <Setter Property="BorderBrush" Value="#374151"/>
+      <Setter Property="Foreground" Value="#111827"/>
+      <Setter Property="Background" Value="#e5e7eb"/>
+      <Setter Property="BorderBrush" Value="#c7cdd9"/>
       <Setter Property="BorderThickness" Value="1"/>
       <Setter Property="Padding" Value="6,4"/>
     </Style>
   </Window.Resources>
+
   <DockPanel LastChildFill="True">
-    <Border DockPanel.Dock="Left" Width="270" Background="#161a22" BorderBrush="#2a2f3a" BorderThickness="0,0,1,0">
+    <Border DockPanel.Dock="Left" Width="270" Background="{StaticResource PanelBg}" BorderBrush="{StaticResource PanelBorder}" BorderThickness="0,0,1,0">
       <StackPanel>
-        <TextBlock Text="Categories" Foreground="#cbd5e1" FontWeight="Bold" Margin="10,10,10,6"/>
-        <TreeView Name="CategoryTree" Margin="8" Background="#0f1115" Foreground="#e5e7eb" BorderThickness="0"/>
+        <TextBlock Text="Categories" FontWeight="Bold" Margin="10,10,10,6"/>
+        <TreeView Name="CategoryTree" Margin="8"/>
       </StackPanel>
     </Border>
 
@@ -102,52 +122,52 @@ $Categories=[ordered]@{
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="*"/>
-        <RowDefinition Height="160"/>
+        <RowDefinition Height="180"/>
       </Grid.RowDefinitions>
 
       <!-- Connection bar -->
-      <Border Grid.Row="0" Background="#161a22" Padding="8" CornerRadius="8" BorderBrush="#2a2f3a" BorderThickness="1">
+      <Border Grid.Row="0" Background="{StaticResource PanelBg}" Padding="8" CornerRadius="8" BorderBrush="{StaticResource PanelBorder}" BorderThickness="1">
         <Grid>
           <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="160"/>   <!-- System -->
-            <ColumnDefinition Width="220"/>   <!-- Host -->
-            <ColumnDefinition Width="120"/>   <!-- Port -->
-            <ColumnDefinition Width="220"/>   <!-- Buttons (widened from 120) -->
-            <ColumnDefinition Width="*"/>     <!-- Status/Debug -->
+            <ColumnDefinition Width="170"/>
+            <ColumnDefinition Width="240"/>
+            <ColumnDefinition Width="120"/>
+            <ColumnDefinition Width="240"/>  <!-- widened for buttons -->
+            <ColumnDefinition Width="*"/>
           </Grid.ColumnDefinitions>
 
           <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center" Margin="4,0">
-            <TextBlock Text="System:" Foreground="#cbd5e1" Margin="0,0,6,0"/>
-            <ComboBox Name="SystemBox" Width="110">
+            <TextBlock Text="System:" Margin="0,0,6,0"/>
+            <ComboBox Name="SystemBox" Width="120">
               <ComboBoxItem Content="1603 SM"/>
               <ComboBoxItem Content="16034 SMX"/>
             </ComboBox>
           </StackPanel>
 
           <StackPanel Orientation="Horizontal" Grid.Column="1" VerticalAlignment="Center" Margin="4,0">
-            <TextBlock Text="Host/IP:" Foreground="#cbd5e1" Margin="0,0,6,0"/>
-            <TextBox Name="HostBox" Width="150"/>
+            <TextBlock Text="Host/IP:" Margin="0,0,6,0"/>
+            <TextBox Name="HostBox" Width="170"/>
           </StackPanel>
 
           <StackPanel Orientation="Horizontal" Grid.Column="2" VerticalAlignment="Center" Margin="4,0">
-            <TextBlock Text="Port:" Foreground="#cbd5e1" Margin="0,0,6,0"/>
-            <TextBox Name="PortBox" Width="60"/>
+            <TextBlock Text="Port:" Margin="0,0,6,0"/>
+            <TextBox Name="PortBox" Width="70"/>
           </StackPanel>
 
           <StackPanel Orientation="Horizontal" Grid.Column="3" VerticalAlignment="Center" Margin="4,0">
-            <Button Name="ConnectBtn" Content="Connect" Width="90" Margin="0,0,6,0"/>
-            <Button Name="DisconnectBtn" Content="Disconnect" Width="110"/>
+            <Button Name="ConnectBtn" Content="Connect" Width="100" Margin="0,0,8,0"/>
+            <Button Name="DisconnectBtn" Content="Disconnect" Width="120"/>
           </StackPanel>
 
           <StackPanel Orientation="Horizontal" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4,0">
-            <CheckBox Name="DebugChk" Content="Debug" Foreground="#cbd5e1"/>
-            <TextBlock Name="StatusText" Text="Disconnected" Foreground="#fca5a5" Margin="10,0,0,0"/>
+            <CheckBox Name="DebugChk" Content="Debug"/>
+            <TextBlock Name="StatusText" Text="Disconnected" Margin="12,0,0,0" Foreground="#b91c1c"/>
           </StackPanel>
         </Grid>
       </Border>
 
       <!-- Builder -->
-      <Border Grid.Row="1" Background="#161a22" Padding="8" CornerRadius="8" BorderBrush="#2a2f3a" BorderThickness="1" Margin="0,10,0,10">
+      <Border Grid.Row="1" Background="{StaticResource PanelBg}" Padding="8" CornerRadius="8" BorderBrush="{StaticResource PanelBorder}" BorderThickness="1" Margin="0,10,0,10">
         <Grid>
           <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -157,41 +177,41 @@ $Categories=[ordered]@{
           </Grid.RowDefinitions>
 
           <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,8">
-            <TextBlock Text="Command:" Foreground="#cbd5e1" Margin="0,0,6,0"/>
-            <ComboBox Name="CommandBox" Width="240"/>
-            <TextBlock Text="Desc:" Foreground="#94a3b8" Margin="20,0,6,0"/>
-            <TextBlock Name="CmdDesc" Foreground="#94a3b8"/>
+            <TextBlock Text="Command:" Margin="0,0,6,0"/>
+            <ComboBox Name="CommandBox" Width="280"/>
+            <TextBlock Text="Desc:" Margin="20,0,6,0" Foreground="{StaticResource TextMuted}"/>
+            <TextBlock Name="CmdDesc" Foreground="{StaticResource TextMuted}"/>
           </StackPanel>
 
           <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,0,0,8">
-            <TextBlock Text="TID:" Foreground="#cbd5e1"/>
-            <TextBox Name="TidBox" Width="100" Margin="6,0,20,0"/>
-            <TextBlock Text="AID:" Foreground="#cbd5e1"/>
-            <TextBox Name="AidBox" Width="120" Margin="6,0,20,0"/>
-            <TextBlock Text="CTAG:" Foreground="#cbd5e1"/>
-            <TextBox Name="CtagBox" Width="80" Margin="6,0,20,0"/>
-            <CheckBox Name="CtagAuto" Content="Auto-increment" Foreground="#cbd5e1" IsChecked="True"/>
+            <TextBlock Text="TID:"/>
+            <TextBox Name="TidBox" Width="120" Margin="6,0,20,0"/>
+            <TextBlock Text="AID:"/>
+            <TextBox Name="AidBox" Width="140" Margin="6,0,20,0"/>
+            <TextBlock Text="CTAG:"/>
+            <TextBox Name="CtagBox" Width="90" Margin="6,0,20,0"/>
+            <CheckBox Name="CtagAuto" Content="Auto-increment" IsChecked="True"/>
           </StackPanel>
 
           <StackPanel Grid.Row="2">
-            <TextBlock Text="Optional Parameters (skip freely — [] means optional):" Foreground="#cbd5e1" Margin="0,0,0,6"/>
+            <TextBlock Text="Optional Parameters (skip freely — [] means optional):" Margin="0,0,0,6"/>
             <WrapPanel Name="OptionalPanel"/>
           </StackPanel>
 
           <StackPanel Grid.Row="3" Orientation="Vertical" Margin="0,10,0,0">
-            <TextBlock Text="Preview:" Foreground="#cbd5e1"/>
-            <TextBox Name="PreviewBox" Height="60" IsReadOnly="True" TextWrapping="Wrap" Background="#0f1115" Foreground="#e5e7eb"/>
+            <TextBlock Text="Preview:"/>
+            <TextBox Name="PreviewBox" Height="70" IsReadOnly="True" TextWrapping="Wrap" Background="#ffffff" Foreground="#111827"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
-              <Button Name="CopyBtn" Content="Copy" Width="90" Margin="6,0"/>
-              <Button Name="SendBtn" Content="Send" Width="90" Margin="6,0"/>
-              <Button Name="LogBtn" Content="Log Only" Width="90" Margin="6,0"/>
+              <Button Name="CopyBtn" Content="Copy" Width="100" Margin="6,0"/>
+              <Button Name="SendBtn" Content="Send" Width="100" Margin="6,0"/>
+              <Button Name="LogBtn" Content="Log Only" Width="100" Margin="6,0"/>
             </StackPanel>
           </StackPanel>
         </Grid>
       </Border>
 
       <!-- Console -->
-      <TextBox Name="ConsoleBox" Grid.Row="2" Background="#0b0e14" Foreground="#e5e7eb"
+      <TextBox Name="ConsoleBox" Grid.Row="2" Background="#ffffff" Foreground="#111827"
                FontFamily="Consolas" FontSize="12" TextWrapping="Wrap"
                VerticalScrollBarVisibility="Auto" IsReadOnly="True"/>
     </Grid>
@@ -199,11 +219,11 @@ $Categories=[ordered]@{
 </Window>
 "@
 
-# Build visual tree
+# ---- Build visual tree
 $reader = New-Object System.Xml.XmlNodeReader $xaml
 $Window = [Windows.Markup.XamlReader]::Load($reader)
 
-# Bind controls
+# ---- Bind controls
 $CategoryTree=$Window.FindName("CategoryTree"); $SystemBox=$Window.FindName("SystemBox")
 $HostBox=$Window.FindName("HostBox"); $PortBox=$Window.FindName("PortBox")
 $ConnectBtn=$Window.FindName("ConnectBtn"); $DisconnectBtn=$Window.FindName("DisconnectBtn")
@@ -216,13 +236,13 @@ $ConsoleBox=$Window.FindName("ConsoleBox"); $CopyBtn=$Window.FindName("CopyBtn")
 $SendBtn=$Window.FindName("SendBtn"); $LogBtn=$Window.FindName("LogBtn")
 $global:ConsoleBox=$ConsoleBox
 
-# Init defaults
+# ---- Init defaults
 $PortBox.Text = ([string]([int]($Settings.DefaultPort -as [int])))
 $HostBox.Text = [string]$Settings.DefaultHost
 $StatusText.Text = "Disconnected"
 $DebugChk.IsChecked = [bool]$Settings.Debug
 
-# Populate categories
+# ---- Populate categories
 $Categories.Keys | ForEach-Object {
   $cat=$_
   $catNode=New-Object System.Windows.Controls.TreeViewItem
@@ -236,7 +256,7 @@ $Categories.Keys | ForEach-Object {
   [void]$CategoryTree.Items.Add($catNode)
 }
 
-# Optional fields
+# ---- Optional fields
 function Refresh-OptionalFields{
   $OptionalPanel.Children.Clear()
   $sel=$CommandBox.SelectedItem
@@ -245,8 +265,8 @@ function Refresh-OptionalFields{
   if(-not $entry){return}
   foreach($name in ($entry.Optional | ForEach-Object { $_ })){
     $sp=New-Object System.Windows.Controls.StackPanel; $sp.Orientation="Horizontal"
-    $lbl=New-Object System.Windows.Controls.TextBlock; $lbl.Text="$name="; $lbl.Foreground="White"
-    $tb=New-Object System.Windows.Controls.TextBox; $tb.Width=140; $tb.Margin="6,0,12,6"
+    $lbl=New-Object System.Windows.Controls.TextBlock; $lbl.Text="$name=";
+    $tb=New-Object System.Windows.Controls.TextBox; $tb.Width=160; $tb.Margin="6,0,12,6"
     [void]$sp.Children.Add($lbl); [void]$sp.Children.Add($tb); [void]$OptionalPanel.Children.Add($sp)
     $tb.Add_TextChanged({ Update-Preview })
   }
@@ -263,7 +283,7 @@ function Build-OptionalList{
   ($pairs -join ",")
 }
 
-# Preview builder  <CMD>::<TID>:<AID>:<CTAG>::op1=val,...;
+# ---- Preview builder  <CMD>::<TID>:<AID>:<CTAG>::op1=val,...;
 function Update-Preview{
   $cmd= if($CommandBox.SelectedItem){ $CommandBox.SelectedItem.Content } else { "" }
   $tid=$TidBox.Text; $aid=$AidBox.Text; $ctag=$CtagBox.Text
@@ -277,7 +297,7 @@ function Update-Preview{
   $PreviewBox.Text = "$left$right;"
 }
 
-# Telnet noise cleaner
+# ---- Telnet noise cleaner
 function Remove-TelnetNoise([byte[]]$bytes){
   $result = New-Object System.Collections.Generic.List[byte]
   for($i=0; $i -lt $bytes.Length; $i++){
@@ -308,10 +328,10 @@ $ConnectBtn.Add_Click({
     $global:tl1_writer = New-Object System.IO.StreamWriter($global:tl1_stream, [Text.Encoding]::ASCII)
     $global:tl1_writer.NewLine="`r`n"; $global:tl1_writer.AutoFlush=$true
     Write-Log ("Connected to {0}:{1}" -f $destHost, $destPort) "NET"
-    $StatusText.Text="Connected"; $StatusText.Foreground='LightGreen'
+    $StatusText.Text="Connected"; $StatusText.Foreground="#15803d"
   } catch {
     Write-Log ("Connect failed: {0}" -f $_.Exception.Message) "ERROR"
-    $StatusText.Text="Disconnected"; $StatusText.Foreground='#fca5a5'
+    $StatusText.Text="Disconnected"; $StatusText.Foreground="#b91c1c"
   }
 })
 
@@ -363,7 +383,7 @@ $DisconnectBtn.Add_Click({
     $global:tl1_client=$null; $global:tl1_stream=$null; $global:tl1_writer=$null
     Write-Log "Disconnected." "NET"
   } finally {
-    $StatusText.Text="Disconnected"; $StatusText.Foreground='#fca5a5'
+    $StatusText.Text="Disconnected"; $StatusText.Foreground="#b91c1c"
   }
 })
 
