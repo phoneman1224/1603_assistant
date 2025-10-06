@@ -1,4 +1,4 @@
-# TL1_CommandBuilder.ps1 — Windows-only WPF TL1 GUI (Telnet) — PS5.1-safe
+# TL1_CommandBuilder.ps1 — Windows-only WPF TL1 GUI (Telnet)
 Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -27,7 +27,7 @@ function Write-Log([string]$Message,[string]$Level="INFO"){
 }
 function Try-Do([scriptblock]$Block,[string]$Context="RUN"){ try{ & $Block }catch{ Write-Log "$Context failed: $($_.Exception.Message)" "ERROR" } }
 
-# Command registry (placeholder; [] optional honored by skipping blanks)
+# Command registry (placeholder; [] optional is honored by skipping blanks)
 $Categories=[ordered]@{
   "System Settings/Maintenance"=@(@{Name="ALW-USER";Desc="Allow user";Optional=@("PRM","MASK")},@{Name="INH-USER";Desc="Inhibit user";Optional=@("PRM","MASK")},@{Name="SET-ATTR";Desc="Set attribute";Optional=@("ATTR","VALUE")},@{Name="ABT-OPR";Desc="Abort operation";Optional=@("REASON")},@{Name="CONFIG-SYS";Desc="Configure system";Optional=@("MODE")},@{Name="CPY-CFG";Desc="Copy config";Optional=@("SRC","DST")})
   "Alarms"=@(@{Name="ALM-ACK";Desc="Acknowledge alarm";Optional=@("ALM","COND")},@{Name="COND-RPT";Desc="Condition report";Optional=@("TYPE")})
@@ -136,17 +136,12 @@ function Build-OptionalList{
 function Update-Preview{
   $cmd= if($CommandBox.SelectedItem){ $CommandBox.SelectedItem.Content } else { "" }
   $tid=$TidBox.Text; $aid=$AidBox.Text; $ctag=$CtagBox.Text
-
   if($Settings.AutoIncrementCTAG -and $CtagAuto.IsChecked -and [string]::IsNullOrWhiteSpace($ctag)){ $CtagBox.Text="1"; $ctag="1" }
-
-  if ($null -eq $tid)  { $tid  = "" }
-  if ($null -eq $aid)  { $aid  = "" }
-  if ($null -eq $ctag) { $ctag = "" }
-
   $opt=Build-OptionalList
-  $left = "$cmd::$($tid):$($aid):$($ctag)"
-  $right = if([string]::IsNullOrWhiteSpace($opt)) { "" } else { "::" + $opt }
-  $PreviewBox.Text = "$left$right;"
+  $tid=$tid??""; $aid=$aid??""; $ctag=$ctag??""
+  $left="$cmd::$tid:$aid:$ctag"
+  $right= if([string]::IsNullOrWhiteSpace($opt)) { "" } else { "::"+$opt }
+  $PreviewBox.Text="$left$right;"
 }
 
 # Selection events
@@ -177,24 +172,23 @@ $global:tl1_reader  = $null
 
 # Connect
 $ConnectBtn.Add_Click({
-  $destHost = $HostBox.Text
-  $destPort = 23
-  if ($PortBox.Text -and $PortBox.Text -match '^\d+$') { $destPort = [int]$PortBox.Text }
-  if([string]::IsNullOrWhiteSpace($destHost)){ Write-Log "Host/IP is empty." "WARN"; return }
+  $host=$HostBox.Text; $port = 23
+  if ($PortBox.Text -and $PortBox.Text -match '^\d+$') { $port=[int]$PortBox.Text }
+  if([string]::IsNullOrWhiteSpace($host)){ Write-Log "Host/IP is empty." "WARN"; return }
   try{
     Add-Type -AssemblyName System.Net.Sockets
     $global:tl1_client = New-Object System.Net.Sockets.TcpClient
-    $iar = $global:tl1_client.BeginConnect($destHost, $destPort, $null, $null)
+    $iar = $global:tl1_client.BeginConnect($host, $port, $null, $null)
     if (-not $iar.AsyncWaitHandle.WaitOne(1500, $false)) { throw "Connect timeout" }
     $global:tl1_client.EndConnect($iar)
     $global:tl1_stream = $global:tl1_client.GetStream()
     $global:tl1_writer = New-Object System.IO.StreamWriter($global:tl1_stream)
     $global:tl1_reader = New-Object System.IO.StreamReader($global:tl1_stream)
     $global:tl1_writer.NewLine="`r`n"; $global:tl1_writer.AutoFlush=$true
-    Write-Log ("Connected to {0}:{1}" -f $destHost, $destPort) "NET"
+    Write-Log "Connected to $host:$port" "NET"
     $StatusText.Text="Connected"; $StatusText.Foreground='LightGreen'
   } catch {
-    Write-Log ("Connect failed: {0}" -f $_.Exception.Message) "ERROR"
+    Write-Log "Connect failed: $($_.Exception.Message)" "ERROR"
     $StatusText.Text="Disconnected"; $StatusText.Foreground='#fca5a5'
   }
 })
@@ -211,12 +205,12 @@ $SendBtn.Add_Click({
       if ($resp) { foreach($line in $resp -split "`r?`n"){ if($line){ $ConsoleBox.AppendText("$line`r`n") } } $ConsoleBox.ScrollToEnd() }
       Write-Log "One-shot send complete." "SEND"
     } catch {
-      Write-Log ("Send failed: {0}" -f $_.Exception.Message) "ERROR"
+      Write-Log "Send failed: $($_.Exception.Message)" "ERROR"
     }
     return
   }
   try {
-    Write-Log ("SEND: {0}" -f $cmdText) "SEND"
+    Write-Log "SEND: $cmdText" "SEND"
     $null=$global:tl1_writer.WriteLine($cmdText)
     $sw=[Diagnostics.Stopwatch]::StartNew()
     while($sw.ElapsedMilliseconds -lt 1500){
@@ -227,7 +221,7 @@ $SendBtn.Add_Click({
     }
     $ConsoleBox.ScrollToEnd()
   } catch {
-    Write-Log ("Send failed: {0}" -f $_.Exception.Message) "ERROR"
+    Write-Log "Send failed: $($_.Exception.Message)" "ERROR"
   }
 })
 
