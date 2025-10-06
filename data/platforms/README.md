@@ -7,13 +7,20 @@ This directory contains platform-specific information for different 1603 variant
 ```
 platforms/
 ├── 1603_SM/
-│   ├── commands/      # Platform-specific command variations
-│   ├── docs/         # Platform documentation
-│   └── schemas/      # Platform-specific schemas and constraints
-└── 16034_SMX/
-    ├── commands/      # Platform-specific command variations
-    ├── docs/         # Platform documentation
-    └── schemas/      # Platform-specific schemas and constraints
+│   ├── commands/           # Platform-specific command variations
+│   │   ├── alarms/        # Alarm management commands
+│   │   ├── configuration/ # System configuration commands
+│   │   ├── maintenance/   # Maintenance operations
+│   │   ├── monitoring/    # Status and performance monitoring
+│   │   ├── provisioning/  # Service provisioning commands
+│   │   └── security/     # Security and user management
+│   ├── docs/             # Platform documentation
+│   │   ├── installation/ # Installation guides and procedures
+│   │   ├── operations/   # Operational procedures
+│   │   ├── reference/    # Technical references and specs
+│   │   └── troubleshooting/ # Problem diagnosis and resolution
+│   └── schemas/          # Platform-specific schemas and constraints
+└── 16034_SMX/           # Similar structure as 1603_SM
 ```
 
 ## Platform Files
