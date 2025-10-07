@@ -687,6 +687,7 @@ $xaml=@"
             <TextBlock Text="Preview:"/>
             <TextBox Name="PreviewBox" Height="70" IsReadOnly="True" TextWrapping="Wrap" Background="#ffffff" Foreground="#111827"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+              <Button Name="WizardBtn" Content="Provisioning Wizard" Width="150" Margin="6,0" Background="#10b981" Foreground="White"/>
               <Button Name="TroubleshootBtn" Content="Run Troubleshooting" Width="150" Margin="6,0" Background="#f59e0b" Foreground="White"/>
               <Button Name="CopyBtn" Content="Copy" Width="100" Margin="6,0"/>
               <Button Name="SendBtn" Content="Send" Width="100" Margin="6,0"/>
@@ -720,6 +721,7 @@ $OptionalPanel=$Window.FindName("OptionalPanel"); $PreviewBox=$Window.FindName("
 $ConsoleBox=$Window.FindName("ConsoleBox"); $CopyBtn=$Window.FindName("CopyBtn")
 $SendBtn=$Window.FindName("SendBtn"); $LogBtn=$Window.FindName("LogBtn")
 $TroubleshootBtn=$Window.FindName("TroubleshootBtn")
+$WizardBtn=$Window.FindName("WizardBtn")
 $global:ConsoleBox=$ConsoleBox
 
 # ---- Init defaults from settings
@@ -731,6 +733,290 @@ $StatusText.Text = "Disconnected"
 $TidBox.Text = $global:Settings.LastUsed.TID
 $AidBox.Text = $global:Settings.LastUsed.AID  
 $CtagBox.Text = [string]$global:Settings.LastUsed.NextCTAG
+
+# ---- Provisioning Wizard Functions
+function Show-ProvisioningWizard {
+    param([string]$wizardName = "Cross_Connect_Wizard")
+    
+    try {
+        # Load wizard definition from playbooks
+        if (-not $global:Playbooks -or -not $global:Playbooks.playbooks.Provisioning.$wizardName) {
+            Write-Log "Wizard '$wizardName' not found in playbooks" "ERROR"
+            return
+        }
+        
+        $wizard = $global:Playbooks.playbooks.Provisioning.$wizardName
+        Write-Log "Starting provisioning wizard: $($wizard.name)" "WIZARD"
+        
+        # Create wizard window
+        $wizardXaml = @"
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        Title="$($wizard.name)" Height="600" Width="800"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Wizard Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Name="WizardTitle" Text="$($wizard.name)" FontSize="20" FontWeight="Bold"/>
+            <TextBlock Name="WizardDesc" Text="$($wizard.description)" FontSize="12" Foreground="#666"/>
+            <TextBlock Name="StepIndicator" Text="Step 1 of X" FontSize="10" Margin="0,5,0,0"/>
+        </StackPanel>
+        
+        <!-- Progress Bar -->
+        <ProgressBar Name="WizardProgress" Grid.Row="1" Height="8" Margin="0,0,0,20" Value="0"/>
+        
+        <!-- Wizard Content -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <StackPanel Name="WizardContent" Margin="0,0,0,20"/>
+        </ScrollViewer>
+        
+        <!-- Wizard Buttons -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Name="BackBtn" Content="Back" Width="100" Margin="0,0,10,0" IsEnabled="False"/>
+            <Button Name="NextBtn" Content="Next" Width="100" Margin="0,0,10,0"/>
+            <Button Name="CancelBtn" Content="Cancel" Width="100"/>
+        </StackPanel>
+    </Grid>
+</Window>
+"@
+        
+        $wizardWindow = [Windows.Markup.XamlReader]::Parse($wizardXaml)
+        
+        # Bind controls
+        $wizardTitle = $wizardWindow.FindName("WizardTitle")
+        $wizardDesc = $wizardWindow.FindName("WizardDesc")
+        $stepIndicator = $wizardWindow.FindName("StepIndicator")
+        $wizardProgress = $wizardWindow.FindName("WizardProgress")
+        $wizardContent = $wizardWindow.FindName("WizardContent")
+        $backBtn = $wizardWindow.FindName("BackBtn")
+        $nextBtn = $wizardWindow.FindName("NextBtn")
+        $cancelBtn = $wizardWindow.FindName("CancelBtn")
+        
+        # Initialize wizard state
+        $wizardState = @{
+            wizard = $wizard
+            currentStep = 1
+            totalSteps = $wizard.wizard_steps.Count
+            data = @{}
+        }
+        
+        # Update step indicator and progress
+        $stepIndicator.Text = "Step $($wizardState.currentStep) of $($wizardState.totalSteps)"
+        $wizardProgress.Maximum = $wizardState.totalSteps
+        $wizardProgress.Value = 1
+        
+        # Load current step
+        Show-WizardStep -wizardWindow $wizardWindow -wizardState $wizardState
+        
+        # Event handlers
+        $nextBtn.Add_Click({
+            if (Validate-WizardStep -wizardWindow $wizardWindow -wizardState $wizardState) {
+                if ($wizardState.currentStep -lt $wizardState.totalSteps) {
+                    $wizardState.currentStep++
+                    Show-WizardStep -wizardWindow $wizardWindow -wizardState $wizardState
+                } else {
+                    # Execute wizard
+                    Execute-Wizard -wizardState $wizardState
+                    $wizardWindow.Close()
+                }
+            }
+        })
+        
+        $backBtn.Add_Click({
+            if ($wizardState.currentStep -gt 1) {
+                $wizardState.currentStep--
+                Show-WizardStep -wizardWindow $wizardWindow -wizardState $wizardState
+            }
+        })
+        
+        $cancelBtn.Add_Click({
+            $wizardWindow.Close()
+        })
+        
+        # Show wizard
+        [void]$wizardWindow.ShowDialog()
+        
+    } catch {
+        Write-Log "Error showing provisioning wizard: $_" "ERROR"
+    }
+}
+
+function Show-WizardStep {
+    param($wizardWindow, $wizardState)
+    
+    $currentStepDef = $wizardState.wizard.wizard_steps[$wizardState.currentStep - 1]
+    $wizardContent = $wizardWindow.FindName("WizardContent")
+    $stepIndicator = $wizardWindow.FindName("StepIndicator")
+    $wizardProgress = $wizardWindow.FindName("WizardProgress")
+    $backBtn = $wizardWindow.FindName("BackBtn")
+    $nextBtn = $wizardWindow.FindName("NextBtn")
+    
+    # Clear previous content
+    $wizardContent.Children.Clear()
+    
+    # Update indicators
+    $stepIndicator.Text = "Step $($wizardState.currentStep) of $($wizardState.totalSteps)"
+    $wizardProgress.Value = $wizardState.currentStep
+    
+    # Update button states
+    $backBtn.IsEnabled = ($wizardState.currentStep -gt 1)
+    if ($wizardState.currentStep -eq $wizardState.totalSteps) {
+        $nextBtn.Content = "Provision"
+    } else {
+        $nextBtn.Content = "Next"
+    }
+    
+    # Add step title and description
+    $stepTitle = New-Object System.Windows.Controls.TextBlock
+    $stepTitle.Text = $currentStepDef.name
+    $stepTitle.FontSize = 16
+    $stepTitle.FontWeight = "Bold"
+    $stepTitle.Margin = "0,0,0,10"
+    $wizardContent.Children.Add($stepTitle)
+    
+    $stepDesc = New-Object System.Windows.Controls.TextBlock
+    $stepDesc.Text = $currentStepDef.description
+    $stepDesc.Margin = "0,0,0,20"
+    $stepDesc.TextWrapping = "Wrap"
+    $wizardContent.Children.Add($stepDesc)
+    
+    # Add fields for current step
+    foreach ($field in $currentStepDef.fields) {
+        $fieldPanel = New-Object System.Windows.Controls.StackPanel
+        $fieldPanel.Margin = "0,0,0,15"
+        
+        # Field label
+        $label = New-Object System.Windows.Controls.TextBlock
+        $label.Text = $field.description
+        if ($field.required) { $label.Text += " *" }
+        $label.Margin = "0,0,0,5"
+        $fieldPanel.Children.Add($label)
+        
+        # Field input based on type
+        if ($field.type -eq "enum") {
+            $comboBox = New-Object System.Windows.Controls.ComboBox
+            $comboBox.Name = $field.name
+            $comboBox.Width = 300
+            $comboBox.HorizontalAlignment = "Left"
+            foreach ($value in $field.values) {
+                [void]$comboBox.Items.Add($value)
+            }
+            if ($field.default) {
+                $comboBox.SelectedItem = $field.default
+            }
+            # Restore previous value if exists
+            if ($wizardState.data.ContainsKey($field.name)) {
+                $comboBox.SelectedItem = $wizardState.data[$field.name]
+            }
+            $fieldPanel.Children.Add($comboBox)
+        } else {
+            $textBox = New-Object System.Windows.Controls.TextBox
+            $textBox.Name = $field.name
+            $textBox.Width = 300
+            $textBox.HorizontalAlignment = "Left"
+            if ($field.example) {
+                $textBox.ToolTip = "Example: $($field.example)"
+            }
+            # Restore previous value if exists
+            if ($wizardState.data.ContainsKey($field.name)) {
+                $textBox.Text = $wizardState.data[$field.name]
+            }
+            $fieldPanel.Children.Add($textBox)
+        }
+        
+        $wizardContent.Children.Add($fieldPanel)
+    }
+}
+
+function Validate-WizardStep {
+    param($wizardWindow, $wizardState)
+    
+    $currentStepDef = $wizardState.wizard.wizard_steps[$wizardState.currentStep - 1]
+    $wizardContent = $wizardWindow.FindName("WizardContent")
+    $isValid = $true
+    
+    # Clear previous data for this step
+    foreach ($field in $currentStepDef.fields) {
+        if ($wizardState.data.ContainsKey($field.name)) {
+            $wizardState.data.Remove($field.name)
+        }
+    }
+    
+    # Validate and collect field data
+    foreach ($control in $wizardContent.Children) {
+        if ($control -is [System.Windows.Controls.StackPanel]) {
+            foreach ($child in $control.Children) {
+                if ($child.Name -and ($child -is [System.Windows.Controls.TextBox] -or $child -is [System.Windows.Controls.ComboBox])) {
+                    $fieldDef = $currentStepDef.fields | Where-Object { $_.name -eq $child.Name }
+                    if ($fieldDef) {
+                        $value = if ($child -is [System.Windows.Controls.ComboBox]) { $child.SelectedItem } else { $child.Text }
+                        
+                        # Required field validation
+                        if ($fieldDef.required -and [string]::IsNullOrWhiteSpace($value)) {
+                            Write-Log "Required field '$($fieldDef.name)' is empty" "ERROR"
+                            $isValid = $false
+                            continue
+                        }
+                        
+                        # Pattern validation
+                        if ($fieldDef.pattern -and $value -and $value -notmatch $fieldDef.pattern) {
+                            Write-Log "Field '$($fieldDef.name)' does not match required pattern" "ERROR"
+                            $isValid = $false
+                            continue
+                        }
+                        
+                        $wizardState.data[$fieldDef.name] = $value
+                    }
+                }
+            }
+        }
+    }
+    
+    return $isValid
+}
+
+function Execute-Wizard {
+    param($wizardState)
+    
+    try {
+        Write-Log "Executing provisioning wizard with collected data" "WIZARD"
+        
+        # Log collected data
+        foreach ($key in $wizardState.data.Keys) {
+            Write-Log "  $key = $($wizardState.data[$key])" "WIZARD"
+        }
+        
+        # Execute the wizard steps (for now, just log the commands that would be executed)
+        if ($wizardState.wizard.wizard_steps) {
+            Write-Log "Wizard would execute the following provisioning sequence:" "WIZARD"
+            
+            # Build ENT-CRS command based on collected data
+            $tid = $TidBox.Text
+            $ctag = Update-CTAG
+            $sourceAid = $wizardState.data['source_aid']
+            $destAid = $wizardState.data['dest_aid']
+            $connType = if ($wizardState.data['connection_type']) { $wizardState.data['connection_type'] } else { "2WAY" }
+            
+            $command = "ENT-CRS-STS1:${tid}:${ctag}::${sourceAid},${destAid},${connType};"
+            Write-Log "  Command: $command" "WIZARD"
+            
+            # Here you would actually send the command if connected
+            # For now, just show it in the preview
+            $PreviewBox.Text = $command
+        }
+        
+        Write-Log "Provisioning wizard completed successfully" "WIZARD"
+        
+    } catch {
+        Write-Log "Error executing wizard: $_" "ERROR"
+    }
+}
 
 # ---- Populate categories tree
 function Populate-CategoryTree {
@@ -1333,6 +1619,21 @@ $TroubleshootBtn.Add_Click({
     Invoke-Playbook -playbookName "Port_Check" -tid $tid -aid $aid
   } catch {
     Write-Log "Troubleshooting error: $($_.Exception.Message)" "ERROR"
+  }
+})
+
+# Provisioning Wizard button event handler
+$WizardBtn.Add_Click({
+  try {
+    # Ensure playbooks are loaded
+    if (-not $global:Playbooks) {
+      Load-Playbooks
+    }
+    
+    # Launch provisioning wizard
+    Show-ProvisioningWizard -wizardName "Cross_Connect_Wizard"
+  } catch {
+    Write-Log "Wizard error: $($_.Exception.Message)" "ERROR"
   }
 })
 
