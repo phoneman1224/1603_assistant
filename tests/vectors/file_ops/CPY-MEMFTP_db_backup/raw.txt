@@ -1,2 +1,0 @@
-CPY-MEMFTP::::SRC=DB,DST=FTP,SRCPATH=/db, DSTIP=10.10.1.10, DSTPATH=/backups/ne/db, USER=ops, PASS=********;
-   MDCMPLD;

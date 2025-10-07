@@ -1,8 +1,0 @@
-{
-  "sequence": [
-    {"cmd":"RTRV-SW","completion":"COMPLD","rows":[{"ACTIVE":"BANKA","STANDBY":"BANKB","BOOT":"BANKA","BANK":"A"}]},
-    {"cmd":"ACT-SW","bank":"B","completion":"MDCMPLD"},
-    {"cmd":"RTRV-SW","completion":"COMPLD","rows":[{"ACTIVE":"BANKB","STANDBY":"BANKA","BOOT":"BANKB","BANK":"B"}]}
-  ],
-  "policy": "maintenance_window_only"
-}
