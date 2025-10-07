@@ -514,12 +514,6 @@ function Load-Playbooks {
         return @{}
     }
 }
-        }
-    } else {
-        Write-Log "No playbooks file found at $PlaybooksPath" "WARN"
-        return $null
-    }
-}
 
 # Execute a playbook with token substitution
 function Invoke-Playbook {
