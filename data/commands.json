@@ -224,7 +224,7 @@
       "object": "LPBK",
       "modifier": "T1",
       "description": "Operate loopback test on DS1 facility for testing and diagnostics",
-      "syntax": "OPR-LPBK-T1:[tid]:aidt1:[ctag]::[locn],[orgn],,[lpbktype];",
+      "syntax": "OPR-LPBK-T1:[tid]:aidt1:[ctag]::[locn],[orgn],[lpbktype];",
       "requires": [
         "TID",
         "AIDT1",
@@ -299,7 +299,7 @@
       "object": "LPBK",
       "modifier": "T1",
       "description": "Release loopback test on DS1 facility",
-      "syntax": "RLS-LPBK-T1:[tid]:aidt1:[ctag]::[locn],[orgn],,[lpbktype];",
+      "syntax": "RLS-LPBK-T1:[tid]:aidt1:[ctag]::[locn],[orgn],[lpbktype];",
       "requires": [
         "TID",
         "AIDT1",
@@ -374,7 +374,7 @@
       "object": "CRS",
       "modifier": "STS1",
       "description": "Create a new STS1 level cross-connection",
-      "syntax": "ENT-CRS-STS1:[tid]:fromaid,toaid:[ctag]::[crstype],[swmate],;",
+      "syntax": "ENT-CRS-STS1:[tid]:fromaid,toaid:[ctag]::[crstype],[swmate];",
       "requires": [
         "TID",
         "FROMAID",
@@ -389,8 +389,8 @@
       "safety_level": "critical",
       "service_affecting": true,
       "examples": [
-        "ENT-CRS-STS1:SITE01:LG1-OC3-1-1,LG2-OC3-1-1:123::1WAY,;",
-        "ENT-CRS-STS1::LG1-OC3-1-1,LG2-OC3-1-1:456::2WAY,AUTO,;"
+        "ENT-CRS-STS1:SITE01:LG1-OC3-1-1,LG2-OC3-1-1:123::1WAY;",
+        "ENT-CRS-STS1::LG1-OC3-1-1,LG2-OC3-1-1:456::2WAY,AUTO;"
       ],
       "paramSchema": {
         "TID": {
@@ -762,7 +762,7 @@
       "object": "ALM",
       "modifier": null,
       "description": "Retrieve active alarms with filtering options",
-      "syntax": "RTRV-ALM:[tid]:[aid]:[ctag]::[almcd],[ntfcncde],,;",
+      "syntax": "RTRV-ALM:[tid]:[aid]:[ctag]::[almcd],[ntfcncde];",
       "requires": [
         "TID",
         "CTAG"
@@ -776,8 +776,8 @@
       "safety_level": "safe",
       "service_affecting": false,
       "examples": [
-        "RTRV-ALM:SITE01::123::ALL,ALL,,;",
-        "RTRV-ALM:::456::CR,CR,,;"
+        "RTRV-ALM:SITE01::123::ALL,ALL,;",
+        "RTRV-ALM:::456::CR,CR,;"
       ],
       "paramSchema": {
         "TID": {
@@ -839,7 +839,7 @@
       "object": "ALM",
       "modifier": null,
       "description": "Acknowledge active alarms to suppress notification",
-      "syntax": "ACK-ALM:[tid]:[aid]:[ctag]::[almid],;",
+      "syntax": "ACK-ALM:[tid]:[aid]:[ctag]::[almid];",
       "requires": [
         "TID",
         "CTAG"
@@ -852,8 +852,8 @@
       "safety_level": "safe",
       "service_affecting": false,
       "examples": [
-        "ACK-ALM:SITE01::123::ALL,;",
-        "ACK-ALM::LG1-OC3-1:456::12345,;"
+        "ACK-ALM:SITE01::123::ALL;",
+        "ACK-ALM::LG1-OC3-1:456::12345;"
       ],
       "paramSchema": {
         "TID": {
@@ -943,7 +943,7 @@
       "object": "PM",
       "modifier": null,
       "description": "Retrieve performance monitoring data for facilities",
-      "syntax": "RTRV-PM:[tid]:[aid]:[ctag]::[montype],[tmper],;",
+      "syntax": "RTRV-PM:[tid]:[aid]:[ctag]::[montype],[tmper];",
       "requires": [
         "TID",
         "CTAG"
@@ -957,8 +957,8 @@
       "safety_level": "safe",
       "service_affecting": false,
       "examples": [
-        "RTRV-PM:SITE01::123::ALL,15MIN,;",
-        "RTRV-PM::LG1-OC3-1:456::CV,24HR,;"
+        "RTRV-PM:SITE01::123::ALL,15MIN;",
+        "RTRV-PM::LG1-OC3-1:456::CV,24HR;"
       ],
       "paramSchema": {
         "TID": {
@@ -1017,7 +1017,7 @@
       "object": "LPB",
       "modifier": null,
       "description": "Initiate loopback test on specified facility",
-      "syntax": "TST-LPB:[tid]:[aid]:[ctag]::[lpbktype],[lpbkloc],;",
+      "syntax": "TST-LPB:[tid]:[aid]:[ctag]::[lpbktype],[lpbkloc];",
       "requires": [
         "TID",
         "AID",
@@ -1031,8 +1031,8 @@
       "safety_level": "caution",
       "service_affecting": true,
       "examples": [
-        "TST-LPB:SITE01:LG1-T1-1:123::FACILITY,NEND,;",
-        "TST-LPB::LG1-OC3-1:456::TERMINAL,FEND,;"
+        "TST-LPB:SITE01:LG1-T1-1:123::FACILITY,NEND;",
+        "TST-LPB::LG1-OC3-1:456::TERMINAL,FEND;"
       ],
       "paramSchema": {
         "TID": {
@@ -1086,7 +1086,7 @@
       "object": "LPB",
       "modifier": null,
       "description": "Release active loopback test",
-      "syntax": "RLS-LPB:[tid]:[aid]:[ctag]::[lpbktype],[lpbkloc],;",
+      "syntax": "RLS-LPB:[tid]:[aid]:[ctag]::[lpbktype],[lpbkloc];",
       "requires": [
         "TID",
         "AID",
@@ -1100,8 +1100,8 @@
       "safety_level": "safe",
       "service_affecting": true,
       "examples": [
-        "RLS-LPB:SITE01:LG1-T1-1:123::FACILITY,NEND,;",
-        "RLS-LPB::LG1-OC3-1:456::ALL,ALL,;"
+        "RLS-LPB:SITE01:LG1-T1-1:123::FACILITY,NEND;",
+        "RLS-LPB::LG1-OC3-1:456::ALL,ALL;"
       ],
       "paramSchema": {
         "TID": {
@@ -1258,7 +1258,7 @@
       "object": "CRS",
       "modifier": "STS1",
       "description": "Modify an existing STS1 level cross-connection",
-      "syntax": "ED-CRS-STS1:[tid]:fromaid,toaid:[ctag]::[crstype],[swmate],;",
+      "syntax": "ED-CRS-STS1:[tid]:fromaid,toaid:[ctag]::[crstype],[swmate];",
       "requires": [
         "TID",
         "FROMAID",
@@ -1273,8 +1273,8 @@
       "safety_level": "critical",
       "service_affecting": true,
       "examples": [
-        "ED-CRS-STS1:SITE01:LG1-OC3-1-1,LG2-OC3-1-1:123::2WAY,;",
-        "ED-CRS-STS1::LG1-OC3-1-1,LG2-OC3-1-1:456::,MANUAL,;"
+        "ED-CRS-STS1:SITE01:LG1-OC3-1-1,LG2-OC3-1-1:123::2WAY;",
+        "ED-CRS-STS1::LG1-OC3-1-1,LG2-OC3-1-1:456::,MANUAL;"
       ],
       "paramSchema": {
         "TID": {
