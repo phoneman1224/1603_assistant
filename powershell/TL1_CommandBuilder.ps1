@@ -304,7 +304,7 @@ function Monitor-BackgroundJobs {
 
 # Load TL1 commands from the data-driven catalog
 function Load-TL1Commands {
-    param([string]$selectedPlatform = "1603_SM")  # Default to 1603_SM
+    param([string]$selectedPlatform = "1603 SM")  # Default to 1603 SM
     
     Write-Log "Loading data-driven commands for platform: $selectedPlatform"
     
@@ -398,6 +398,13 @@ function Load-TL1Commands {
     
     $totalCommands = ($AllCommands.Values | ForEach-Object { $_.Count } | Measure-Object -Sum).Sum
     Write-Log "Loaded $($AllCommands.Keys.Count) categories with $totalCommands total commands for $selectedPlatform"
+    
+    # Log detailed breakdown
+    foreach ($category in $AllCommands.Keys) {
+        $count = $AllCommands[$category].Count
+        Write-Log "  $category: $count commands"
+    }
+    
     return $AllCommands
 }
 
@@ -416,7 +423,7 @@ function Load-Settings {
             NextCTAG = 1
         }
         UI = @{
-            Platform = "1603_SM"
+            Platform = "1603 SM"
         }
         Window = @{
             Width = 1150
@@ -726,7 +733,7 @@ $xaml=@"
             <TextBlock Text="System:" Margin="0,0,6,0"/>
             <ComboBox Name="SystemBox" Width="120">
               <ComboBoxItem Content="1603 SM"/>
-              <ComboBoxItem Content="16034 SMX"/>
+              <ComboBoxItem Content="1603 SMX"/>
             </ComboBox>
           </StackPanel>
 
