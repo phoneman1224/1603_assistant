@@ -1,0 +1,180 @@
+{
+    "metadata": {
+        "systems": {
+            "SM": {
+                "name": "Alcatel 1603 SM",
+                "description": "SONET Multiplexer"
+            },
+            "SMX": {
+                "name": "Alcatel 1603 SMX",
+                "description": "Enhanced SONET Multiplexer"
+            }
+        },
+        "version": "1.0",
+        "last_updated": "2025-10-06"
+    },
+    "command_categories": {
+        "System Administration": {
+            "description": "Basic system management commands",
+            "commands": [
+                {
+                    "command_code": "ACT-USER",
+                    "description": "Activate User",
+                    "systems": ["SM", "SMX"],
+                    "syntax": "ACT-USER:[TID]:<UID>:[CTAG]::<PID>;",
+                    "parameters": {
+                        "UID": {
+                            "required": true,
+                            "description": "User ID",
+                            "max_length": 10
+                        },
+                        "PID": {
+                            "required": true,
+                            "description": "Password",
+                            "max_length": 10
+                        }
+                    },
+                    "variations": {
+                        "SMX": {
+                            "additional_parameters": {
+                                "ROLE": {
+                                    "required": false,
+                                    "description": "User role",
+                                    "values": ["ADMIN", "MAINT", "USER"]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "command_code": "CANC-USER",
+                    "description": "Cancel User Session",
+                    "systems": ["SM", "SMX"],
+                    "syntax": "CANC-USER:[TID]:<UID>:[CTAG]::;",
+                    "parameters": {
+                        "UID": {
+                            "required": true,
+                            "description": "User ID"
+                        }
+                    }
+                }
+            ]
+        },
+        "Equipment Management": {
+            "description": "Commands for managing system hardware",
+            "commands": [
+                {
+                    "command_code": "RTRV-EQPT",
+                    "description": "Retrieve Equipment Information",
+                    "systems": ["SM", "SMX"],
+                    "syntax": "RTRV-EQPT:[TID]:<AID>:[CTAG]::;",
+                    "parameters": {
+                        "AID": {
+                            "required": false,
+                            "description": "Access Identifier - Equipment location",
+                            "format": "SLOT-<n>"
+                        }
+                    },
+                    "variations": {
+                        "SMX": {
+                            "additional_parameters": {
+                                "DETAIL": {
+                                    "required": false,
+                                    "description": "Detail level",
+                                    "values": ["MIN", "MAX"]
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "Cross Connections": {
+            "description": "Cross-connect management commands",
+            "commands": [
+                {
+                    "command_code": "ENT-CRS-STS1",
+                    "description": "Enter STS-1 Cross Connection",
+                    "systems": ["SM", "SMX"],
+                    "syntax": "ENT-CRS-STS1:[TID]:[CTAG]::AID1=<from>,AID2=<to>,CCT=<type>;",
+                    "parameters": {
+                        "from": {
+                            "required": true,
+                            "description": "Source STS-1"
+                        },
+                        "to": {
+                            "required": true,
+                            "description": "Destination STS-1"
+                        },
+                        "CCT": {
+                            "required": true,
+                            "description": "Circuit Type",
+                            "values": ["2WAY", "1WAY"]
+                        }
+                    },
+                    "variations": {
+                        "SMX": {
+                            "additional_parameters": {
+                                "CKTID": {
+                                    "required": false,
+                                    "description": "Circuit ID for tracking"
+                                },
+                                "PCA": {
+                                    "required": false,
+                                    "description": "Protection Channel Access",
+                                    "values": ["Y", "N"]
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "Performance Monitoring": {
+            "description": "Performance monitoring commands",
+            "commands": [
+                {
+                    "command_code": "RTRV-PM",
+                    "description": "Retrieve Performance Monitoring Data",
+                    "systems": ["SM", "SMX"],
+                    "syntax": "RTRV-PM:[TID]:<AID>:[CTAG]::<MONTYPE>,<MONLEV>,<LOCN>,<DIRN>,<TMPER>;",
+                    "parameters": {
+                        "AID": {
+                            "required": true,
+                            "description": "Access ID of facility"
+                        },
+                        "MONTYPE": {
+                            "required": false,
+                            "description": "Monitored parameter type",
+                            "values": ["ALL", "CVL", "ESL", "SESL", "UASL"]
+                        },
+                        "MONLEV": {
+                            "required": false,
+                            "description": "Monitoring level"
+                        },
+                        "LOCN": {
+                            "required": false,
+                            "description": "Location",
+                            "values": ["NEND", "FEND"]
+                        },
+                        "TMPER": {
+                            "required": false,
+                            "description": "Time period",
+                            "values": ["15-MIN", "1-DAY"]
+                        }
+                    },
+                    "variations": {
+                        "SMX": {
+                            "additional_montype_values": ["AISS", "BBE", "ES", "SES", "UAS"],
+                            "additional_parameters": {
+                                "TMPER": {
+                                    "additional_values": ["1-HR"]
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

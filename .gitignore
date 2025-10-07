@@ -27,3 +27,15 @@ dist/
 .pytest_cache/
 logs/
 *.bak-*
+
+# Credentials and secrets
+credentials.json
+service-account.json
+*.key
+*.pem
+.env.local
+.env.production
+secrets/
+
+# Backup files
+cleanup_backups/

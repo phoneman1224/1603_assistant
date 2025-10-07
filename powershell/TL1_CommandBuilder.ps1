@@ -91,43 +91,221 @@ function Write-Log([string]$Message,[string]$Level="INFO"){
   if($global:ConsoleBox){ $global:ConsoleBox.AppendText("$line`r`n"); $global:ConsoleBox.ScrollToEnd() }
 }
 
-# Command placeholders (we can load real set later)
-$Categories=[ordered]@{
-  "System Settings/Maintenance"=@(
-    @{Name="ALW-USER";Desc="Allow user";Optional=@("PRM","MASK")},
-    @{Name="INH-USER";Desc="Inhibit user";Optional=@("PRM","MASK")},
-    @{Name="SET-ATTR";Desc="Set attribute";Optional=@("ATTR","VALUE")},
-    @{Name="ABT-OPR";Desc="Abort operation";Optional=@("REASON")},
-    @{Name="CONFIG-SYS";Desc="Configure system";Optional=@("MODE")},
-    @{Name="CPY-CFG";Desc="Copy config";Optional=@("SRC","DST")}
-  )
-  "Alarms"=@(
-    @{Name="ALM-ACK";Desc="Acknowledge alarm";Optional=@("ALM","COND")},
-    @{Name="COND-RPT";Desc="Condition report";Optional=@("TYPE")}
-  )
-  "Retrieve Information"=@(
-    @{Name="RTRV-STAT";Desc="Retrieve status";Optional=@("SCOPE","VERBOSITY")},
-    @{Name="RTRV-INV";Desc="Retrieve inventory";Optional=@("FILTER")}
-  )
-  "Troubleshooting"=@(
-    @{Name="CONN-LB";Desc="Loopback connect";Optional=@("TYPE","DUR")},
-    @{Name="DGN-PORT";Desc="Diagnostics port";Optional=@("TEST","DUR")},
-    @{Name="DISC-LB";Desc="Loopback disconnect";Optional=@("TYPE")},
-    @{Name="OPR-TEST";Desc="Operate test";Optional=@("TEST","PATTERN")},
-    @{Name="RLS-RES";Desc="Release resource";Optional=@("RES")},
-    @{Name="RD-REG";Desc="Read register";Optional=@("REG")},
-    @{Name="TST-LOOP";Desc="Test loop";Optional=@("PATTERN","DUR")},
-    @{Name="SW-TRAFF";Desc="Switch traffic";Optional=@("MODE")},
-    @{Name="CHG-ACCMD-T1";Desc="Change access cmd T1";Optional=@("LEVEL")}
-  )
-  "Provisioning"=@(
-    @{Name="ENT-SRVC";Desc="Enter service";Optional=@("BAND","OPT")},
-    @{Name="ED-SRVC";Desc="Edit service";Optional=@("FIELD","VALUE")},
-    @{Name="RMV-SRVC";Desc="Remove service";Optional=@("FORCE")},
-    @{Name="RST-UNIT";Desc="Reset unit";Optional=@("SOFT","HARD")},
-    @{Name="DLT-OBJ";Desc="Delete object";Optional=@("CONFIRM")}
-  )
+# Load TL1 commands from JSON files and extracted PDF data with platform filtering
+function Load-TL1Commands {
+    param([string]$selectedPlatform = "SM")  # Default to SM
+    
+    $AllCommands = [ordered]@{}
+    $platformMap = @{
+        "1603 SM" = @("SM", "1603_SM")
+        "16034 SMX" = @("SMX", "16034_SMX")
+    }
+    
+    $platformIds = $platformMap[$selectedPlatform]
+    if (-not $platformIds) {
+        # Default mapping if not found
+        $platformIds = if ($selectedPlatform -like "*SMX*") { @("SMX", "16034_SMX") } else { @("SM", "1603_SM") }
+    }
+    
+    Write-Log "Loading commands for platform: $selectedPlatform (IDs: $($platformIds -join ', '))"
+    
+    # First load from extracted PDF data (comprehensive documentation)
+    $ExtractedDir = Join-Path $RootDir "data\extracted_commands"
+    if (Test-Path $ExtractedDir) {
+        Write-Log "Loading extracted PDF command data from $ExtractedDir"
+        
+        # Load platform-specific extracted data
+        $platformFile = Join-Path $ExtractedDir "$($platformIds[1])_commands.json"
+        if (Test-Path $platformFile) {
+            try {
+                $content = Get-Content $platformFile -Raw -Encoding UTF8 | ConvertFrom-Json
+                Write-Log "Processing platform-specific file: $($platformIds[1])_commands.json"
+                
+                # Process extracted PDF data structure
+                $content.PSObject.Properties | ForEach-Object {
+                    $categoryName = $_.Name
+                    $commands = $_.Value
+                    
+                    if (-not $AllCommands.Contains($categoryName)) {
+                        $AllCommands[$categoryName] = @()
+                    }
+                    
+                    $commands | ForEach-Object {
+                        $cmd = $_
+                        $requiredParams = @()
+                        $optionalParams = @()
+                        
+                        # Parse parameters from detailed parameter info
+                        if ($cmd.parameters) {
+                            $cmd.parameters.PSObject.Properties | ForEach-Object {
+                                $paramName = $_.Name
+                                $paramDesc = $_.Value
+                                
+                                # Determine if required based on syntax and description
+                                if ($cmd.syntax -and $cmd.syntax -like "*[$paramName]*") {
+                                    if ($cmd.syntax -like "*:$paramName:*" -or $paramDesc -like "*required*") {
+                                        $requiredParams += $paramName
+                                    } else {
+                                        $optionalParams += $paramName
+                                    }
+                                } else {
+                                    $optionalParams += $paramName
+                                }
+                            }
+                        }
+                        
+                        $AllCommands[$categoryName] += @{
+                            Name = $cmd.command_code
+                            Desc = $cmd.description
+                            DetailedDesc = $cmd.function
+                            Required = $requiredParams
+                            Optional = $optionalParams
+                            Parameters = $cmd.parameters
+                            Syntax = if ($cmd.syntax) { $cmd.syntax } else { "" }
+                            Restrictions = if ($cmd.restrictions) { $cmd.restrictions } else { "" }
+                            ResponseFormat = if ($cmd.response_format) { $cmd.response_format } else { "" }
+                            SafetyLevel = if ($cmd.safety_level) { $cmd.safety_level } else { "safe" }
+                            ServiceAffecting = if ($cmd.service_affecting) { $cmd.service_affecting } else { $false }
+                            SourceFile = if ($cmd.source_file) { $cmd.source_file } else { "" }
+                            Platform = $selectedPlatform
+                        }
+                    }
+                }
+            } catch {
+                Write-Log "Error loading platform file $platformFile: $_" "ERROR"
+            }
+        }
+    }
+    
+    # Then load from shared TL1 catalogs (supplement any missing) with platform filtering
+    $TL1Dir = Join-Path $RootDir "data\shared\catalogs\tl1"
+    if (Test-Path $TL1Dir) {
+        Write-Log "Loading shared TL1 catalogs from $TL1Dir with platform filter"
+        Get-ChildItem -Path $TL1Dir -Filter "*.json" | ForEach-Object {
+            try {
+                $content = Get-Content $_.FullName -Raw -Encoding UTF8 | ConvertFrom-Json
+                Write-Log "Processing shared catalog: $($_.Name)"
+                
+                # Handle different JSON structures with platform filtering
+                if ($content.commands -and $content.commands -is [PSCustomObject]) {
+                    # Object with categories
+                    $content.commands.PSObject.Properties | ForEach-Object {
+                        $categoryName = $_.Name
+                        $commands = $_.Value
+                        
+                        if (-not $AllCommands.Contains($categoryName)) {
+                            $AllCommands[$categoryName] = @()
+                        }
+                        
+                        # Filter and add commands for selected platform
+                        $commands | ForEach-Object {
+                            $cmd = $_
+                            
+                            # Check if command is applicable to selected platform
+                            $isApplicable = $false
+                            if ($cmd.platforms) {
+                                $isApplicable = $platformIds | Where-Object { $cmd.platforms -contains $_ }
+                            } elseif ($cmd.applicable_models) {
+                                $isApplicable = $platformIds | Where-Object { $cmd.applicable_models -contains $_ }
+                            } else {
+                                # If no platform info, include for all platforms
+                                $isApplicable = $true
+                            }
+                            
+                            if ($isApplicable) {
+                                # Only add if command doesn't already exist from PDF extraction
+                                $exists = $AllCommands[$categoryName] | Where-Object { $_.Name -eq $cmd.command_code }
+                                if (-not $exists) {
+                                    $AllCommands[$categoryName] += @{
+                                        Name = $cmd.command_code
+                                        Desc = $cmd.description
+                                        Required = if ($cmd.parameters.required) { $cmd.parameters.required } else { @() }
+                                        Optional = if ($cmd.parameters.optional) { $cmd.parameters.optional } else { @() }
+                                        Syntax = if ($cmd.syntax) { $cmd.syntax } else { "" }
+                                        SafetyLevel = if ($cmd.safety_level) { $cmd.safety_level } else { "safe" }
+                                        ServiceAffecting = if ($cmd.service_affecting) { $cmd.service_affecting } else { $false }
+                                        Platform = $selectedPlatform
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } elseif ($content -is [Array]) {
+                    # Array format with platform filtering
+                    $content | ForEach-Object {
+                        $cmd = $_
+                        
+                        # Check if command is applicable to selected platform
+                        $isApplicable = $false
+                        if ($cmd.platforms) {
+                            $isApplicable = $platformIds | Where-Object { $cmd.platforms -contains $_ }
+                        } elseif ($cmd.applicable_models) {
+                            $isApplicable = $platformIds | Where-Object { $cmd.applicable_models -contains $_ }
+                        } else {
+                            $isApplicable = $true
+                        }
+                        
+                        if ($isApplicable) {
+                            $categoryName = if ($cmd.category) { $cmd.category } else { "General" }
+                            
+                            if (-not $AllCommands.Contains($categoryName)) {
+                                $AllCommands[$categoryName] = @()
+                            }
+                            
+                            # Only add if command doesn't already exist
+                            $exists = $AllCommands[$categoryName] | Where-Object { $_.Name -eq $cmd.command_code }
+                            if (-not $exists) {
+                                $requiredParams = @()
+                                $optionalParams = @()
+                                
+                                if ($cmd.parameters) {
+                                    $cmd.parameters.PSObject.Properties | ForEach-Object {
+                                        if ($_.Value.required -eq $true) {
+                                            $requiredParams += $_.Name
+                                        } else {
+                                            $optionalParams += $_.Name
+                                        }
+                                    }
+                                }
+                                
+                                $AllCommands[$categoryName] += @{
+                                    Name = $cmd.command_code
+                                    Desc = if ($cmd.command_name) { $cmd.command_name } else { $cmd.description }
+                                    Required = $requiredParams
+                                    Optional = $optionalParams
+                                    Syntax = if ($cmd.syntax) { $cmd.syntax } else { "" }
+                                    SafetyLevel = if ($cmd.safety_level) { $cmd.safety_level } else { "safe" }
+                                    ServiceAffecting = if ($cmd.service_affecting) { $cmd.service_affecting } else { $false }
+                                    Platform = $selectedPlatform
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch {
+                Write-Log "Error loading shared catalog $($_.Name): $_" "ERROR"
+            }
+        }
+    }
+    
+    if ($AllCommands.Keys.Count -eq 0) {
+        Write-Log "No commands loaded for $selectedPlatform - using fallback" "WARN"
+        return @{
+            "System Management" = @(
+                @{Name="ACT-USER";Desc="Activate User";Required=@("UID");Optional=@("PID");Platform=$selectedPlatform},
+                @{Name="CANC-USER";Desc="Cancel User Session";Required=@("UID");Optional=@();Platform=$selectedPlatform}
+            )
+        }
+    }
+    
+    $totalCommands = ($AllCommands.Values | ForEach-Object { $_.Count } | Measure-Object -Sum).Sum
+    Write-Log "Loaded $($AllCommands.Keys.Count) categories with $totalCommands total commands for $selectedPlatform"
+    return $AllCommands
 }
+
+# Initial load with default platform
+$global:CurrentPlatform = "1603 SM"
+$Categories = Load-TL1Commands -selectedPlatform $global:CurrentPlatform
 
 # -------------------- LIGHT THEME XAML --------------------
 $xaml=@"
@@ -298,42 +476,315 @@ $HostBox.Text = [string]$Settings.DefaultHost
 $StatusText.Text = "Disconnected"
 $DebugChk.IsChecked = [bool]$Settings.Debug
 
-# ---- Populate categories
-$Categories.Keys | ForEach-Object {
-  $cat=$_
-  $catNode=New-Object System.Windows.Controls.TreeViewItem
-  $catNode.Header=$cat
-  foreach($entry in $Categories[$cat]){
-    $cmdNode=New-Object System.Windows.Controls.TreeViewItem
-    $cmdNode.Header=$entry.Name
-    $cmdNode.Tag=$entry
-    [void]$catNode.Items.Add($cmdNode)
-  }
-  [void]$CategoryTree.Items.Add($catNode)
+# ---- Populate categories tree
+function Populate-CategoryTree {
+    $CategoryTree.Items.Clear()
+    $CommandBox.Items.Clear()
+    $CmdDesc.Text = "Select a system and category to begin"
+    
+    $Categories.Keys | ForEach-Object {
+      $cat=$_
+      $catNode=New-Object System.Windows.Controls.TreeViewItem
+      $catNode.Header="$cat ($(($Categories[$cat]).Count) commands)"
+      foreach($entry in $Categories[$cat]){
+        $cmdNode=New-Object System.Windows.Controls.TreeViewItem
+        $cmdNode.Header=$entry.Name
+        $cmdNode.Tag=$entry
+        [void]$catNode.Items.Add($cmdNode)
+      }
+      [void]$CategoryTree.Items.Add($catNode)
+    }
+    
+    Write-Log "Category tree populated with $($Categories.Keys.Count) categories for $global:CurrentPlatform"
 }
 
-# ---- Optional fields
+# Initial tree population
+Populate-CategoryTree
+
+# ---- System dropdown change handler
+$SystemBox.Add_SelectionChanged({
+    $selected = $SystemBox.SelectedItem
+    if ($selected) {
+        $newPlatform = $selected.Content
+        if ($newPlatform -ne $global:CurrentPlatform) {
+            Write-Log "Platform changed from '$global:CurrentPlatform' to '$newPlatform'"
+            $global:CurrentPlatform = $newPlatform
+            
+            # Show loading indicator
+            $CmdDesc.Text = "Loading commands for $newPlatform..."
+            $CmdDesc.Foreground = "#1f2937"
+            
+            # Reload commands for new platform
+            try {
+                $global:Categories = Load-TL1Commands -selectedPlatform $newPlatform
+                Populate-CategoryTree
+                $CmdDesc.Text = "Platform changed to $newPlatform. Select a category to view commands."
+                $CmdDesc.Foreground = "#15803d"  # Green
+            } catch {
+                Write-Log "Error loading commands for $newPlatform: $_" "ERROR"
+                $CmdDesc.Text = "Error loading commands for $newPlatform. Check debug log."
+                $CmdDesc.Foreground = "#dc2626"  # Red
+            }
+        }
+    }
+})
+
+# ---- Tree selection handler
+$CategoryTree.Add_SelectedItemChanged({
+  $selected = $CategoryTree.SelectedItem
+  if ($selected -and $selected.Tag) {
+    # Command selected
+    $entry = $selected.Tag
+    $CommandBox.Items.Clear()
+    $cmdItem = New-Object System.Windows.Controls.ComboBoxItem
+    $cmdItem.Content = $entry.Name
+    $cmdItem.Tag = $entry
+    [void]$CommandBox.Items.Add($cmdItem)
+    $CommandBox.SelectedIndex = 0
+    
+    # Show platform-specific description
+    $platformInfo = if ($entry.Platform) { " [$($entry.Platform)]" } else { "" }
+    $CmdDesc.Text = $entry.Desc + $platformInfo
+    
+    # Show safety warnings
+    if ($entry.SafetyLevel -eq "caution" -or $entry.ServiceAffecting) {
+      $warning = ""
+      if ($entry.SafetyLevel -eq "caution") { $warning += "[CAUTION] " }
+      if ($entry.ServiceAffecting) { $warning += "[SERVICE AFFECTING] " }
+      $CmdDesc.Text = $warning + $entry.Desc + $platformInfo
+      $CmdDesc.Foreground = "#b91c1c"  # Red warning
+    } else {
+      $CmdDesc.Foreground = "#6b7280"  # Normal gray
+    }
+    
+    Refresh-OptionalFields
+  } elseif ($selected -and $selected.Header -and $Categories.ContainsKey($selected.Header.Split('(')[0].Trim())) {
+    # Category selected - populate command dropdown with all commands in category
+    $categoryHeader = $selected.Header.Split('(')[0].Trim()  # Remove count from header
+    $CommandBox.Items.Clear()
+    $CmdDesc.Text = "Select a command from the '$categoryHeader' category for $global:CurrentPlatform"
+    foreach($entry in $Categories[$categoryHeader]) {
+      $cmdItem = New-Object System.Windows.Controls.ComboBoxItem
+      $cmdItem.Content = $entry.Name
+      $cmdItem.Tag = $entry
+      [void]$CommandBox.Items.Add($cmdItem)
+    }
+  }
+})
+
+# ---- Command dropdown handler
+$CommandBox.Add_SelectionChanged({
+  $selected = $CommandBox.SelectedItem
+  if ($selected -and $selected.Tag) {
+    $entry = $selected.Tag
+    
+    # Show platform-specific description
+    $platformInfo = if ($entry.Platform) { " [$($entry.Platform)]" } else { "" }
+    $CmdDesc.Text = $entry.Desc + $platformInfo
+    
+    # Show safety warnings
+    if ($entry.SafetyLevel -eq "caution" -or $entry.ServiceAffecting) {
+      $warning = ""
+      if ($entry.SafetyLevel -eq "caution") { $warning += "[CAUTION] " }
+      if ($entry.ServiceAffecting) { $warning += "[SERVICE AFFECTING] " }
+      $CmdDesc.Text = $warning + $entry.Desc + $platformInfo
+      $CmdDesc.Foreground = "#b91c1c"  # Red warning
+    } else {
+      $CmdDesc.Foreground = "#6b7280"  # Normal gray
+    }
+    
+    Refresh-OptionalFields
+    Update-Preview
+  }
+})
+
+# ---- Parameter fields with enhanced PDF information
 function Refresh-OptionalFields{
   $OptionalPanel.Children.Clear()
   $sel=$CommandBox.SelectedItem
   if(-not $sel){return}
   $entry=$sel.Tag
   if(-not $entry){return}
-  foreach($name in ($entry.Optional | ForEach-Object { $_ })){
-    $sp=New-Object System.Windows.Controls.StackPanel; $sp.Orientation="Horizontal"
-    $lbl=New-Object System.Windows.Controls.TextBlock; $lbl.Text="$name=";
-    $tb=New-Object System.Windows.Controls.TextBox; $tb.Width=160; $tb.Margin="6,0,12,6"
-    [void]$sp.Children.Add($lbl); [void]$sp.Children.Add($tb); [void]$OptionalPanel.Children.Add($sp)
-    $tb.Add_TextChanged({ Update-Preview })
+  
+  # Show source information if from PDF
+  if ($entry.SourceFile) {
+    $sourceHeader=New-Object System.Windows.Controls.TextBlock
+    $platformInfo = if ($entry.Platform) { " ($($entry.Platform))" } else { "" }
+    $sourceHeader.Text="Source: $($entry.SourceFile)$platformInfo"
+    $sourceHeader.FontStyle="Italic"
+    $sourceHeader.Foreground="#6b7280"
+    $sourceHeader.FontSize=10
+    $sourceHeader.Margin="0,0,0,8"
+    [void]$OptionalPanel.Children.Add($sourceHeader)
+  }
+  
+  # Show detailed description if available
+  if ($entry.DetailedDesc -and $entry.DetailedDesc.Trim() -ne "") {
+    $detailHeader=New-Object System.Windows.Controls.TextBlock
+    $detailHeader.Text="Detailed Description:"
+    $detailHeader.FontWeight="Bold"
+    $detailHeader.Foreground="#1f2937"
+    [void]$OptionalPanel.Children.Add($detailHeader)
+    
+    $detailText=New-Object System.Windows.Controls.TextBlock
+    $detailText.Text=$entry.DetailedDesc
+    $detailText.TextWrapping="Wrap"
+    $detailText.Foreground="#374151"
+    $detailText.Margin="0,2,0,8"
+    [void]$OptionalPanel.Children.Add($detailText)
+  }
+  
+  # Show restrictions if available
+  if ($entry.Restrictions -and $entry.Restrictions.Trim() -ne "") {
+    $restrHeader=New-Object System.Windows.Controls.TextBlock
+    $restrHeader.Text="Restrictions:"
+    $restrHeader.FontWeight="Bold"
+    $restrHeader.Foreground="#dc2626"
+    [void]$OptionalPanel.Children.Add($restrHeader)
+    
+    $restrText=New-Object System.Windows.Controls.TextBlock
+    $restrText.Text=$entry.Restrictions
+    $restrText.TextWrapping="Wrap"
+    $restrText.Foreground="#dc2626"
+    $restrText.Margin="0,2,0,8"
+    [void]$OptionalPanel.Children.Add($restrText)
+  }
+  
+  # Add required parameters first
+  if ($entry.Required -and $entry.Required.Count -gt 0) {
+    $reqHeader=New-Object System.Windows.Controls.TextBlock
+    $reqHeader.Text="Required Parameters:"
+    $reqHeader.FontWeight="Bold"
+    $reqHeader.Foreground="#b91c1c"
+    $reqHeader.Margin="0,4,0,4"
+    [void]$OptionalPanel.Children.Add($reqHeader)
+    
+    foreach($name in $entry.Required) {
+      $sp=New-Object System.Windows.Controls.StackPanel; $sp.Orientation="Vertical"; $sp.Margin="0,0,0,8"
+      
+      # Parameter name and input
+      $inputSp=New-Object System.Windows.Controls.StackPanel; $inputSp.Orientation="Horizontal"
+      $lbl=New-Object System.Windows.Controls.TextBlock; 
+      $lbl.Text="$name="; $lbl.FontWeight="Bold"; $lbl.Width=80
+      $tb=New-Object System.Windows.Controls.TextBox; 
+      $tb.Width=300; $tb.Margin="6,0,0,0"
+      $tb.BorderBrush="#dc2626"  # Red border for required
+      [void]$inputSp.Children.Add($lbl); [void]$inputSp.Children.Add($tb)
+      [void]$sp.Children.Add($inputSp)
+      
+      # Show detailed parameter description if available
+      if ($entry.Parameters -and $entry.Parameters.$name) {
+        $paramDesc=New-Object System.Windows.Controls.TextBlock
+        $paramDesc.Text=$entry.Parameters.$name
+        $paramDesc.TextWrapping="Wrap"
+        $paramDesc.FontSize=10
+        $paramDesc.Foreground="#6b7280"
+        $paramDesc.Margin="86,2,0,0"  # Indent to align with input
+        [void]$sp.Children.Add($paramDesc)
+      }
+      
+      [void]$OptionalPanel.Children.Add($sp)
+      $tb.Add_TextChanged({ Update-Preview })
+    }
+  }
+  
+  # Add optional parameters
+  if ($entry.Optional -and $entry.Optional.Count -gt 0) {
+    if ($entry.Required -and $entry.Required.Count -gt 0) {
+      $spacer=New-Object System.Windows.Controls.TextBlock; $spacer.Text=""; $spacer.Height=8
+      [void]$OptionalPanel.Children.Add($spacer)
+    }
+    
+    $optHeader=New-Object System.Windows.Controls.TextBlock
+    $optHeader.Text="Optional Parameters:"
+    $optHeader.FontWeight="Bold"
+    $optHeader.Foreground="#6b7280"
+    $optHeader.Margin="0,4,0,4"
+    [void]$OptionalPanel.Children.Add($optHeader)
+    
+    foreach($name in $entry.Optional) {
+      $sp=New-Object System.Windows.Controls.StackPanel; $sp.Orientation="Vertical"; $sp.Margin="0,0,0,8"
+      
+      # Parameter name and input
+      $inputSp=New-Object System.Windows.Controls.StackPanel; $inputSp.Orientation="Horizontal"
+      $lbl=New-Object System.Windows.Controls.TextBlock; 
+      $lbl.Text="$name="; $lbl.Width=80
+      $tb=New-Object System.Windows.Controls.TextBox; 
+      $tb.Width=300; $tb.Margin="6,0,0,0"
+      [void]$inputSp.Children.Add($lbl); [void]$inputSp.Children.Add($tb)
+      [void]$sp.Children.Add($inputSp)
+      
+      # Show detailed parameter description if available
+      if ($entry.Parameters -and $entry.Parameters.$name) {
+        $paramDesc=New-Object System.Windows.Controls.TextBlock
+        $paramDesc.Text=$entry.Parameters.$name
+        $paramDesc.TextWrapping="Wrap"
+        $paramDesc.FontSize=10
+        $paramDesc.Foreground="#6b7280"
+        $paramDesc.Margin="86,2,0,0"  # Indent to align with input
+        [void]$sp.Children.Add($paramDesc)
+      }
+      
+      [void]$OptionalPanel.Children.Add($sp)
+      $tb.Add_TextChanged({ Update-Preview })
+    }
+  }
+  
+  # Show syntax if available
+  if ($entry.Syntax -and $entry.Syntax.Trim() -ne "") {
+    $spacer=New-Object System.Windows.Controls.TextBlock; $spacer.Text=""; $spacer.Height=8
+    [void]$OptionalPanel.Children.Add($spacer)
+    
+    $syntaxHeader=New-Object System.Windows.Controls.TextBlock
+    $syntaxHeader.Text="Syntax:"
+    $syntaxHeader.FontWeight="Bold"
+    $syntaxHeader.Foreground="#1f2937"
+    [void]$OptionalPanel.Children.Add($syntaxHeader)
+    
+    $syntaxText=New-Object System.Windows.Controls.TextBlock
+    $syntaxText.Text=$entry.Syntax
+    $syntaxText.FontFamily="Consolas"
+    $syntaxText.FontSize=11
+    $syntaxText.Foreground="#374151"
+    $syntaxText.TextWrapping="Wrap"
+    $syntaxText.Margin="0,2,0,0"
+    [void]$OptionalPanel.Children.Add($syntaxText)
+  }
+  
+  # Show response format if available
+  if ($entry.ResponseFormat -and $entry.ResponseFormat.Trim() -ne "") {
+    $spacer=New-Object System.Windows.Controls.TextBlock; $spacer.Text=""; $spacer.Height=8
+    [void]$OptionalPanel.Children.Add($spacer)
+    
+    $respHeader=New-Object System.Windows.Controls.TextBlock
+    $respHeader.Text="Response Format:"
+    $respHeader.FontWeight="Bold"
+    $respHeader.Foreground="#1f2937"
+    [void]$OptionalPanel.Children.Add($respHeader)
+    
+    $respText=New-Object System.Windows.Controls.TextBlock
+    $respText.Text=$entry.ResponseFormat
+    $respText.FontFamily="Consolas"
+    $respText.FontSize=10
+    $respText.Foreground="#6b7280"
+    $respText.TextWrapping="Wrap"
+    $respText.Margin="0,2,0,0"
+    [void]$OptionalPanel.Children.Add($respText)
   }
 }
 function Build-OptionalList{
   $pairs=@()
   foreach($child in $OptionalPanel.Children){
-    if($child -is [System.Windows.Controls.StackPanel] -and $child.Children.Count -ge 2){
-      $k=$child.Children[0].Text.Trim('=')
-      $v=$child.Children[1].Text
-      if($v -and $v.Trim() -ne ""){ $pairs+=("{0}={1}" -f $k,$v.Trim()) }
+    if($child -is [System.Windows.Controls.StackPanel]){
+      # Look for nested input StackPanel
+      foreach($nestedChild in $child.Children) {
+        if($nestedChild -is [System.Windows.Controls.StackPanel] -and $nestedChild.Children.Count -ge 2){
+          $k=$nestedChild.Children[0].Text.Trim('=')
+          $v=$nestedChild.Children[1].Text
+          if($v -and $v.Trim() -ne ""){ $pairs+=("{0}={1}" -f $k,$v.Trim()) }
+          break  # Only process first input panel per container
+        }
+      }
     }
   }
   ($pairs -join ",")

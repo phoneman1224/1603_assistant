@@ -1,0 +1,1151 @@
+{
+  "16034_SMX": {},
+  "1603_SM": {
+    "Network Maintenance": [
+      {
+        "source_file": "Command_ RLS-LPBK-OC48.pdf",
+        "command_code": "RLS-LPBK-OC48",
+        "description": "Release loopback test on OC48.",
+        "syntax": "RLS-LPBK-OC48:[tid]:aidoc48:[ctag]::[locn],[orgn],,[lpbktype];",
+        "parameters": {
+          "tid": "The identification of the target NE. The value may be an identifier or text string. It is limited to 20 ASCII characters. The NE's SID code is the recommended value for this parameter. TID is optional and has a default value of null when it is not used. aidoc48 The access identification code that identifies an OC48 high speed interface. The aid may be preceded with \"AID=\", although it is not required. Enter in one of the following formats, replacing lower-case parameters with the values given: LGx-oc48b Line group OC48 facility (side B) where: x = 1...2 oc48b = OC48B",
+          "ctag": "The correlation tag that correlates an input command with its associated output response(s). It is assigned by the originator of the command. The value is limited to six characters, which may be an identifier or a decimal numeral. It is optional with a default of 0.",
+          "locn": "The location where the loopback occurs. Valid values are: FEND Far end NEND Near end (Alcatel factory default)",
+          "orgn": "The office that originates the signal that is to be looped back. Valid values are: FEND Signal originates at the far end of the system NEND Signal originates at the near end of the system (Alcatel factory default)",
+          "lpbktype": "The point at which the signal is looped back. Valid values are: FACILITY Loopback takes place at the facility TERMINAL Loopback takes place at the terminal (Alcatel factory default)"
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RLS-LPBK-OC48:[tid]:aidoc48:[ctag]::[locn],[orgn],,[lpbktype] */\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ OPR-LPBK-T3.pdf",
+        "command_code": "OPR-LPBK-T3",
+        "description": "Operate loopback test on a DS3.",
+        "syntax": "OPR-LPBK-T3:[tid]:aidt3:[ctag]::[locn],[orgn],,[lpbktype];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidt3 Access identification code that identifies a DS3 facility. The value can be preceded by AID=, but this is not required. Grouping is allowed. Enter one of the following formats, replacing lowercase parameters with the values given: dgx-T3-ds3port DS3 drop group where: dgx = DG1, DG2, DG3 ds3port = 1...4",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "locn": "Location where the loopback test occurs. Valid values are: FEND Far end NEND Near end (Alcatel factory default)",
+          "orgn": "Origin of the signal to be looped back. Valid values are: FEND Far end NEND Near end (Alcatel factory default)",
+          "lpbktype": "Point at which signal is looped back. Valid values are: FACILITY At the facility TERMINAL At the terminal (Alcatel factory default)"
+        },
+        "restrictions": "",
+        "function": "To operate a loopback test on DS3 facility.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* OPR-LPBK-T3:[tid]:aidt3:[ctag]::[locn],[orgn],,[lpbktype] */\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ RLS-LPBK-T1.pdf",
+        "command_code": "RLS-LPBK-T1",
+        "description": "Release loopback test on DS1.",
+        "syntax": "RLS-LPBK-T1:[tid]:aidt1:[ctag]::[locn],[orgn],,[lpbktype];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE's SID code is the recommended value. The default value is null. aidt1 Access identification code that identifies a DS1. The value can be preceded by AID=, but this is not required. Enter one of the following formats, replacing lowercase parameters with the values given: dgx-T1-ds1port Sequential VT1/T1 dgx-T1-vtgrp-vtno Grouped VT1/T1 where: dgx = DG1, DG2, DG3 ds1port = 1...28 vtgrp = 1...7 vtno = 1...4 NOTE: The T1/VT1 AID format is determined by the VTFORMAT parameter of the SET-NE-ALL command. The RTRV-COND-COM command reports the AID format currently used by the NE. See Appendix F for details.",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "locn": "Location where loopback test occurs. Valid values are: FEND Far end NEND Near end (Alcatel factory default)",
+          "orgn": "Origin of signal tto be looped back. Valid values are: FEND Far end NEND Near end (Alcatel factory default)",
+          "lpbktype": "Point at which signal is looped back. Valid values are: FACILITY At the facility TERMINAL At the terminal (Alcatel factory default)"
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To release a loopback test on a DS1 port (facility). The loopback must have been initiated\npreviously by the OPR-LPBK-T1 command.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RLS-LPBK-T1:[tid]:aidt1:[ctag]::[locn],[orgn],,[lpbktype] */\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ INIT-REG-T3.pdf",
+        "command_code": "INIT-REG-T3",
+        "description": "Initialize registers on DS3.",
+        "syntax": "INIT-REG-T3:[tid]:aidt3:[ctag]::[mont3],,[locn],[dirn],[tmper],[mondat],[montm];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidt3 Access identification code that identifies a DS3 facility. The value can be preceded by AID=, but this is not required. Enter one of the following formats, replacing lowercase parameters with the values given: dgx-T3-ds3port DS3 drop group where: dgx = DG1, DG2, DG3 ds3port = 1...4 (grouping and ranging allowed) ALL All DS3 facilities",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "mont3": "CVPLCPP PLCP coding violations CVPP P-Bit (cont) path errors (NEND TRMT/RCV, FEND RCV) ESCPP CP-Bit path errored seconds (NEND TRMT/RCV, FEND RCV) ESL Line errored seconds (NEND RCV) ESPLCPP PLCP errored seconds ESPP P-Bit path errored seconds (NEND TRMT/RCV) FCCP Path failure count, FEAC bits (FEND RCV) FCP Path failure count (NEND TRMT/RCV) SASCP Path SEF/AIS seconds based on X-bits (FEND RCV) SASP Path AIS seconds (NEND TRMT/RCV) SEFSPLCPP PLCP path severely errored framing seconds SESCPP CP-Bit path SES (NEND TRMT/RCV, FEND RCV) SESL Line severely errored seconds (NEND RCV) SESPLCPP PLCP severely errored seconds SESPP P-Bit path SES (NEND TRMT/RCV) UASCPP CP-Bit path unavailable seconds (NEND TRMT/RCV, FEND RCV) UASPLCPP PLCP unavailable seconds UASPP P-Bit path unavailable seconds (NEND TRMT/RCV)",
+          "locn": "Location where performance monitoring is reported. Grouping is allowed. Valid values are: FEND Far end NEND Near end",
+          "dirn": "Direction of performance monitoring. Grouping is allowed. Valid values are: RCV Receive direction TRMT Transmit direction",
+          "tmper": "Duration of performance monitoring. Valid values are: 1-DAY 1-day time period 15-MIN 15-minute time period",
+          "mondat": "Date to begin performance monitoring. Valid values are: mon-day Month and day where: mon = 1...12 day = 1...31 ALL All beginning times that are available. montm Time to begin performance monitoring. Does not apply when tmper equals 1-DAY. Valid values are: hh-mm Hour and minute where: hh = 00...23 mm = 00...59 The Alcatel factory default is 00-00. ALL All beginning times that are available for the specified mondat in the NE."
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To initialize the DS3 performance monitoring registers. The network element initializes to a\nspecific value one or more mont3 parameter values (monitored parameters) that are associated\nwith the specified DS3 facility. During normal operation, these registers contain PM information\naccumulated at defined time intervals in past.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* INIT-REG-T3:[tid]:aidt3:[ctag]::[mont3],,[locn],[dirn],[tmper],\n*/\n/* [mondat],[montm] */\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ OPR-LPBK-T1.pdf",
+        "command_code": "OPR-LPBK-T1",
+        "description": "Operate loopback test on a DS1 port (facility).",
+        "syntax": "OPR-LPBK-T1:[tid]:aidt1:[ctag]::[locn],[orgn],,[lpbktype],[rqsttype];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidt1 The access identification code which is used to identify a DS1 from which the alarms are to be retrieved. The parameter may be preceded with \"AID=\", although it is not required. Enter the aid by substituting lower-case parameters with the values: dgx-T1-ds1port Sequential VT1/T1 dgx-T1-vtgrp-vtno Grouped VT1/T1 where: dgx = DG1, DG2, DG3 ds1port = 1...28 vtgrp = 1...7 vtno = 1...4 NOTE: The T1/VT1 AID format is determined by the VTFORMAT parameter of the SET-NE-ALL command. The RTRV-COND-COM command reports the AID format currently used by the NE. See Appendix F for details.",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "locn": "Location where the loopback test occurs. Valid values are: FEND Far end NEND Near end (Alcatel factory default)",
+          "orgn": "Origin of the signal to be looped back. Valid values are: FEND Far end NEND Near end (Alcatel factory default)",
+          "lpbktype": "Point at which signal is looped back. Valid values are: FACILITY Signal is looped back at the facility TERMINAL Signal is looped back at the terminal (Alcatel factory default)",
+          "rqsttype": "Type of loopback request sent to the far end. (see Table E) Valid values are: DS2 DS2 loopback ESFLINE ESF frame data-link message FEAC Far-end alarm status request INBAND 4/4 or 5/3 inband code Table E. Valid Combinations for T1 Loopback Commands LOCN ORGN LPBKTYPE RQSTTYPE DESCRIPTION NEND NEND TERMINAL - Looped inward toward VSCC NEND FEND FACILITY - Looped outward toward DS1 facility FEND NEND FACILITY INBAND Send: 4/4 (1100/1110) [1] or 5/3 (00001/001) [1] inb and loop-up code on DS1 facility (see INBANDMODE for ED-T1 or ENT-T1 commands) FEND NEND FACILITY ESFLINE Send ESF loopback activate code on DS1 facility. [2] FEND NEND FACILITY FEAC Send FEAC activate code on DS1 facility FEND NEND FACILITY DS2 Send DS1/DS2 activate code on DS1 facility",
+          "1": "Loop-up/loopdown",
+          "2": "For ESF mode only: Line loopback activate = 0001110 11111111 Line loopback deactivate = 00111000 11111111 Universal loopback deactivate = 00100100 11111111"
+        },
+        "restrictions": "All parameters in this command are position-defined. The port must be in maintenance state\n(OOS-MT) to operate a loopback test. The RLS-LPBK-T1 command is used to release the\nloopback test.",
+        "function": "To operate a loopback test on a DS1 port.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/*\nOPR-LPBK-T1:[tid]:aidt1:[ctag]::[locn],[orgn],,[lpbktype],[rqsttype]\n*/\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ DISC-TACC.pdf",
+        "command_code": "DISC-TACC",
+        "description": "Disconnect test access for DS1.",
+        "syntax": "DISC-TACC:[tid]:tap:[ctag]:;",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. tap The TSC-assigned or NE-defined test access path number. The valid value range is 1...999.",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0."
+        },
+        "restrictions": "All parameters in this command are position-defined. The value of the tap parameter must\nmatch the active tap value of the previous CONN-TACC-T1 command.",
+        "function": "To disconnect test access for DS1 and restore the circuit under test to its through state.\nPreviously provisioned cross-connections are automatically restored.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* DISC-TACC:[tid]:tap:[ctag]: */\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ SET-ATTR-T1.pdf",
+        "command_code": "SET-ATTR-T1",
+        "description": "Set attribute of T1.",
+        "syntax": "SET-ATTR-T1:[tid]:aidt1:[ctag]::[ntfcncde],[condt1],[locn],[dirn],[tmper]:,[act],[deact];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidt1 Access identification code that identifies a DS1. The value can be preceded by AID=, but this is not required. Enter one of the following formats, replacing lowercase parameters with the values given: dgx-T1-ds1port Sequential VT1/T1 dgx-T1-vtgrp-vtno Grouped VT1/T1 where: dgx = DG1, DG2, DG3 ds1port = 1...28 vtgrp = 1...7 vtno = 1...4 ALL All T1 facilities CUSTDFLT Customer-defined defaults NOTE: The T1/VT1 AID format is determined by the VTFORMAT parameter of the SET-NE-ALL command. The RTRV-COND-COM command reports the AID format currently used by the NE. See Appendix F for details.",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "ntfcncde": "Notification code associated with an alarm condition. Valid values are: CR Critical alarm MJ Major alarm MN Minor alarm NA Not alarmed; reported via report event NR Not reported when event occurs; information retained in NE",
+          "condt1": "Condition type of the DS1 entity. The value can (see NOTE) be preceded by CONDTYPE=, but this is not required. Grouping is allowed. Valid values are listed in Table R with Alcatel factory default attributes.",
+          "locn": "Location where performance monitoring is (see NOTE) reported. Grouping is allowed. Valid values are: FEND Far end NEND Near end",
+          "dirn": "Direction of cell flow. Grouping is allowed. Valid (see NOTE) values are: RCV Receive TRMT Transmit",
+          "tmper": "Duration of performance monitoring. Valid values are: 1-DAY One day 15-MIN Fifteen minutes",
+          "act": "Activation time, in half seconds (0...20), for declaring an alarm condition",
+          "deact": "Deactivation time, in seconds (0...20), for declaring an alarm condition NOTE: A null entry defaults to all values for this parameter, when applicable. Table R. T1 Alarm Conditions and Alcatel Factory Default Attributes ALARM DESCRIPTION DEFAULTS CONDITION NTFCTNCDE ACT TIME DEACT TIME AIS Alarm indication NR 5 10 signal, All 1s (NEND TRMT/RCV) BERL-HT Bit error ratio - MJ 5 10 high threshold (SFBER) DS2OOF DS2 source MJ 5 10 out-of-frame DS2RAI DS2 source NR 5 10 remote alarm indication DS1ISD Idle pattern NR 5 10 detected (SF and ESF only) (NEND RCV) INHLPBK-yy Inhibit loopback NR 5 10 (yy=DS2, ESFLINE, FEAC, INBANDRX, or INBANDTX) INHPMREPT Inhibit PM report NR 5 10 LOF Loss of frame NR 5 10 (NEND TRMT/RCV) LOS Loss of signal MJ 5 10 (NEND TRMT/RCV) MTCE Remove from MN 0 0 service for maintenance RAI Remote alarm NR 5 10 indication (NEND TRMT/RCV) T-BPV Threshold violation NA 5 10 for PM type bipolar violations (NEND RCV) T-CSSP Threshold violation NA 5 10 for controlled slips (FEND TRMT/RCV) T-CVL Coding violation NA 5 10 threshold crossing - Line (NEND RCV) T-CVP Coding violation NA 5 10 threshold crossing - Path (NEND TRMT/RCV, FEND TRMT/RCV) T-ESL Threshold violation NA 5 10 for PM errored seconds - Line (NEND RCV, FEND TRMT/RCV) T-ESP Threshold violation NA 5 10 for PM errored seconds - Path (NEND TRMT/RCV, FEND TRMT/RCV) T-SASP Threshold violation NA 5 10 for PM path AIS seconds (FEND TRMT/RCV) T-SESF Threshold violation NA 5 10 for PM severely errored framing seconds (FEND TRMT/RCV) T-SESL Threshold violation NA 5 10 for PM severely errored seconds - Line (NEND RCV) T-SESP Threshold violation NA 5 10 for PM severely errored seconds - Path (NEND TRMT/RCV, FEND TRMT/RCV) T-UASP Threshold violation NA 5 10 for PM unavailable seconds - Path (NEND TRMT/RCV, FEND TRMT/RCV)"
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To set the attribute of a DS1 (T1) port (facility) condition type.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/*\nSET-ATTR-T1:[tid]:aidt1:[ctag]::[ntfcncde],[condt1],[locn],[dirn],[tmp\ner]:, */\n/* [act],[deact] */\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": true
+      },
+      {
+        "source_file": "Command_ SET-SYNCN (1).pdf",
+        "command_code": "SET-TH-AAL5",
+        "description": "Set threshold ATM Adaptation Layer 5 (AAL5).",
+        "syntax": "SET-TH-AAL5:[tid]:aidaal5:[ctag]::monaal5th,thlev,,,[tmper];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidaal5 Access identification code that identifies a AAL5 facility. The value can be preceded by AID=, but this is not required. Enter one of the following formats, replacing lowercase parameters with the values given: dgy-AAL5-lannum Drop group facility where: dgy = DG1, DG2, DG3 lannum = 1...4 (grouping and ranging allowed) CUSTDFLT Customer-defined defaults ALL All of the above",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0. monaal5th AAL5 performance monitoring type (see Table A). The value can be preceded by MONAAL5TH=, but this is not required. Valid values are: thlev Performance monitoring threshold level for daily and hourly counts (see Table A). The default can be specified with the CUSTDFLT AID.",
+          "tmper": "Duration of performance monitoring. Valid values are: 1-DAY One day 15-MIN Fifteen minutes Table A. Threshold Table - ATM Adaptation Layer 5 MONITOR TYPE ALCATEL FACTORY DEFAULTS RANGE DESCRIPTION 15-MIN 1-DAY PTCOLERR 3 288 1...4,294,967,295 Sum of protocol errors TXERR 2 192 1...4,294,967,295 Sum of transfer errors DISAAL5FR 12 48 1...4,294,967,295 AAL5 frames discarded due to no buffer available DISRFCHDR 4 18 1...4,294,967,295 AAL5 frames discarded due to bad RFC-1483 header"
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To modify the performance monitoring threshold levels for an AAL5 entity.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* SET-TH-AAL5:[tid]:aiaal5:[ctag]::monaal5th,thlev,,,[tmper] */\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ SET-ATTR-PORT.pdf",
+        "command_code": "SET-ATTR-PORT",
+        "description": "Set attributes of port.",
+        "syntax": "SET-ATTR-PORT:[tid]:aidports:[ctag]::[ntfcncde],[condport],,,:,[act],[deact];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidports Access identification code that identifies a port. The value can be preceded by AID=, but this is not required. Grouping is allowed. Enter one of the following formats, replacing lowercase parameters with the values given: CRAFT1 Craft interface port 1 CRAFT2 Craft interface port 2 SE2A Serial E2A interface port X25PORT X.25 interface port ALL All of the above",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "ntfcncde": "Notification code associated with an alarm condition. Valid values are: CR Critical alarm MJ Major alarm MN Minor alarm NA Not alarmed; reported via report event NR Not reported when event occurs; information retained in NE",
+          "condport": "Condition type of port interface. The value can (see NOTE) be preceded by CONDTYPE=, but this is not required. Valid values are listed in Table L with Alcatel factory default attributes.",
+          "act": "Activation time, in half seconds (0...20), for declaring an alarm condition",
+          "deact": "Deactivation time, in seconds (0...20), for declaring an alarm condition NOTE: A null entry defaults to all values for this parameter. Table L. Port Alarm Conditions and Alcatel Factory Default Attributes ALARM DESCRIPTION DEFAULTS CONDITION NTFCTNCDE ACT TIME DEACT TIME CD Port failure MN 5 10"
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To set the attributes of port condition types.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* SET-ATTR-PORT:[tid]:aidports:[ctag]::[ntfcncde],[condport],,,:,\n*/\n/* [act],[deact] */\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": true
+      },
+      {
+        "source_file": "Command_ ENT-AAL5.pdf",
+        "command_code": "ENT-AAL5",
+        "description": "Enter ATM Adaptation Layer 5 (AAL5).",
+        "syntax": "ENT-AAL5:[tid]:aidaal5:[ctag]:::aal5_nblk:[pst],;",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidaal5 Access identification code that identifies a domain. The value can be preceded by AID=, but this is not required. Grouping and ranging are allowed. Enter one of the following formats, replacing lowercase parameters with the values given: DGy-AAL5-lannum Drop group AAL5 facility where: DGy = DG1, DG2, DG3 lannum = 1...4",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0. aal5_nblk Named parameter block for AAL5. The block consists of the following parameters in any order, separated by commas. Each parameter name is followed by an equal sign and a valid value. VPI = Associated VP identifier (0...4095) for this AAL5 entity. This parameter is required. VCI = Associated VC identifier (17...65535) for this AAL5 entity. This parameter is required. aal5_nblk INGRESS_TRAFDSC_NAME= (cont) Traffic descriptor name (1...32 characters) for ATM cell stream. Specified at the time of traffic descriptor creation. This parameter is required. CLP= Cell loss priority to use for the created ATM cells. This parameter is optional. Default defined by customer defaults. Valid values are: High High priority Low Low priority ENCAP= Type of encapsulation to use for the created ATM cells. This parameter is optional. Default defined by customer defaults. Valid values are: Off Encapsulation off RFC1438 Encapsulation on",
+          "pst": "Desired primary state (condition) of the object entity. A null means no change to the current value. Valid values are: IS In-Service (normal -NR, or abnormal -ANR is implied and determined by the NE) OOS Out-Of-Service (out-of-service due to provisioning memory-administration operations is implied) MA Memory Administration (OOS-MA is implied)"
+        },
+        "restrictions": "This command will be denied unless the supporting USRLAN entity has been assigned. The\nparameters VPI and VCI will be utilized to create VPL and VCL entities for use with this instance\nof AAL5. The value reflecting the combination of VPI and VCI must be unique among the set of\nprovisioned AAL5 instances in this drop group. All parameters in this command are\nposition-defined except aal5_nblk, which is name-defined.",
+        "function": "To assign an AAL5.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* ENT-AAL5:[tid]:aidaal5:[ctag]:::aal5_nblk:[pst].: */\n/* optional free format text */\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ ED-LLSDCC.pdf",
+        "command_code": "ED-LLSDCC",
+        "description": "Edit provisioning data for the lower layers 1 and 2 (LL) of section data communications channel\n(SDCC) OSI communications stack.",
+        "syntax": "ED-LLSDCC:[tid]:aidllsdcc:[ctag]:::[llsdcc_nblk]:[pst];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidllsdcc Access identifier for LLSDCC. Valid values are: lgx Line group where: lgx = LG1, LG2 dgy Drop group where: dgy = DG1, DG2, DG3",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "llsdcc_nblk": "Named parameter block for data link layer LAPD. The block consists of the following parameters in any order, separated by commas. Each parameter name is followed by an equal sign and a valid value. L2EXTDOMN= Layer 2 external domain. The values are: Y Yes N No L2IF= Layer 2 outstanding I-Frame count. The range is 1...127. L2INFO= Layer 2 information size in bytes (512...2048) L2NOA= Layer 2 T203 no-activity timer in seconds (4...120) L2REX= Layer 2 N200 retransmission count. The range is 2...16. L2SIDE= Layer 2 NE role assignment. The values are USER or NETWORK. L2WAIT= Layer 2 T200 waiting acknowledgement timer in tenths of a second (2...200)",
+          "pst": "Desired primary state (condition) of the object entity. If no value is specified, the actual state is used. Valid values are: IS In-Service (normal -NR, or abnormal -ANR is implied and determined by the NE) OOS Out-Of-Service (out-of-service due to provisioning memory-administration operations is implied) MA Memory Administration (OOS-MA is implied)"
+        },
+        "restrictions": "The pst parameter must be OOS in order to update provisioning data. (This also disables\npackets from being sent for this circuit.) The l2wait parameter value must be less the l4wait\nparameter value of the upper layers (UL) of the section data communications channnel (SDCC)\ncommunications stack. All parameters in this command are position-defined except the\nllsdcc_nblk parameter, which is name-defined.",
+        "function": "",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* ED-LLSDCC:[tid]:aidllsdcc:[ctag]:::[llsdcc_nblk]:[pst] */\n/* optional free format text */\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": true
+      },
+      {
+        "source_file": "Command_ SET-ATTR-LAN.pdf",
+        "command_code": "SET-ATTR-LAN",
+        "description": "Set local area network (LAN) alarm attributes.",
+        "syntax": "SET-ATTR-LAN:[tid]:aidlan:[ctag]::[ntfcncde],[condlan],,,:,[act],[deact];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidlan Access identification code that identifies a LAN. The value can be preceded by AID=, but this is not required. Valid values are: LANA Associated with NEPA LANB Reserved for future use",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "ntfcncde": "Notification code associated with an alarm condition. Valid values are: CR Critical alarm MJ Major alarm MN Minor alarm NA Not alarmed; reported via report event NR Not reported when event occurs; information retained in NE",
+          "condlan": "Condition type of the LAN. The value can be (see NOTE) preceded by CONDTYPE=, but this is not required. Grouping is allowed. Valid values are: CARLOS Loss of carrier. Generated when a carrier-lost indication is sensed by the LAN controller during frame transmission. When this loss is reported, an alarm is immediately deployed and not cleared until either a good frame is received or a good transmission occurs. DUPADR Duplicate address error. Generated at LAN initialization if a duplicate address check fails. (This check verifies that the address being used does not exist on the network.) The alarm is cleared during a system cold or warm restart. The condition types are listed in Table E with Alcatel factory default attributes.",
+          "act": "Activation time, in half seconds (0...20), for declaring an alarm condition. Default can be specified with the CUSTDFLT AID.",
+          "deact": "Deactivation time, in seconds (0...20), for declaring an alarm condition cleared. Default can be specified with the CUSTDFLT AID. NOTE: A null entry defaults to all values for this parameter. Table E. LAN Alarm Conditions and Alcatel Factory Default Attributes ALARM DESCRIPTION DEFAULTS CONDITION NTFCTNCDE ACT TIME DEACT TIME LAN: CARLOS Loss of carrier MN 5 10 DUPADR Duplicate address MN 5 10 error"
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To set the attributes of alarm indicators for the LAN.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* SET-ATTR-LAN:[tid]:aidlan:[ctag]::[ntfcncde],[condlan],,,:, */\n/* [act],[deact] */\n/* optional free format text */\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": true
+      },
+      {
+        "source_file": "Command_ DLT-IPT.pdf",
+        "command_code": "DLT-IPT",
+        "description": "Delete Internet Protocol Tunnel.",
+        "syntax": "DLT-IPT:[tid]:aidipt:[ctag]:::;",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE's SID code is the recommended value. The default value is null. aidipt Access identification code for IP tunnel. Valid values are: IPT-n The number of the IP tunnel. where: n = 1...128 ALL All IP tunnels provisioned for the NE.",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0."
+        },
+        "restrictions": "All parameters in this command are position-defined. The IP tunnel must be in OOS-MA-AS\nstate to be deleted and must not be referenced in a static IP route.",
+        "function": "To delete an NE's IP tunnel.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* DLT-IPT:[tid]:aidipt:[ctag]::: */\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "caution",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ DLT-IPAREA.pdf",
+        "command_code": "DLT-IPAREA",
+        "description": "Delete Internet Protocol Area.",
+        "syntax": "DLT-IPAREA:[tid]:aidiparea:[ctag]:::;",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE's SID code is the recommended value. The default value is null. aidiparea Access identification code for IP area or OSPF routing on an NE that serves as an EMG (Edge Management Gateway). Valid values are: IPAREA1 The first defined IP area for the NE. ALL All IP areas defined for the NE.",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0."
+        },
+        "restrictions": "All parameters in this command are position-defined. The IP area must be in OOS-MA-AS state\nto be deleted.",
+        "function": "To delete the NE's IP area.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* DLT-IPAREA:[tid]:aidiparea:[ctag]::: */\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "caution",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ SET-ACO-COM.pdf",
+        "command_code": "SET-ACO-COM",
+        "description": "Set alarm cut-off of common equipment.",
+        "syntax": "SET-ACO-COM:[tid]:aidcom:[ctag]::[acomode];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidcom Access identification code that identifies a common equipment unit or NE. The value can be preceded by AID=, but this is not required. The value is COM.",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "acomode": "Mode of alarm cutoff (ACO) operation to be provided by the NE. The value can be preceded with ACOMODE=, but this is not required. The modes are: MAN ACO introduced by command or by manual operation at the NE (Alcatel factory default) DELD ACO introduced automatically at the NE, but delayed approximately 5 seconds to allow a brief audible announcement of the trouble IMED ACO introduced automatically and immediately at the NE"
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To set the office audible alarm cut-off mode of the common equipment.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* SET-ACO-COM:[tid]:aidcom:[ctag]::[acomode] */\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ SET-TH-STS1.pdf",
+        "command_code": "SET-TH-STS1",
+        "description": "Set threshold on STS1.",
+        "syntax": "SET-TH-STS1:[tid]:aidstsp:[ctag]::monststh,thlev,,,[tmper];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidstsp Access identification code that identifies a STS1 path. The value can be preceded by AID=, but this is not required. Enter one of the following formats, replacing lowercase parameters with the values given: lgx-STS1-stspath Line group STS1 path where: lgx = LG1, LG2 stspath = 1...12 (grouping and ranging allowed) dgx-STS1-stspath Drop group STS1 path where: dgx = DG1, DG2, DG3 stspath = 1...4 (grouping and ranging allowed) ALL All STS1 paths CUSTDFLT Customer-defined defaults",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0. monststh STS1 path threshold type (see Table H). The value can be preceded by MONSTSTH=, but this is not required. Grouping is allowed. thlev Performance monitoring threshold level (see Table H). The default can be specified with the CUSTDFLT AID.",
+          "tmper": "Duration of performance monitoring. Valid values are: 1-DAY One day 15-MIN Fifteen minutes Table H. STS1 Thresholds MONITOR TYPE ALCATEL FACTORY RANGE DESCRIPTION DEFAULTS 15-MIN 1-DAY BERP-HT 4 3...4 Bit Error Ratio Path - high threshold (SFBER) BERP-LT 6 5...9 Bit Error Ratio Path - low threshold (DGBER) CVP 15 125 1...4,294,967,295 Coding violation count (path) DSESP 2400 1...65535 Number of coding violations to make one SESP ESP 12 100 1...65535 STS Path Errored Seconds NPJCDET 60 5760 1...4,294,967,295 Negative pointer justification count detected NPJCGEN 60 5760 1...4,294,967,295 Negative pointer justification count generated PPJCDET 60 5760 1...4,294,967,295 Negative pointer justification count detected PPJCGEN 60 5760 1...4,294,967,295 Negative pointer justification count generated PJCSDET 60 5760 1...4,294,967,295 Pointer justification count seconds detected PJCSGEN 60 5760 1...4,294,967,295 Pointer justification count seconds generated PJCDIFF 60 5760 1...4,294,967,295 Pointer justification count difference SESP 3 7 1...65535 STS Path Severely Errored Seconds UASP 10 10 1...65535 STS Path Unavailable Seconds"
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To set the STS1 path threshold levels.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* SET-TH-STS1:[tid]:aidstsp:[ctag]::monststh,thlev,,,[tmper] */\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ RTRV-AO.pdf",
+        "command_code": "RTRV-AO",
+        "description": "Retrieve automatic output generated by the local NE.",
+        "syntax": "RTRV-AO:[tid]::[ctag]:::[ao_nblk];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null.",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "ao_nblk": "(cont) AUTOTYPE= Type of message to be retrieved. Grouping is allowed. A null entry defaults to the entire log. Valid values are: ALM Alarm DBCHG Database change EVT Event PM Performance monitoring RMV Remove RST Restore SW Switch DBCHGSEQ= Database change report sequence (1...999. Ranging is allowed. A null entry defaults to the entire sequence."
+        },
+        "restrictions": "All parameters in this command are position-defined except the ao_nblk parameter, which is\nname-defined. If the NE is a concentrator, CAMR messages are not included in the RTRV-AO\noutput.",
+        "function": "",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RTRV-AO:[tid]::[ctag]:::[ao_nblk] */\n/* autonomous messages */\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ RTRV-IPTABLE.pdf",
+        "command_code": "RTRV-IPTABLE",
+        "description": "Retrieve Internet Protocol Table.",
+        "syntax": "RTRV-IPTABLE:[tid]:aidiptable:[ctag]:;",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidiptable Access identification code for IP routing table. Valid values are: IPROU The default routing table. ALL All IP routes provisioned for the NE.",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0."
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To retrieve the NE IP routing table.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RTRV-IPTABLE:[tid]:aidiptable:[ctag]: */\naidiptable::[iptable_nblk]\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ RTRV-ATTR-USRLAN.pdf",
+        "command_code": "RTRV-ATTR-USRLAN",
+        "description": "Retrieve attributes of User LAN facility.",
+        "syntax": "RTRV-ATTR-USRLAN:[tid]:aidusrlan:[ctag]::[ntfcncde],[condusrlan],,[dirn],\n[tmper]:,[act],[deact];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidusrlan Access identification code that identifies a User LAN facility. The value can be preceded by AID=, but this is not required. Grouping and ranging are allowed. Enter one of the following formats, replacing lowercase parameters with the values given: dgy-USRLAN-lannum User LAN drop group facility where: dgy = 1...3 lannum = 1...4 ALL All User LAN facilities",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "ntfcncde": "Notification code associated with a signal alarm (see NOTE) condition. Valid values are: CR Critical alarm MJ Major alarm MN Minor alarm NA Not alarmed, reported via report event NR Not reported when event occurs; information retained in NE",
+          "condusrlan": "Condition type of the User LAN. The value can be preceded by CONDTYPE=, but this is not required. Grouping is allowed. Valid values are listed in Table AA with Alcatel factory default attributes.",
+          "dirn": "Direction of performance monitoring. Grouping is allowed. Valid values are: RCV Receive direction TRMT Transmit direction",
+          "tmper": "Duration of performance monitoring. Valid (see NOTE) values are: 1-DAY One day 15-MIN Fifteen minutes",
+          "act": "Activation time, in half seconds (0...20), for (see NOTE) declaring an alarm condition",
+          "deact": "Deactivation time, in seconds (0...20), for (see NOTE) declaring an alarm condition cleared NOTE: A null entry defaults to all values for this parameter. Table AA. User LAN Alarm Conditions and Alcatel Factory Default Attributes ALARM DESCRIPTION DEFAULTS CONDITION NTFCTNCDE ACT TIME DEACT TIME User LAN Facility: INHPMREPTNDC Inhibit all NDC NR 5 10 scheduled PM reports INHPMREPTQOS Inhibit all QOS NR 5 10 scheduled PM reports LOS Loss of signal CR 5 10 MTCE Removed from MN 0 0 service for maintenance T-CSERR Threshold violation NA 5 10 for carrier sense errors T-DISFR Threshold violation NA 5 10 for frames discarded due to no buffer available T-FRCRC Threshold violation NA 5 10 for total received frames with bad FCS T-LFR Threshold violation NA 5 10 for total received frames longer than maximum T-EXCOL Threshold violation NA 5 10 for excessive transmit collisions T-LFRCOL Threshold violation NA 5 10 for late transmit collisions"
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To retrieve the current attributes of the User LAN (Ethernet) facility condition types.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/*\nRTRV-ATTR-USRLAN:[tid]:aidusrlan:[ctag]::[ntfcncde],[condusrlan],, */\n/* [dirn],[tmper]:,[act],[deact] */\n\"aidusrlan,aidtype:ntfcncde,condusrlan,,[dirn],[tmper]:,act,deact\"\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ RTRV-ALM-TADRMAP.pdf",
+        "command_code": "RTRV-ALM-TADRMAP",
+        "description": "Retrieve Target Identifier Address Resolution Map (TADRMAP) alarms.",
+        "syntax": "RTRV-ALM-TADRMAP:[tid]:aidtadrmap2:[ctag]::[ntfcncde],[contadrmap],[srveff]\n[,,,];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidtadrmap2 Access identification code that identifies a TADRMAP. The value can be preceded by AID=, but this is not required. Valid values are: TADRMAP-n Location of a specified TID-to-NSAP association in TADRMAP where: n = 1...32 ALL Location of all TID-to-NSAP associations in the TADRMAP",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "ntfcncde": "Notification code associated with an alarm condition. Valid values are: CR Critical alarm MJ Major alarm MN Minor alarm",
+          "condtadrmap": "Condition type of the TADRMAP. The value can be preceded by CONDTYPE=, but this is not required. The value is TADRMM (TADRMAP provisioning mismatch).",
+          "srveff": "Effect on service caused by the alarm condition. The value can be preceded by SRVEFF=, but this is not required. Valid values are: SA Service-affecting condition. Immediate action required. NSA Non-service-affecting condition"
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To retrieve the current alarms associated with the TADRMAP.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RTRV-ALM-TADRMAP:[tid]:aidtadrmap2:[ctag]::[ntfcncde], */\n/* [contadrmap],[srveff][,,,] */\n\"aidtadrmap,aidtype:ntfcncde,condtadrmap,srveff:[conddescr],[aiddet]:,\n[tblist]\"\n/* optional free format text */\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ RTRV-ATTR-EC1.pdf",
+        "command_code": "RTRV-ATTR-EC1",
+        "description": "Retrieve attributes of EC1 facility.",
+        "syntax": "RTRV-ATTR-EC1:[tid]:aidec1:[ctag]::[ntfcncde],[condec1],[locn],,[tmper]:,[act],[deact];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidec1 Access identification code that identifies a EC1 facility. The value can be preceded by AID=, but this is not required. Enter one of the following formats, replacing lowercase parameters with the values given: dgx-EC1-stspath EC1 drop group facility where: dgx = DG1, DG2, DG3 stspath = 1...4 (grouping and ranging allowed) ALL All EC1 facilities CUSTDFLT Customer-defined default ALCLDFLT Alcatel factory default",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "ntfcncde": "Notification code associated with a signal alarm (see NOTE) condition. Valid values are: CR Critical alarm MJ Major alarm MN Minor alarm NA Not alarmed, reported via report event NR Not reported when the event occurs, information retained in NE",
+          "condec1": "Condition type of the EC1 entity. The value can (see NOTE) be preceded by CONDTYPE=, but this is not required. Grouping is allowed. The condition types are listed in Table I with Alcatel factory default attributes.",
+          "locn": "Location where performance monitoring is reported. Valid values are: FEND Far end NEND Near end (Alcatel factory default)",
+          "tmper": "Duration of performance monitoring. Valid (see NOTE) values are: 1-DAY One day 15-MIN Fifteen minutes",
+          "act": "Activation time, in half seconds (0...20), for (see NOTE) declaring an alarm condition",
+          "deact": "Deactivation time, in seconds (0...20), for (see NOTE) declaring an alarm condition cleared NOTE: A null entry defaults to all values for this parameter. Table I. EC1 Alarm Conditions and Alcatel Factory Default Attributes ALARM DESCRIPTION DEFAULTS CONDITION NTFCTNCDE ACT TIME DEACT TIME EC1 Facility: AISL Line AIS NR 5 10 APSB APS byte failure MJ 5 10 BERL-HT BER Line - high CR 5 10 threshold BERL-LT BER Line - low MJ 5 10 threshold INHPMREPT Inhibit PM report NR 5 10 LOF Loss of frame CR 5 10 LOS Loss of signal CR 5 10 MTCE Remove from MN 0 0 service for maintenance RFI Far end failure NR 5 10 SECTRCMF Section tracer MN 5 10 mismatch SYNCLEVINCHG Synchronization NA* 5 10 message change SYNCLEVINFAIL Synchronization MN 5 10 message failure T-CVL Coding violation NA 5 10 threshold crossing - line T-CVS Coding violation NA 5 10 threshold crossing - section T-BPV BPV TCA NA 5 10 15MIN/1DAY T-ESL Line errored NA 5 10 seconds TCA 15MIN/1DAY, NEND/FEND T-ESS Section errored NA 5 10 seconds TCA 15MIN/1DAY T-SEFS Severe err framing NA 5 10 secs TCA 15MIN/1DAY T-SESL Line severe err NA 5 10 secs TCA 15MIN/1DAY, NEND/FEND T-SESS Section severe err NA 5 10 secs TCA 15MIN/1DAY T-UASL Line unavailable NA 5 10 seconds TCA 15MIN/1DAY, NEND/FEND * This condition can be provisioned only as NA or NR."
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RTRV-ATTR-EC1:[tid]:aidec1:[ctag]::[ntfcncde],[condec1], */\n/* [locn],,[tmper]:,[act],[deact] */\n\"aidec1,aidtype:ntfcncde,condec1,[locn],,[tmper]:,act,deact\"\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ RTRV-COND-LAN.pdf",
+        "command_code": "RTRV-COND-LAN",
+        "description": "Retrieve local area network (LAN) conditions.",
+        "syntax": "RTRV-COND-LAN:[tid]:aidlana:[ctag]::[condlan][,,,];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidlana Access identification code that identifies a LAN. The value can be preceded by AID=, but this is not required. Valid values are: LANA LAN A (associated with NEPA) LANB LAN B (reserved for future use) ALL All of the above",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "condlan": "Condition type of the LAN. The value can be preceded by CONDTYPE=, but this is not required. Valid values are: CARLOS Loss of carrier DUPADR Duplicate address error"
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To retrieve the current conditions of alarm indicators for the LAN.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RTRV-COND-LAN:[tid]:aidlana:[ctag]::[condlan][,,,] */\n\"aidlan,aidtype:ntfcncde,condlan,srveff,,,,,,[conddescr]:\n[aiddet]\"\n/* optional free format text */\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ RTRV-PM-OC12.pdf",
+        "command_code": "RTRV-PM-OC12",
+        "description": "Retrieve performance monitoring on OC12.",
+        "syntax": "RTRV-PM-OC12:[tid]:aidoc12:[ctag]::[monoc12],[monlev],[locn],,[tmper],[mondat],[montm\n];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidoc12 Access identification code that identifies an OC12 facility. The value can be preceded by AID=, but this is not required. Grouping is allowed. Enter one of the following formats, replacing lowercase parameters with the values given: lgx-oc12s Line group OC12 facility where: lgx = LG1, LG2 oc12s = OC12, OC12A, OC12B ALL All OC12 facilities",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "monoc12": "OC12 performance monitoring type. The value can be preceded by MONTYPE=, but this is not required. Valid values are: CVL Coding violation count - line (NEND or FEND) CVS Coding violation count - section (NEND only) ESL Errored seconds in the Line (NEND or FEND) ESS Errored seconds in the Section (NEND only) FCL Line failure count (NEND or FEND) PSC Protection switch count (NEND only) PSD Protection switch duration (number of seconds on side B facility when revertive switching is enabled, see ED-FFP-OC12 command) (NEND only) SEFS Severely errored framing seconds - OOFS/COFAS (NEND only) SESL Severely errored seconds in the Line (NEND or FEND) SESS Severely errored seconds in the Section (NEND only) UASL Unavailable seconds in the Line (NEND or FEND)",
+          "locn": "Location where performance monitoring is reported. Valid values are: FEND Far end NEND Near end (Alcatel factory default)",
+          "monlev": "Retrieval threshold level for requested monitored parameter. Valid values are: lev-dirn Level and direction where: lev = Monitoring level range (0...32768) dirn = Direction. Valid values are: UP Values equal to or greater than the value of lev DN Values equal to or less than the value of lev",
+          "tmper": "Duration of performance monitoring. Values are: 1-DAY One day 15-MIN Fifteen minutes",
+          "mondat": "Date when performance monitoring begins. Values are: mon-day Month and day where: mon = 1...12 day = 1...31",
+          "montm": "Time when performance monitoring begins. Does not apply when tmper equals 1-DAY. Values are: hh-mm Hour and minute where: hh = 0...23 mm = 0...59 ALL All beginning times that are available for the specified mondat in the NE"
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RTRV-PM-OC12:[tid]:aidoc12:[ctag]::[monoc12],[monlev],[locn],,\n*/\n/* [tmper],[mondat],[montm] */\n\"aidoc12,aidtype:monoc12,monval,[vldty],[locn],,[tmper],[mondat],\n[montm]\"\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ RTRV-ATTR-X25.pdf",
+        "command_code": "RTRV-ATTR-X25",
+        "description": "Retrieve X.",
+        "syntax": "RTRV-ATTR-X25:[tid]:aidx25:[ctag]::[ntfcncde],[condx25],,,:,[act],[deact];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidx25 The access identification code which is used to identify the X.25 protocol stack from which the attributes are to be retrieved. To enter the parameter, the X.25 entity must be given in the following format: X25 X.25 protocol stack CUSTDFLT Customer-defined defaults ALCLDFLT Alcatel factory defaults",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "ntfcncde": "Notification code associated with a signal alarm (see NOTE) condition. Valid values are: CR Critical alarm MJ Major alarm MN Minor alarm NA Not alarmed, reported via report event NR Not reported when event occurs; information retained in NE",
+          "condx25": "Condition type of the X.25 entity. The value can (see NOTE) be preceded by CONDTYPE=, but this is not required. Grouping is allowed. Valid values are are listed in Table AC with Alcatel factory default attributes.",
+          "act": "Activation time, in half seconds (0...20), for (see NOTE) declaring an alarm condition",
+          "deact": "Deactivation time, in seconds (0...20), for (see NOTE) declaring an alarm condition cleared NOTE: A null entry defaults to all values for this parameter. Table AC. X.25 Alarm Conditions and Alcatel Factory Default Attributes ALARM DESCRIPTION DEFAULTS CONDITION NTFCTNCDE ACT TIME DEACT TIME LAPBERR LAPB link fail MN 5 10"
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To retrieve the current attributes of the X.25 protocol stack condition types.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RTRV-ATTR-X25:[tid]:aidx25:[ctag]::[ntfcncde],[condx25],,,:, */\n/* [act],[deact] */\n\"aidx25,aidtype:ntfcncde,condx25:,act,deact\"\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ RTRV-PM-ATMPORT.pdf",
+        "command_code": "RTRV-PM-ATMPORT",
+        "description": "Retrieve performance monitoring on ATM port.",
+        "syntax": "RTRV-PM-ATMPORT:[tid]:aidatmport1:[ctag]::[monatmport],[monlev],,[dirn],[tmper],\n[mondat],[montm];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidatmport Access identification code that identifies an ATM port. The value can be preceded by AID=, but this is not required. Grouping is allowed. Enter one of the following formats, replacing lowercase parameters with the values given: lgx-ATMPORT-lsts ATM port line group facility where: lgx = 1, 2 lsts = 1...12 dgy-ATMPORT-n ATM port drop group facility where: dgy = 1...3 n = 1...4 ALL All ATMPORT entities",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "monatmport": "CDHEC Cells discarded due to HEC violations (cont) OCD Out of cell delineation anomalies TCIN Total incoming NDC-valid ATM cells per port TCOUT Total outgoing NDC-valid ATM cells per port",
+          "monlev": "Retrieval threshold level for the requested monitored parameter. Valid values are: lev-dirn Level and direction where: lev = Monitoring level range (0...32768) dirn = Direction. Valid values are: UP Monitored parameter with values equal to or greater than the value of lev is reported DN Monitored parameter with values equal to or less than the value of lev is reported",
+          "dirn": "Direction of cell flow. Valid values are:. RCV Receive TRMT Transmit BOTH Both directions (default)",
+          "tmper": "Duration of performance monitoring. Values are: 1-DAY One day 15-MIN Fifteen minutes",
+          "mondat": "Date when performance monitoring begins. Values are: mon-day Month and day where: mon = 1...12 day = 1...31",
+          "montm": "Time when performance monitoring begins. Does not apply when tmper equals 1-DAY. Values are: hh-mm Hour and minute where: hh = 0...23 mm = 0...59 ALL All beginning times that are available for the specified mondat in the NE"
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To retrieve data on ATM port performance monitoring registers.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/*\nRTRV-PM-ATMPORT:[tid]:aidatmport:[ctag]::[monatmport],[monlev],,[dirn]\n, */\n/* [tmper],[mondat],[montm] */\n\"aidatmport,aidtype:monatmport,monval,[vldty],,[dirn],[tmper],[mondat]\n,[montm]\"\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ RTRV-COND-COM.pdf",
+        "command_code": "RTRV-COND-COM",
+        "description": "Retrieve condition of common equipment/NE.",
+        "syntax": "RTRV-COND-COM:[tid]:aidcom:[ctag]::[condcom][,,,];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidcom Access identification code that identifies a common equipment unit or NE. The value can be preceded by AID=, but this is not required. Grouping is allowed. The value is COM.",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "condcom": "RING NE supports both linear and ring (cont) operation RING1 All ring paths on RING1 RING2 All ring paths on RING2 RINGBOTH Ring paths on both RING1 and RING2 TM NE type: terminal multiplexer SECU-INTRU Security intrusion alert SWDL Automatic or manual download in progress SYNCMA Provisioned NE/Bits Synch entity is OOS-MA VTGRP NE is using grouped VT1 path numbering format VTSEQ NE is using sequential VT1 path numbering format PRIDBLIMIT-xxx Primary database limit WKGDBALLOC-xxx Working database allocation where: xxx = 0...999"
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To retrieve the current condition of the common equipment or network element (NE) alarm\nindicators.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RTRV-COND-COM:[tid]:aidcom:[ctag]::[condcom][,,,] */\n\"aidcom,aidtype:ntfcncde,condcom,srveff,,,,,,[conddescr]:[aiddet]\"\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ RTRV-IP.pdf",
+        "command_code": "RTRV-IP",
+        "description": "Retrieve Internet Protocol (IP).",
+        "syntax": "RTRV-IP:[tid]:aidip:[ctag]::::,;",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidip Access identification code that identifies an IP. The value can be preceded by AID=, but this is not required. Valid values are: COMIP Common Internet Protocol setup identifier ALCLDFLT Alcatel factory default CUSTDFLT Customer-defined default",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0."
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To retrieve the IP setup of the NE.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RTRV-IP:[tid]:aidip:[ctag]::::, */\naidip::[ip_nblk]:pst,,\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ RTRV-TH-OC12.pdf",
+        "command_code": "RTRV-TH-OC12",
+        "description": "Retrieve threshold on OC12.",
+        "syntax": "RTRV-TH-OC12:[tid]:aidoc12:[ctag]::[monoc12th],,[tmper];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidoc12 Access identification code that identifies an OC12 facility. The value can be preceded by AID=, but this is not required. Grouping is allowed. Enter one of the following formats, replacing lowercase parameters with the values given: lgx-OC12 Line group OC12 facility where lgx = LG1, LG2 ALL All OC12 facilities CUSTDFLT Customer-defined defaults ALCLDFLT Alcatel factory defaults",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "monoc12th": "* OC12 performance monitoring type. The value can be preceded by MONTYPE=, but this is not required. Valid values are: BERL-LT Bit error ratio line - low threshold crossed BERL-HT Bit error ratio line - high threshold crossed CVL Coding violation count - line CVS Coding violation count - section DSESL Number of coding violations which constitute an SESL DSESS Number of coding violations which constitute an SESS ESL Errored seconds in the Line ESS Errored seconds in the Section SEFS Severely errored framing seconds - OOFS/COFAS SESL Severely errored seconds in the Line SESS Severely errored seconds in the Section UASL Unavailable seconds in the Line",
+          "tmper": "* Duration of performance monitoring. Does not apply to BERL-LT or BERL-HT. Valid values are: 1-DAY One day 15-MIN Fifteen minutes * A null entry defaults to all values for this parameter."
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RTRV-TH-OC12:[tid]:aidoc12:[ctag]::[monoc12th],,[tmper] */\n\"aidoc12,aidtype:monoc12th,,,thlev,[tmper]\"\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ RTRV-PM-VPL.pdf",
+        "command_code": "RTRV-PM-VPL",
+        "description": "Retrieve performance monitoring on VPL.",
+        "syntax": "RTRV-PM-VPL:[tid]:aidvpl:[ctag]::[monvpl],[monlev],[locn],[dirn],[tmper],\n[mondat],[montm];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidvpl Access identification code that identifies a VPL. The value can be preceded by AID=, but this is not required. Grouping is allowed. Enter one of the following formats, replacing lowercase parameters with the values given: lgx-VPL-lsts-vpnum VPL line group facility where: lgx: = LG1, LG2 lsts: = 1...12 vpnum: = 0...511 dgy-VPL-n-vpnum VPL drop group facility where: dgy = DG1, DG2, DG3 n: = 1...4 vpnum: = 0...4095 ALL All VPL facilities",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "monvpl": "VPL performance monitoring type. The value can be preceded by MONTYPE=, but this is not required. Valid values are: EC Errored cells IMP0+1 Impaired cell blocks IMPLSTMIS Impaired cell blocks with cells lost or misinserted LOS0 Lost 0 user information cells LOS0+1 Lost 0+1 user information cells MIS0+1 Misinserted user information cells POLCD0 CPL0 cells discarded due to policing POLCD0+1 CPL0+1 cells discarded due to policing POLTAG0 CPL0 cells tagged due to policing SECB Severely errored cell blocks SECBE Severely errored cell blocks due to bit errors SECBM Severely errored cell blocks due to misinserted cells TCINVP Total incoming NDC-valid ATM cells per VPL TCOUTVP Total outgoing NDC-valid ATM cells per VPL TLOS0 Total lost 0 user information cells TLOS0+1 Total lost 0+1 user information cells TXC0 Transmitted 0 user information cells TXC0+1 Transmitted 0+1 user information cells",
+          "monlev": "Retrieval threshold level for requested monitored parameter. Valid values are: lev-dirn Level and direction where: lev = Monitoring level range (0...32768) dirn = Direction. Valid values are: UP Values equal to or greater than the value of lev DN Values equal to or less than the value of lev The Alcatel factory default is 1-UP.",
+          "locn": "Location where performance monitoring is reported. Valid values are: FEND Far end NEND Near end BOTH Both ends (default)",
+          "dirn": "Direction of performance monitoring. Grouping is allowed. Valid values are: RCV Receive TRMT Transmit BOTH Transmit and receive directions (default)",
+          "tmper": "Duration of performance monitoring. Values are: 15-MIN Fifteen minutes",
+          "mondat": "Date when performance monitoring begins. Values are: mon-day Month and day where: mon = 1...12 day = 1...31",
+          "montm": "Time when performance monitoring begins. Does not apply when tmper equals 1-DAY. Values are: hh-mm Hour and minute where: hh = 0...23 mm = 0...59 The Alcatel factory default is 00-00. ALL All beginning times that are available for the specified mondat in the NE"
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To retrieve data on virtual path link (VPL) performance monitoring registers.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/*\nRTRV-PM-VPL:[tid]:aidvpl:[ctag]::[monvpl],[monlev],[locn],[dirn], */\n/* [tmper],[mondat],[montm] */\n\"aidvpl,aidtype:monvpl,monval,[vldty],[locn],[dirn],[tmper],[mondat],[\nmontm]\"\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ ALW-LPBK-T1.pdf",
+        "command_code": "ALW-LPBK-T1",
+        "description": "Allow loopback on a DS1.",
+        "syntax": "ALW-LPBK-T1:[tid]:aidt1:[ctag]::rqsttype;",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidt1 Access identification code that identifies a DS1. The value may be preceded by AID=, but this is not required. Enter one of the following formats, replacing lowercase parameters with the values given: dgx-T1-ds1port Sequential VT1/T1 dgx-T1-vtgrp-vtno Grouped VT1/T1 where: dgx = DG1, DG2, DG3 ds1port = 1...28 vtgrp = 1...7 vtno = 1...4 ALL All T1 facilities NOTE: The T1/VT1 AID format is determined by the VTFORMAT parameter of the SET-NE-ALL command. The RTRV-COND-COM command reports the AID format currently used by the NE. See Appendix F for details.",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0. rqsttype Loopback request type. Valid values are: DS2 DS2 loopback (LIF601 only) ESFLINE ESF frame data-link message (LIF601 and VTG301 only) FEAC Far-end alarm status request (LIF601 only) INBANDRX Receive 4/4 or 5/3 inband code (VTG101/102/301 only) INBANDTX Transmit 4/4 or 5/3 inband code (VTG301 only) ALL All loopback types"
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To allow automatic loopback on a DS1 port (facility) when a loopback request is received from a\nDS1 facility far-end terminal. This command has no affect on the OPR-LPBK-T1 command,\nwhich is always allowed. The default for allowing or inhibiting loopback for T1 can be specified\nwith the ED-T1 command.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* ALW-LPBK-T1:[tid]:aidt1:[ctag]::rqsttype */\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ ALW-SWDX-EQPT.pdf",
+        "command_code": "ALW-SWDX-EQPT",
+        "description": "Allow duplex switching of equipment.",
+        "syntax": "ALW-SWDX-EQPT:[tid]:aideqpt:[ctag][::];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aideqpt Access identification code that identifies an equipment entity with duplex switching capability. Grouping is allowed. The value can be preceded by AID=, but this is not required. Enter one of the following formats, replacing lowercase parameters with the values given: pba Common unit where: pba = NEP, CLK, VSCC dgx-DMI DMI unit where: dgx = DG1, DG2, DG3 dgx-LIF LIF unit where: dgx = DG1, DG2, DG3 dgx-LDR-ldrport LDR units where: dgx = DG1, DG2, DG3 ldrport = 1...4 ALL All of the above",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0."
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To allow automatic or manual duplex switching of equipment.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* ALW-SWDX-EQPT:[tid]:aideqpt:[ctag][::] */\n;",
+        "examples": [],
+        "category": "Network Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      }
+    ],
+    "Security Administration": [
+      {
+        "source_file": "Command_ CANC-USER.pdf",
+        "command_code": "CANC-USER",
+        "description": "Cancel user.",
+        "syntax": "CANC-USER:[tid]:[uid]:[ctag]:::[pc];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null.",
+          "uid": "User identification code (1...10 character) that identifies a user. Input is case-sensitive and can be any mix of uppercase and lowercase characters. It can be preceded by AID=, but this is not required.",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "pc": "Controls whether the association is left intact after logon is terminated to provide external response for the 1301 NM. This parameter is valid only if the cid parameter in the ED-SECU-USER command is set to CRAFT, REMOTE, or PEER, and operates the same for either remote or local logons. This parameter is ignored for OS sessions, that is, if the cid parameter = MAINT, PROV, or TEST for the ED-SECU-CID command. The value is PC."
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To cancel or terminate a user's session. A user with superuser session privilege can cancel\nanother user by including the user's uid as the aid parameter.\nNOTE: The system superuser session cannot be canceled by another user.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* CANC-USER:[tid]:[uid]:[ctag]:::[pc] */\n;",
+        "examples": [],
+        "category": "Security Administration",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "caution",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ ED-SECU-USER.pdf",
+        "command_code": "ED-SECU-USER",
+        "description": "Edit security level for user.",
+        "syntax": "ED-SECU-USER:[tid]:uid:[ctag]::[nuid],[npid],,[pcmaint],[pcprov],[pcsecu],\n[pctest]:[uid_nblk];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE's SID code is the recommended value. The default value is null. uid The user identification code which is used to identify the user whose password is to be changed. The parameter may be preceded by \"AID=\", although it is not required. Input of alpha characters is case-sensitive. The length of the name is 1...10 characters.",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "nuid": "New user identification code (1...10 characters ). The value can be preceded by NUID=, but this is not required. Input is case-sensitive.",
+          "npid": "New password (6...10 characters) for the user. The new password must be different from the old one and must include at least one digit, one letter, and one non-alphanumeric character. Input is case-sensitive. If the non-alphanumeric character is one of those interpreted by the parser as symbolic operators, the password must be enclosed in double quotes. See Table B (Syntactical Operators) in Appendix B (TL1 Language).",
+          "pcmaint": "Authorization level (0...7) for the maintenance function. The value can be preceded by PCMAINT=, but this is not required. 1 indicates the least privileged level, and 7 the most privileged. 0 disables security checking for this category.",
+          "pcprov": "Authorization level (0...7) for the provisioning function. The value can be preceded by PCPROV=, but this is not required. 1 indicates the least privileged level, and 7 the most privileged. 0 disables security checking for this category.",
+          "pcsecu": "Authorization level (0...7) for the security function. The value can be preceded by PCSECU=, but this is not required. 1 indicates the least privileged level, and 7 the most privileged. 0 disables security checking for this category.",
+          "pctest": "Authorization level (0...7) for the testing function. The value can be preceded by PCTEST=, but this is not required. 1 indicates the least privileged level, and 7 the most privileged. 0 disables security checking for this category.",
+          "uid_nblk": "Named parameter block for user identification. The block consists of the following parameters in any order, separated by commas. Each parameter name is followed by an equal sign and a valid value. DBCHMSG= Whether database change messages are enabled for the specifed user. The generation of database change messages is enabled/disabled (for the entire NE) by the DBCHMSG parameter of the SET-NE-ALL command. Valid values are: Y Enabled. Database change messages are sent to the user session (Alcatel factory default). N Disabled. Database change messages are suppressed for the specified user. NOTE: For X.25 connections, database change messages are not sent to NMA or TEST OS. Database change messages are always sent to CAMR concentrators. PAGE= Length of time (0...999 days) until the password expires and must be changed. A value of zero disables the feature. UAGE= Length of time (0...999 days) until the UID is disabled if no successful logon session has occured. A value of zero disables the feature. TMDIS= Whether inactivity timeout is disabled. Valid values are: Y TMOUT disabled. Timeout interval is ignored. N TMOUT not disabled. Logon session is terminated when the timeout interval (set by the TMOUT parameter of the ED-SECU-CID command) expires. NOTE: A TMOUT value of 0 for the ED-SECU-CID command also disables the timeout feature."
+        },
+        "restrictions": "All parameters in this command are position-defined except the uid_nblk parameter, which\ncontains name-defined parameters. The session user cannot raise any user's privilege code to a\nlevel greater than or equal to his/her own security privilege code. Only the superuser can edit a\nuser to have a privilege code equal to his own privilege code.",
+        "function": "",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* ED-SECU-USER:[tid]:uid:[ctag]::[nuid],[npid],,[pcmaint], */\n/* [pcprov],[pcsecu],[pctest]:[uid_nblk] */\n;",
+        "examples": [],
+        "category": "Security Administration",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": true
+      },
+      {
+        "source_file": "Command_ ED-SECU-PID.pdf",
+        "command_code": "ED-SECU-PID",
+        "description": "Edit security on private identifier.",
+        "syntax": "ED-SECU-PID:[tid]:uid:[ctag]::opid,npid;",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. uid User identification code (1...10 characters) of the user whose password is to be changed. The value can be preceded by UID=, but this is not required. Input is case-sensitive.",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0. opid Old password (6...10 characters). Input is case-sensitive. If the non-alphanumeric character of the password is interpreted by the parser as a symbolic operator, the password must be enclosed in double quotes. See Table B (Syntactical Operators) in Appendix B (TL1 Language). npid New password (6...10 characters). The new password must be different from the old one and must include at least one digit, one letter, and one non-alphanumeric character. Input is case-sensitive. If the non-alphanumeric character of the password is interpreted by the parser as a symbolic operator, the password must be enclosed in double quotes. See Table B (Syntactical Operators) in Appendix B (TL1 Language)."
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To edit the user's own password/private identifier.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* ED-SECU-PID:[tid]:uid:[ctag]::opid,npid */\n;",
+        "examples": [],
+        "category": "Security Administration",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": true
+      },
+      {
+        "source_file": "Command_ RTRV-SECU-CMD.pdf",
+        "command_code": "RTRV-SECU-CMD",
+        "description": "Retrieve security on commands.",
+        "syntax": "RTRV-SECU-CMD:[tid]:verbmod:[ctag]:[pcmaint],[pcprov],[pcsecu],[pctest];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. verbmod Command verb and associated modifiers (3...20 characters) that identify the command whose security level is to be retrieved. The value can be preceded by AID=, but this is not required. ALL is allowed.",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0. pcmaint Authorization level (0...7) for users using the CID to execute maintenance commands. The value can be preceded by PCMAINT=, but this is not required. 1 indicates the least privileged level, 7 the most privileged. 0 disables security checking for this category. pcprov Authorization level for users using the CID to execute provisioning commands. The value can be preceded by PCPROV=, but this is not required. 1 indicates the least privileged level, 7 the most privileged. 0 disables security checking for this category. pcsecu Authorization level for users using the CID to execute security commands. The value can be preceded by PCSECU=, but this is not required. 1 indicates the least privileged level, 7 the most privileged. 0 disables security checking for this category. pctest Authorization level for users using the CID to execute test commands. The value can be preceded by PCTEST=, but this is not required. 1 indicates the least privileged level, 7 the most privileged. 0 disables security checking for this category."
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To retrieve security levels associated with a command. Security levels for commands are not\nshown if they are higher than the user's security privilege levels. The optional parameters\npcmaint, pcprov, pcsecu, and pctest can be used with verbmod =ALL to retrieve all commands\nthat have security levels less than or equal to the specified values.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RTRV-SECU-CMD:[tid]:verbmod:[ctag]:[pcmaint],[pcprov],[pcsecu],\n*/\n/* [pctest] */\n\"verbmod:[pcmaint],[pcprov],[pcsecu],[pctest]\"\n;",
+        "examples": [],
+        "category": "Security Administration",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      }
+    ],
+    "Memory Administration": [
+      {
+        "source_file": "Command_ DLT-PORT.pdf",
+        "command_code": "DLT-PORT",
+        "description": "Delete port.",
+        "syntax": "DLT-PORT:[tid]:aidport:[ctag][:::];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE's SID code is the recommended value. The default value is null. aidport The access identification code which is used to identify a port. The parameter may be preceded by \"AID= \", although it is not required. Grouping is allowed. The values are: CRAFT2 2nd craft port SE2A Serial E2A port X25PORT X.25 port ALL All of the above",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0."
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To delete a port (primary state must be OOS-MA to be deleted).",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* DLT-PORT:[tid]:aidport:[ctag][:::] */\n;",
+        "examples": [],
+        "category": "Memory Administration",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "caution",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ ED-ATMPROC.pdf",
+        "command_code": "ED-ATMPROC",
+        "description": "Edit ATM processing.",
+        "syntax": "ED-ATMPROC:[tid]:aidatmproc:[ctag]::[frc_alcldflt]:[atmproc_nblk]:[pst],;",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidatmproc Access identification code that identifies entities from which the attributes are to be retrieved. The value can be preceded by AID=, but this is not required. Grouping is allowed. Enter one of the following formats, replacing lowercase parameters with the values given: ATMPROC-XCONN Cross-connect facility ATMPROC-DGy ATM port drop group facility where: y = 1...3 CUSTDFLT Customer-defined default",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "frc_alcldflt": "Reset customer-defined defaults to Alcatel factory default values. Valid for AID of CUSTDFLT only. Valid values are: Y Yes N No (Alcatel factory default)",
+          "atmproc_nblk": "Name-defined parameter block. The block of data, in any order separated by commas, is made up of named parameters which are followed by an equal sign (=) and a selected value. The named parameters and their values are: ALWPMREPTQOS Whether Quality of Service PM reporting is allowed by default. Valid only for AID of CUSTDFLT. Valid values are: Y Yes N No If this parameter is not specified, its value is assumed to be N. ALWPMREPTNDC Whether Network Data Collection PM reporting is allowed by default. Valid only for AID of CUSTDFLT. Valid values are: Y Yes N No If this parameter is not specified, its value is assumed to be N. ALWPMREPTNTM Whether Network Traffic Management PM reporting is allowed by default. Valid only for AID of CUSTDFLT. Valid values are: Y Yes N No If this parameter is not specified, its value is assumed to be N.",
+          "pst": "Desired primary state (condition) of the object entity. Valid values are: IS In-Service (normal -NR or abnormal -ANR is implied and determined by the NE) OOS Out-Of-Service (out-of-service due to provisioning memory-administration operations is implied) MA Memory Administration (OOS-MA is implied)"
+        },
+        "restrictions": "All parameters in this command are position-defined except atmproc_nblk, which is\nname-defined.",
+        "function": "To edit the provisioning data associated with ATM processing.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/*\nED-ATMPROC:[tid]:aidatmproc:[ctag]::[frc_alcldflt]:[atmproc_nblk]: */\n/* [pst][,] */\n;",
+        "examples": [],
+        "category": "Memory Administration",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": true
+      },
+      {
+        "source_file": "Command_ DLT-OC12.pdf",
+        "command_code": "DLT-OC12",
+        "description": "Delete OC12.",
+        "syntax": "DLT-OC12:[tid]:aidoc12:[ctag][:::];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE's SID code is the recommended value. The default value is null. aidoc12 The access identification code which is used to identify an OC12 high speed interface. The parameter may be preceded by \"AID=\", although it is not required. Grouping is allowed. Enter the aid in one of the following formats, replacing lower-case parameters with the values given: lgx-oc12s Line group high speed interfaces where: lgx = LG1, LG2 oc12s = OC12, OC12A, OC12B ALL All of the above",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0."
+        },
+        "restrictions": "All parameters in this command are position-defined. If any test access connections exist to an\nendpoint associated with the facility to be deleted, the command will be denied. (This is true\nregardless of the test access mode.)",
+        "function": "",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* DLT-OC12:[tid]:aidoc12:[ctag][:::] */\n;",
+        "examples": [],
+        "category": "Memory Administration",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "caution",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ ED-FFP-STS3C.pdf",
+        "command_code": "ED-FFP-STS3C",
+        "description": "Edit STS3C Fast-Facility Protection (FFP).",
+        "syntax": "ED-FFP-STS3C:[tid]:aidstsp,:[ctag]:::[ffp_nblk][:,];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidstsp Access identification code that identifies a drop group STS3C path. The value can be preceded by AID=, but this is not required. Grouping is allowed. Enter one of the following formats, replacing lowercase parameters with the values given: dgx-STS3C-1 STS3C drop group path where: dgx = DG1, DG2, DG3 ALL All STS3C FFP entities",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "ffp_nblk": "PREF= Preference of FFP selector between the two ring paths (line groups) for revertive switching. The ring path selected is the protected path and the other ring path is the protection path. Valid values are: LG1 Line Group 1 LG2 Line Group 2 RVRTV= Revertive switching mode for FFP selector. Valid values are: Y Yes, revertive switching mode. The FFP selector reverts to the preferred ring path (selected with the pref parameter) after a manual switch is released or after cause for automatic switch clears. N No, nonrevertive switching mode. The FFP selector will not revert to the ring path selected with the pref parameter. RVTWTR= Wait to restore delay for FFP selector. This parameter determines how many minutes to wait before reverting to the ring path selected with the pref parameter. This parameter is in effect only when revertive switching is selected. Valid values are 0...12."
+        },
+        "restrictions": "",
+        "function": "",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* ED-FFP-STS3C:[tid]:aidstsp[,]:[ctag]:::[ffp_nblk][:,] */\n;",
+        "examples": [],
+        "category": "Memory Administration",
+        "subcategory": "Rings",
+        "safety_level": "safe",
+        "service_affecting": true
+      },
+      {
+        "source_file": "Command_ DLT-SML.pdf",
+        "command_code": "DLT-SML",
+        "description": "Delete Synchronous Maintenance Link.",
+        "syntax": "DLT-SML:[tid]:aidsml:[ctag][:::];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE's SID code is the recommended value. The default value is null. aidsml The access identification code which is used to identify the Synchronous Maintenance Link (SML). The parameter may be preceded by \"AID=\", although it is not required. Grouping and ranging is allowed. The values are: MAINT1 Maintenance link 1 MAINT2 Maintenance link 2 (reserved for future use) ALL All SML entities",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0."
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To delete a Synchronous Maintenance Link. (See General Notes.)",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* DLT-SML:[tid]:aidsml:[ctag][:::] */\n;",
+        "examples": [],
+        "category": "Memory Administration",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "caution",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ ENT-PROFILE-TRAFDSC.pdf",
+        "command_code": "ENT-PROFILE-TRAFDSC",
+        "description": "Enter profile of Traffic Descriptor.",
+        "syntax": "ENT-PROFILE-TRAFDSC:[tid]:aidtrafdsc:[ctag]::trafdsc_name,profile_type:\n[trafdsc_nblk];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidtrafdsc Access identification code that identifies a Traffic Descriptor. The value can be preceded by AID=, but this is not required. Grouping and ranging are allowed. Valid values are: TRAFDSC- n Traffic Descriptor where: n: = 1...32",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0. trafdsc_name Description (1...32 characters) of the service type for this Traffic Descriptor. Case is ignored. profile_type Combination of trafdsc_nblk parameters allowed for this Traffic Descriptor. Valid values are: PT1 PCR0+1, CDVT, TAG (LIFB01 only) PT2 PCR0+1, CDVT, SCR0+1, MBS0+1, TAG (LIFB01 only) PT3 PCR0+1, CDVT, SCR0, MBS0, TAG (LIFB01 only) PT4 PCR0, PCR0+1, CDVT, TAG (LIFB01 only) PT5 PCR0+1 (LIF901 only) PT6 PCR0+1, SCR0+1, MBS0+1 (LIF901 only)",
+          "trafdsc_nblk": "Named parameter block for Traffic Descriptor. The block consists of the following parameters in any order, separated by commas. Each parameter name is followed by an equal sign and a valid value. PCR0 Peak cell rate, in cells per second (100...353207), for CLP0 ATM cells PCR0+1 Peak cell rate, in cells per second (100...353207), for CLP0 and CLP1 ATM cells CDVT Cell Delay Variation Tolerance, in microseconds, associated with the enforcement of peak cell rate of arrival of cells on this connection. Valid values are 50, 100, 150, 200, 250, 350, 500, 700, 1000, 1400, and 2000. SCR0 Sustained cell rate, in cells per second (100...353207), for CLP0 ATM cells SCR0+1 Sustained cell rate, in cells per second (100...353207), for CLP0 and CLP1 ATM cells MBS0 Maximum Burst Size (in cells) associated with the enforcement of sustained rate of arrival of CLP0 cells on this connection. Valid values are 32, 50, 100, 150, and 210. MBS0+1 Maximum Burst Size, in cells, associated with the enforcement of sustained rate of arrival of CLP0+1 cells on this connection. Valid values are 32, 50, 100, 150, and 210. TAG Tagging control. Determines how nonconformant cells are handled. Valid values are: YES Set CLP bit of cell to 1 NO Discard cell"
+        },
+        "restrictions": "All parameters in this command are position-defined except the trafdsc_nblk parameters, which\nare name defined.",
+        "function": "To create a Traffic Descriptor. A specific instance of a Traffic Descriptor must be associated with\neach ATM connection that is either policing or creating an ATM cell stream.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/*\nENT-PROFILE-TRAFDSC:[tid]:aidtrafdsc:[ctag]::trafdsc_name,profile_type\n:\n[trafdsc_nblk]: */\n;",
+        "examples": [],
+        "category": "Memory Administration",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ ENT-OC12.pdf",
+        "command_code": "ENT-OC12",
+        "description": "Enter OC12 facility.",
+        "syntax": "ENT-OC12:[tid]:aidoc12:[ctag]:::[hif6_nblk]:[pst],[sst];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidoc12 Access identification code that identifies a high speed interface (OC12). The value can be preceded by AID=, but this is not required. Grouping is allowed. Enter the following format, replacing lowercase parameters with the values given: lgx-oc12s Line group OC12 facility where: lgx = LG1, LG2 oc12s = OC12, OC12A, OC12B",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "hif6_nblk": "STSPJNPSEL= STS1 selected for Negative (cont) and Positive PJC monitoring. The valid value range is 1...12. The Alcatel factory default is 1. SYNCMSGIN= Whether the synchronization message input is enabled. The valid values are: Y Yes N No (Alcatel factory default) SYNCMSGOUT= Whether the synchronization message output is enabled. Valid values are: Y Enabled N Not enabled (Alcatel factory default) DU Do not use for synchronization ISWAITDELAY= Allows the user to provision the Automatic In Service (IS) Wait Delay time in 15 minute intervals (0...288). A value of 288 is equivalent to 72 hours. A value of 0 allows automatic state transition from OOS-MA-AINS to IS and inhibits automatic state transition from OOS-MA to IS.",
+          "pst": "The desired primary state (condition) of the object entity. A null value means no change to the current state. Valid values are: IS In-Service (normal -NR, or abnormal -ANR is implied and determined by the NE) OOS Out-Of-Service (out-of-service due to provisioning memory-administration operations is implied) MA Memory Administration (OOS-MA is implied) MT Maintenance (OOS-MT is implied)",
+          "sst": "The secondary state to be activated (or stay active). The valid values are: AINS Automatic In Service (controllable). Automatic transition into in-service is allowed. (For certain types of objects, the circuit packet plugged-in event may cause the object to change automatically from MA-AS to an in-service state, provided the object is already assigned with appropriate attributes.)"
+        },
+        "restrictions": "",
+        "function": "",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* ENT-OC12:[tid]:aidoc12:[ctag]:::[hif6_nblk]:[pst],[sst] */\n;",
+        "examples": [],
+        "category": "Memory Administration",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ ED-OC12.pdf",
+        "command_code": "ED-OC12",
+        "description": "Edit OC12 facility.",
+        "syntax": "ED-OC12:[tid]:aidoc12:[ctag]::[frc_alcldflt]:[hif6_nblk]:[pst],[sst];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidoc12 Access identification code that identifies an OC12 facility. The value can be preceded by AID=, but this is not required. Grouping is allowed. Enter one of the following formats, replacing lowercase parameters with the values given: lgx-oc12s Line group where: lgx = LG1, LG2 oc12s = OC12, OC12A, OC12B ALL All of the above CUSTDFLT Customer-defined defaults",
+          "frc_alcldflt": "Reset customer-defined defaults to Alcatel factory defaults. Valid only when AID=CUSTDFLT. Valid values are: Y Reset N Do not reset If no value is specified, N is assumed.",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "hif6_nblk": "SYNCMSGIN= Whether the synchronization (cont) message input is enabled. Valid values are: Y Yes N No SYNCMSGOUT= Whether the synchronization message output is enabled, disabled, or not used for synchronization. Valid values are: Y Enabled N Not enabled DU Do not use ALWPMREPT= Allow Performance Monitoring Reports by Customer-defined default. Valid for AID of CUSTDFLT only. Valid values are: Y Allow N Do not allow ISWAITDELAY= Automatic Service (IS) Wait Delay Time in 15-minute intervals (0...288). A value of 288 is equivalent to 72 hours. A value of 0 inhibits Automatic State transition from OOS-MA to IS, and allows Automatic State transition from OOS-MA-AINS to IS immediately when signal is recovered.",
+          "pst": "Desired primary state (condition) of the object entity. Null means no change to the current value. A customer-defined default cannot be specified. Valid values are: IS In-Service (normal -NR, or abnormal -ANR is implied and determined by the NE) OOS Out-Of-Service (out-of-service due to provisioning memory-administration operations is implied) MA Memory Administration (OOS-MA is implied) MT Maintenance (OOS-MT is implied)",
+          "sst": "Secondary state to be activated (or stay active). Valid values are: AINS Automatic In Service (controllable). Automatic transition into \"in-service\" is allowed. (For certain types of objects, the circuit packet plugged-in event may cause the object to change automatically from MA-AS to an in-service state, provided the object is already assigned with appropriate attributes.) AINS-DEA Activate AINS state"
+        },
+        "restrictions": "All parameters in this command are position-defined except for the hif6_nblk parameter, which\nis name-defined.",
+        "function": "",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* ED-OC12:[tid]:aidoc12:[ctag]:::[hif6_nblk]:[pst],[sst] */\n;",
+        "examples": [],
+        "category": "Memory Administration",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": true
+      },
+      {
+        "source_file": "Command_ ENT-USRLAN.pdf",
+        "command_code": "ENT-USRLAN",
+        "description": "Enter User LAN.",
+        "syntax": "ENT-USRLAN:[tid]:aidusrlan:[ctag]:::[usrlan_nblk]:[pst],[sst];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidusrlan Access identification code that identifies a User LAN facility. The value can be preceded by AID=, but this is not required. Grouping is allowed. Enter the following format, replacing lowercase parameters with the values given: DGy-USRLAN-lannum User LAN drop group facility where: DGy = DG1, DG2, DG3 lannum = 1...4",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "usrlan_nblk": "MODE Transmission mode of the User LAN (cont) (Ethernet) facility. Valid values are: NRML Half duplex (initial database for customer defaults) FULLDPLX Full duplex PHYLAYER Physical layer used for the User LAN (Ethernet) facility. Valid values are: 10BASET 10Base-T (initial database default) 100BASETX 100Base-TX",
+          "pst": "Desired primary state (condition) of the object entity. Valid values are: IS In-Service (normal -NR, or abnormal -ANR is implied and determined by the NE) OOS Out-Of-Service (out-of-service due to provisioning memory-administration operations is implied) MA Memory Administration (OOS-MA is implied) MA Maintenance (OOS-MT is implied)",
+          "sst": "Secondary state to be activated (or stay active). Valid values are: AINS Automatic In Service (controllable). Automatic transition to in-service is allowed. (For certain types of objects, the circuit packet plugged-in event may cause the object to change automatically from MA-AS to an in-service state, provided the object is already assigned with appropriate attributes.) AINS-DEA Deactivates the AINS state"
+        },
+        "restrictions": "",
+        "function": "To assign a User LAN (Ethernet) facility.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* ENT-USRLAN:[tid]:aidusrlan:[ctag]:::[usrlan_nblk]:[pst],[sst] */\n;",
+        "examples": [],
+        "category": "Memory Administration",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ ED-STS3C.pdf",
+        "command_code": "ED-STS3C",
+        "description": "Edit STS3C.",
+        "syntax": "ED-STS3C:[tid]:aidstsp:[ctag]::[sts3cptype],[frc_alcldflt]:[sts_nblk]:[pst][,];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidstsp Access identification code that identifies a STS3C path. The value can be preceded by AID=, but this is not required. Grouping is allowed. Enter one of the following formats, replacing lowercase parameters with the values given: lgx-STS3C-r Line group STS3C path where: lgx = LG1, LG2 r = 1, 4, 7, 10 dgx-STS3C-1 Drop group STS3C path where: dgx = DG1, DG2, DG3 CUSTDFLT Customer-defined defaults",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "sts3cptype": "STS3C payload type. Valid values are: STS3C STS3C payload ATM ATM payload",
+          "frc_alcldflt": "Reset Customer-defined defaults to Alcatel factory defaults. Valid for AID of CUSTDFLT only. Valid values are: Y Reset N Don't reset If FRC_ALCLDFT is not specified in the ED-STS3C command, it is assumed to have a value of N.",
+          "sts_nblk": "PDI_SWITCH= Payload defect indication (cont) switching enabled (line group only). Valid values are: Y Enabled N Disabled ERDI= Whether Enhanced Remote Defect Indicator is generated or detected. Valid values are: Y Generate/detect N Don't generate/detect (default) NOTE: ERDI is available for the following units: HIF603, HIFB01, HIFG01, LIF404. SIGLBLMON= Signal label value (1...19) for monitoring. A value of 1 indicates a nonspecific payload. SSRXMODE= STS SPE pointer receive overwrite mode. Valid values are: THROUGH No translation (default) SONET Translates a received STM1 payload to STS3c payload SDH Translates a received STS3c payload to STM1 payload",
+          "pst": "Desired primary state (condition) of the object entity. A null value indicates no change in value after command is executed. A customer-defined default cannot be specified. Valid values are: IS In-Service (normal -NR, or abnormal -ANR is implied and determined by the NE) OOS Out-Of-Service (out-of-service due to provisioning memory-administration operations is implied) MA Memory Administration (OOS-MA is implied)"
+        },
+        "restrictions": "All parameters in this command are position-defined except the sts_nblk parameters, which are\nname-defined.",
+        "function": "",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* ED-STS3C:[tid]:aidstsp:[ctag]:::[sts_nblk]:[pst][,] */\n;",
+        "examples": [],
+        "category": "Memory Administration",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": true
+      },
+      {
+        "source_file": "Command_ ENT-BITS.pdf",
+        "command_code": "ENT-BITS",
+        "description": "Enter BITS.",
+        "syntax": "ENT-BITS:[tid]:aidbits:[ctag]:::[bits_nblk]:[pst][,];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidbits Access identification code that identifies a BITS source. The value can be preceded by AID=, but this is not required. Enter one of the following formats, replacing lowercase parameters with the values given: SYNCPRI Primary synchronization source SYNCSEC Secondary synchronization source",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "bits_nblk": "SYNCMSGIN= Whether the synchronization (cont) message input is enabled. Valid values are: Y Yes N No (Alcatel factory default) SYNCMSGOUT= Whether the synchronization message output is enabled. Valid values are: Y Enabled N Not enabled (Alcatel factory default) DU Do not use for synchronization",
+          "pst": "Desired primary state (condition) of the object entity. A null value means no change to the current state. Valid values are: IS In-Service (normal -NR, or abnormal -ANR is implied and determined by the NE) OOS Out-Of-Service (out-of-service due to provisioning memory-administration operations is implied) MA Memory Administration (OOS-MA is implied) MT Maintenance (OOS-MT is implied)"
+        },
+        "restrictions": "All parameters in this command are position-defined except bits_nblk, which is name-defined. If\nCLK equipment has not been provisioned since in normal condition, CLK will be assigned after\npower-up initialization.",
+        "function": "To enter the provisioning data associated with the BITS (Building Integrated Timing System).",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* ENT-BITS:[tid]:aidbits:[ctag]:::[bits_nblk]:[pst][,] */\n;",
+        "examples": [],
+        "category": "Memory Administration",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ RTRV-VCL.pdf",
+        "command_code": "RTRV-VCL",
+        "description": "Retrieve Virtual Channel Link (VCL).",
+        "syntax": "RTRV-VCL:[tid]:aidvcl:[ctag]::::[pstf],;",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidvcl Access identification code that identifies a VCL. The value can be preceded by AID=, but this is not required. Enter one of the following formats, replacing lowercase parameters with the values given: dgy-VCL-1-vpnum-vcnum Drop group VCL facility where: dgy = DG1, DG2, DG3 vpnum = 0...4095 vcnum = 17...65535 ALL All VCL facilities ALCLDFLT Alcatel factory default CUSTDFLT Customer-defined default",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "pstf": "Desired primary state (condition) of tentity. Valid values are: AS Assigned (default) IS In-Service (normal -NR, or abnormal -ANR is implied and determined by the NE) OOS Out-Of-Service (out-of-service due to provisioning memory-administration operations is implied) MA Memory Administration (OOS-MA is implied)"
+        },
+        "restrictions": "All parameters in this command are position-defined except vcl_nblk, which is name-defined.",
+        "function": "To retrieve the provisioning data and state associated with an assigned virtual channellink.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RTRV-VCL:[tid]:aidvcl:[ctag]::::[pstf], */\naidvcl::[vc_nblk]:pst,[sst],[ast]\n;",
+        "examples": [],
+        "category": "Memory Administration",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ RTRV-SYNCN.pdf",
+        "command_code": "RTRV-SYNCN",
+        "description": "Retrieve synchronization.",
+        "syntax": "RTRV-SYNCN:[tid]:aidsyncn:[ctag][::::,];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidsyncn Access identification code that identifies a clock type. The value can be preceded by AID=, but this is not required. Grouping is allowed. Enter one of the following formats, replacing lowercase parameters with the values given: NESYNC NE system timing, both A and B sides BITSSYNC BITS synchronization, both A and B sides BITSSYNCA BITS synchronization, A side only BITSSYNCB BITS synchronization, B side only ALL All of the above CUSTDFLT-syncn Customer-defined defaults ALCLDFLT-syncn Alcatel factory defaults where: syncn = NESYNC, BITSSYNC, ALL",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0."
+        },
+        "restrictions": "All parameters in this command are position-defined except syncn_nblk ,which is name-defined.",
+        "function": "To retrieve the clock reference list for the selected clock type.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RTRV-SYNCN:[tid]:aidsyncn:[ctag][::::,] */\n\"aidsyncn::[syncn_nblk]:pst,[sst],[ast]\"\n;",
+        "examples": [],
+        "category": "Memory Administration",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ RTRV-FFP-OC12.pdf",
+        "command_code": "RTRV-FFP-OC12",
+        "description": "Retrieve facility protection for OC12.",
+        "syntax": "RTRV-FFP-OC12:[tid]:aidoc12:[ctag][::::,];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidoc12 Access identification code that identifies an OC12 facility. The value can be preceded by AID=, but this is not required. Grouping is allowed. Enter one of the following formats, replacing lowercase parameters with the values given: lgx-OC12 OC12 facility where lgx = LG1, LG2 ALL All OC12 facilities CUSTDFLT Customer-defined default ALCLDFLT Alcatel factory default",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0."
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RTRV-FFP-OC12:[tid]:aidoc12:[ctag][::::,] */\n\"aidoc12ab:[ffp_nblk]\"\n;",
+        "examples": [],
+        "category": "Memory Administration",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ RTRV-NE-ATM.pdf",
+        "command_code": "RTRV-NE-ATM",
+        "description": "Retrieve Network Element ATM\nRestrictions:\nAll parameters in this command are position-defined except the atm_nblk parameters, which are\nname defined .",
+        "syntax": "RTRV-NE-ATM:[tid]:aidcom:[ctag]:;",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidcom Access identification code that identifies the common equipment or NE. The value can be preceded by AID=, but this is not required. Enter one of the following formats, replacing lowercase parameters with the values given: COM Common equipment CUSTDFLT Customer-defined defaults ALCLDFLT Alcatel factory defaults",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0."
+        },
+        "restrictions": "All parameters in this command are position-defined except the atm_nblk parameters, which are\nname defined .",
+        "function": "To retrieve provisioning data relevant to the system-wide ATM functionality common parameters.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RTRV-NE-ATM:[tid]:aidcom:[ctag]:; */\n\"aidcom::atm_nblk\"\n;",
+        "examples": [],
+        "category": "Memory Administration",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ ALW-PM-VPL.pdf",
+        "command_code": "ALW-PM-VPL",
+        "description": "Allow Performance Monitoring Virtual Path Link (VPL).",
+        "syntax": "ALW-PM-VPL:[tid]:aidvpl:[ctag]::[flow_type],,[dirn];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidvpl Access identification code that identifies a VPL facility. The value may be preceded by AID=, but this is not required. Enter one of the following formats, replacing lowercase parameters with the values given: dgy-VPL-1-vpnum Drop group VPL facility where: dgy = DG1, DG2, DG3 vpnum = 0...4095 ALL All of the above",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "flow_type": "Type of flow to be affected. Valid values are: SEG Segment flow CON Connection flow BOTH Both flows (default)",
+          "dirn": "Direction of the OAM cell process, including BOTH. Valid values are: RCV Receive direction TRMT Transmit direction (valid only if parent equipment is COMPAT LIFB01) BOTH Both directions (default)"
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To allow the activation of VP performance monitoring block process from a remote NE via the\nOAM activation process.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* ALW-PM-VPL:[tid]:aidvpl:[ctag]::[flow-type],,[dirn] */\n;",
+        "examples": [],
+        "category": "Memory Administration",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      }
+    ],
+    "System Maintenance": [
+      {
+        "source_file": "Command_ SET-PMMODE-STS1.pdf",
+        "command_code": "SET-PMMODE-STS1",
+        "description": "Set performance monitoring modes of an STS1 path.",
+        "syntax": "SET-PMMODE-STS1:[tid]:aidstsp_pmmode:[ctag]::[locn],[pmtypests],[pmstate],\n[pmdaystart];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidstsp_pmmode Access identification code that identifies a DS1. The value can be preceded by AID=, but this is not required. Enter one of the following formats, replacing lowercase parameters with the values given: dgx-STS1-1 where: dgx = DG1, DG2, DG3 ALL All LIF901 and LIFB01 equipped drop group cards CUSTDFLT Customer-defined defaults",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "locn": "Location where performance monitoring is reported. Grouping is allowed. Valid values are: FEND Far end NEND Near end BOTH Both locations (default)",
+          "pmtypests": "STS1 performance monitoring type. The value can be preceded by MONTYPE=, but this is not required. Valid values are: P Transport Path performance monitoring parameters",
+          "pmstate": "Whether the specified PM type was directed to turn ON (Alcatel factory default) or OFF",
+          "pmdaystart": "Hour (0...23) to start accumulating daily PM counts. Alcatel factory default is 0 (midnight). The defaults can be specified with the CUSTDFLT AID."
+        },
+        "restrictions": "",
+        "function": "To set STS1 performance monitoring modes associated with a STS1 path that terminates on a\nLIF901 or LIFB01.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* SET-PMMODE-STS1:[tid]:aidstsp_pmmode:[ctag]::[locn] */\n;",
+        "examples": [],
+        "category": "System Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ RTRV-PMMODE-EQPT.pdf",
+        "command_code": "RTRV-PMMODE-EQPT",
+        "description": "Retrieve performance monitoring mode of equipment.",
+        "syntax": "RTRV-PMMODE-EQPT:[tid]:aideqptsw:[ctag][::];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aideqptsw Access identification code that identifies an equipment unit. The value can be preceded by AID=, but this is not required. Enter one of the following formats, replacing lowercase parameters with the values given: pba Common unit where: pba = NEP, CLK, VSCC dgx-DMI DMI unit where: dgx = DG1, DG2, DG3 dgx-VTG-vtgport Main VTG unit where: dgx = DG1, DG2, DG3 vtgport = 1...7 (grouping and ranging allowed) aideqptsw dgx-VTG-P Protection VTG unit where: dgx = (cont) DG1, DG2, DG3 dgx-LIF LIF unit where: dgx = DG1, DG2, DG3 dgx-LDR-ldrportLDR unit where: dgx = DG1, DG2, DG3 ldrport = 1...4 (grouping and ranging allowed) ALL All of the above CUSTDFLT-eqpt Customer-defined defaults ALCLDFLT-eqpt Alcatel factory defaults where: eqpt = ALL, CLK, DMI, LDR, LIF, NEP, VSCC, VTG",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0."
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To retrieve performance monitoring mode on specified equipment.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RTRV-PMMODE-EQPT:[tid]:aideqptsw:[ctag][::] */\n\"aideqptsw:,,,[pmdaystart]\"\n;",
+        "examples": [],
+        "category": "System Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ RTRV-HDR.pdf",
+        "command_code": "RTRV-HDR",
+        "description": "Retrieve NE header.",
+        "syntax": "RTRV-HDR:[tid]::[ctag]:::[pc];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null.",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "pc": "Privilege code. The only valid value is PC. If this value is specified, additional response parameters are displayed."
+        },
+        "restrictions": "All parameters in this command are position-defined. The engineering release is omitted if its\nvalue is zero. The swver is provided only when the pc parameter is included.",
+        "function": "To retrieve the NE header information ( tid ). The user does not have to be logged on to enter\nthis command and receive a response.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RTRV-HDR:[tid]::[ctag]:::[pc] */\n;\nNormal Response (with pc included):\nsid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RTRV-HDR:[tid]::[ctag]:::[pc] */\n\"[tid],[adstid],[model],[netype],[ntfcncde],[srveff],[psid],[swver]\"\n;",
+        "examples": [],
+        "category": "System Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      },
+      {
+        "source_file": "Command_ RTRV-PMMODE-T1.pdf",
+        "command_code": "RTRV-PMMODE-T1",
+        "description": "Retrieve performance monitoring of DS1.",
+        "syntax": "RTRV-PMMODE-T1:[tid]:aidt1:[ctag]::[locn];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidt1 Access identification code that identifies a DS1. The value can be preceded by AID=, but this is not required. Grouping is allowed. Enter one of the following formats, replacing lowercase parameters with the values given: dgx-T1-ds1port Sequential VT1/T1 dgx-T1-vtgrp-vtno Grouped VT1/T1 where: dgx = DG1, DG2, DG3 ds1port = 1...28 vtgrp = 1...7 vtno = 1...4 ALL All T1 facilities CUSTDFLT Customer-defined defaults ALCLDFLT Alcatel factory defaults NOTE: The T1/VT1 AID format is determined by the VTFORMAT parameter of the SET-NE-ALL command. The RTRV-COND-COM command reports the AID format currently used by the NE.",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "locn": "Location where performance monitoring is reported. Valid values are: FEND Far end NEND Near end"
+        },
+        "restrictions": "All parameters in this command are position-defined.",
+        "function": "To retrieve DS1 performance monitoring mode of a facility.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RTRV-PMMODE-T1:[tid]:aidt1:[ctag]::[locn] */\n\"aidt1:[locn],pmtype,pmstate,[pmdaystart]\"\n;",
+        "examples": [],
+        "category": "System Maintenance",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      }
+    ],
+    "Network Maintenance Application: Add/Drop, Rings": [
+      {
+        "source_file": "Command_ RTRV-ALM-USRLAN.pdf",
+        "command_code": "RTRV-ALM-USRLAN",
+        "description": "Retrieve alarm User LAN.",
+        "syntax": "RTRV-ALM-USRLAN:[tid]:aidusrlan:[ctag]::[ntfcncde],[condusrlan],[srveff],,\n[dirn],[tmper];",
+        "parameters": {
+          "tid": "Identification of the target NE (1...20 characters). The NE SID code is the recommended value. The default value is null. aidusrlan Access identification code that identifies a User LAN facility. The value can be preceded by AID=, but this is not required. Groupingand ranging are allowed. Enter one of the following formats, replacing lowercase parameters with the values given: dgy-USRLAN-lannum User LAN drop group facility where: dgy = 1...3 lannum = 1...4 ALL All User LAN facilities",
+          "ctag": "Correlation tag (1...6 characters) that links an input command with associated output responses. The default is 0.",
+          "ntfcncde": "Notification code associated with a signal alarm condition. Valid values are: CR Critical alarm MJ Major alarm MN Minor alarm",
+          "condusrlan": "Condition type of the User LAN. The value can be preceded by CONDTYPE=, but this is not required. Grouping is allowed. Valid values are: INHPMREPTNDC Inhibit all NDC scheduled PM reports INHPMREPTQOS Inhibit all QOS scheduled PM reports LOS Loss of signal MTCE Removed from service for maintenance T-CSERR Threshold violation for carrier sense errors T-DISFR Threshold violation for frames discarded due to no buffer available T-FRCRC Threshold violation for total received frames with bad FCS T-LFR Threshold violation for total received frames longer than maximum T-EXCOL Threshold violation for excessive transmit collisions T-LFRCOL Threshold violation for late transmit collisions",
+          "srveff": "Effect on service caused by the alarm condition. The value can be preceded by SRVEFF=, but this is not required. Valid values are: SA Service-affecting condition. Immediate action required. NSA Non-service-affecting condition",
+          "dirn": "Direction of performance monitoring. Grouping is allowed. Valid values are: RCV Receive direction TRMT Transmit direction",
+          "tmper": "Duration of performance monitoring. Valid values are: 1-DAY One day 15-MIN Fifteen minutes"
+        },
+        "restrictions": "All parameters of this command are position-defined.",
+        "function": "To retrieve the current alarms of a User LAN (Ethernet) facility. The alarms to be retrieved can\nbe specified by using the parameters as a filter. Existing alarms satisfying all input parameters\nare reported in the response message.",
+        "response_format": "sid yy-mm-dd hh:mm:ss\nM c COMPLD\n/* RTRV-ALM-USRLAN:[tid]:aidusrlan:[ctag]::[ntfcncde],[condusrlan],\n*/\n/* [srveff],,[dirn],[tmper] */\n\"aidusrlan,aidtype:ntfcncde,condusrlan,srveff,,,,[dirn],[tmper]:[condd\nescr],\n[aiddet]:,[tblislt]\"\n;",
+        "examples": [],
+        "category": "Network Maintenance Application: Add/Drop, Rings",
+        "subcategory": "Add/Drop, Rings",
+        "safety_level": "safe",
+        "service_affecting": false
+      }
+    ]
+  }
+}

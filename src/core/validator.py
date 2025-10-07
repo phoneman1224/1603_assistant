@@ -6,7 +6,7 @@ def _load(path):
         return json.load(f)
 
 def _schema_for(data_path, root):
-    p = os.path.normpath(data_path)
+    p = os.path.normpath(data_path).replace(os.sep, '/')  # Normalize to forward slashes for pattern matching
     if "/catalogs/tl1/" in p:
         return os.path.join(root, "data/shared/schemas", "tl1_catalog.schema.json")
     if "/catalogs/dlp/" in p and p.endswith("dlp_index.json"):

@@ -9,7 +9,10 @@ def main():
     ap.add_argument("--find", help="Find by id/code (e.g., RTRV-ATTR-T1, DLP-203, TAP-047)")
     ap.add_argument("--parse", help="Parse a TL1 raw test file")
     args = ap.parse_args()
-    root = os.path.expanduser("~/1603_assistant")
+    
+    # Use current working directory or script directory for root path
+    script_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    root = script_dir  # Use the repository root
 
     if args.validate:
         results = validator.validate_all(root)
