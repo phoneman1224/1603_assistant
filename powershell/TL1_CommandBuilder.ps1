@@ -1301,23 +1301,29 @@ $CommandBox.Add_SelectionChanged({
 
 # ---- Parameter fields with enhanced PDF information
 function Refresh-OptionalFields{
-  $OptionalPanel.Children.Clear()
-  $sel=$CommandBox.SelectedItem
-  if(-not $sel){return}
-  $entry=$sel.Tag
-  if(-not $entry){return}
-  
-  # Show source information if from PDF
-  if ($entry.SourceFile) {
-    $sourceHeader=New-Object System.Windows.Controls.TextBlock
-    $platformInfo = if ($entry.Platform) { " ($($entry.Platform))" } else { "" }
-    $sourceHeader.Text="Source: $($entry.SourceFile)$platformInfo"
-    $sourceHeader.FontStyle="Italic"
-    $sourceHeader.Foreground="#6b7280"
-    $sourceHeader.FontSize=10
-    $sourceHeader.Margin="0,0,0,8"
-    [void]$OptionalPanel.Children.Add($sourceHeader)
-  }
+  try {
+    if (-not $OptionalPanel) {
+      Write-Log "OptionalPanel not initialized in Refresh-OptionalFields" "ERROR"
+      return
+    }
+    
+    $OptionalPanel.Children.Clear()
+    $sel=$CommandBox.SelectedItem
+    if(-not $sel){return}
+    $entry=$sel.Tag
+    if(-not $entry){return}
+    
+    # Show source information if from PDF
+    if ($entry.SourceFile) {
+      $sourceHeader=New-Object System.Windows.Controls.TextBlock
+      $platformInfo = if ($entry.Platform) { " ($($entry.Platform))" } else { "" }
+      $sourceHeader.Text="Source: $($entry.SourceFile)$platformInfo"
+      $sourceHeader.FontStyle="Italic"
+      $sourceHeader.Foreground="#6b7280"
+      $sourceHeader.FontSize=10
+      $sourceHeader.Margin="0,0,0,8"
+      [void]$OptionalPanel.Children.Add($sourceHeader)
+    }
   
   # Show detailed description if available
   if ($entry.DetailedDesc -and $entry.DetailedDesc.Trim() -ne "") {
@@ -1624,6 +1630,9 @@ function Refresh-OptionalFields{
     $respText.TextWrapping="Wrap"
     $respText.Margin="0,2,0,0"
     [void]$OptionalPanel.Children.Add($respText)
+  }
+  } catch {
+    Write-Log "Error in Refresh-OptionalFields: $($_.Exception.Message)" "ERROR"
   }
 }
 function Build-OptionalList{
