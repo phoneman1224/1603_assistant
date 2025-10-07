@@ -1,174 +1,97 @@
-# 1603 Assistant Documentation Package
+# 1603 Assistant
 
-All the files you need to get GitHub Copilot to build your GUI application.
+A comprehensive tool for managing and interacting with 1603 platform documentation and commands.
 
-## Files Included
+## 🚀 Quick Start
 
-### 📋 Documentation Files (Add to Repository)
+### Windows Users
+1. Clone this repository
+2. Double-click `Start-TL1.cmd` to launch the GUI
+3. Enter Host/IP and Port, then click Connect
+4. Build and send TL1 commands
 
-1. **tl1_syntax.md** (61 KB)
-   - Complete TL1 command syntax reference
-   - **CRITICAL vacant parameter rules**
-   - Command format and examples
-   - Best practices
-   - Location: `data/platforms/alcatel_1603/tl1_syntax.md`
+### Linux/Unix Users
+1. Clone this repository
+2. Run the bootstrap script:
+   ```bash
+   ./scripts/linux_bootstrap.sh
+   ```
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-2. **command_examples.json** (8 KB)
-   - JSON database of TL1 commands
-   - Categorized by function
-   - Parameter definitions
-   - Response codes
-   - Location: `data/platforms/alcatel_1603/commands/command_examples.json`
-
-3. **TAP-001.md** (8 KB)
-   - Sample troubleshooting procedure
-   - Alarm identification guide
-   - Step-by-step instructions
-   - AI assistant triggers
-   - Location: `data/platforms/alcatel_1603/tap_procedures/TAP-001.md`
-
-4. **DIRECTORY_STRUCTURE.md** (5 KB)
-   - Recommended file organization
-   - Directory layout
-   - File descriptions
-   - Integration points
-   - Location: `data/platforms/alcatel_1603/DIRECTORY_STRUCTURE.md`
-
-### 📝 Instructions
-
-5. **COPILOT_PROMPT.txt** (12 KB)
-   - **COPY THIS INTO GITHUB COPILOT CHAT**
-   - Complete build instructions
-   - Technical specifications
-   - All requirements
-   - This is what Copilot needs to build your GUI
-
-6. **QUICK_START.md** (6 KB)
-   - Step-by-step guide
-   - How to add files to repo
-   - How to use Copilot
-   - Troubleshooting tips
-   - Success criteria
-
-## Quick Start
-
-### 1. Add Documentation to Your Repo
+## 📁 Repository Structure
 
 ```
-1603_assistant/
-└── data/
-    └── platforms/
-        └── alcatel_1603/
-            ├── tl1_syntax.md              ← Add
-            ├── DIRECTORY_STRUCTURE.md     ← Add
-            ├── commands/
-            │   └── command_examples.json  ← Add
-            └── tap_procedures/
-                └── TAP-001.md             ← Add
+.
+├── src/               # Core Python source code
+├── data/             # Platform documentation and schemas
+│   ├── platforms/    # Platform-specific files
+│   └── shared/       # Shared resources
+├── docs/             # Project documentation
+├── scripts/          # Utility and automation scripts
+├── tests/            # Test cases and vectors
+└── powershell/       # Windows PowerShell GUI components
 ```
 
-### 2. Commit to GitHub
+## 🛠️ Setup and Configuration
 
-```bash
-git add data/platforms/alcatel_1603/
-git commit -m "Add documentation for 1603 Assistant"
-git push origin main
-```
+1. **Platform Documentation**
+   - Documentation is organized under `data/platforms/{platform_id}/`
+   - Each platform follows a standard structure for commands and docs
+   - Use `scripts/update_indices.py` to maintain documentation indices
 
-### 3. Tell GitHub Copilot to Build
+2. **Development Environment**
+   - Python 3.8+ required for core functionality
+   - PowerShell 5.1+ required for Windows GUI
+   - Additional dependencies listed in `requirements.txt`
 
-Open GitHub Copilot Chat and paste the contents of:
-**COPILOT_PROMPT.txt**
+3. **Automation Tools**
+   - Documentation sync: `scripts/sync_google_drive.sh`
+   - Repository cleanup: `scripts/cleanup.sh`
+   - Scheduled maintenance: `scripts/setup_scheduled_cleanup.sh`
 
-### 4. Test Your Application
+## 🔄 Maintenance
 
-```bash
-python launch.py
-```
+### Automated Cleanup
+- Weekly cleanup runs every Sunday at 2 AM
+- Manual cleanup: `./scripts/cleanup.sh`
+- Schedule configuration in `.github/workflows/scheduled-cleanup.yml`
 
-## What Copilot Will Build
+### Documentation Updates
+1. Sync from source: `./scripts/sync_google_drive.sh`
+2. Organize files: `python scripts/organize_files.py`
+3. Update indices: `python scripts/update_indices.py`
 
-✅ **Main GUI Window** with:
-- Connection panel (host, port, connect/disconnect)
-- TL1 command builder (dropdowns + inputs)
-- Response display area
-- AI assistant panel
+## 🧪 Testing
 
-✅ **Proper Vacant Parameter Handling:**
-- Empty parameters = `::` (no text)
-- Never "null", "empty", or placeholders
+1. Run test vectors:
+   ```bash
+   python -m pytest tests/
+   ```
+2. Check test coverage reports in `tests/coverage/`
 
-✅ **Telnet Connection:**
-- Connect to equipment on port 10201
-- Send TL1 commands
-- Receive and display responses
+## 📚 Documentation
 
-✅ **AI Assistant:**
-- Natural language queries
-- TAP/DLP procedure matching
-- Command suggestions
-- Step-by-step guidance
+- Project overview: `docs/`
+- Platform specifics: `data/platforms/README.md`
+- API documentation: `docs/api/`
 
-## Key Features
+## 🤝 Contributing
 
-### Command Builder
-- Select verb, modifier, object from dropdowns
-- Input TID, AID, CTAG as needed
-- Preview command before sending
-- **Vacant parameters stay empty!**
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests
+5. Submit a pull request
 
-### AI Assistant Triggers
-- "I see alarms" → Load TAP-001
-- "provision T1" → Show provisioning guide
-- "OC12 troubleshooting" → Suggest diagnostics
-- "equipment failure" → Load equipment TAPs
+## 📄 License
 
-## Critical Success Criteria
+This project is proprietary and confidential.
 
-The #1 requirement is **correct vacant parameter handling**:
+## 🔍 Additional Resources
 
-✅ Correct:
-```
-RTRV-ALM-ALL:::123::;           # TID and AID vacant
-RTRV-ALM-ALL:SITE01::456::;     # AID vacant
-```
-
-❌ Wrong:
-```
-RTRV-ALM-ALL:TID:AID:123::;     # Never!
-RTRV-ALM-ALL:null:null:123::;   # Never!
-```
-
-## File Sizes
-
-- tl1_syntax.md: ~61 KB
-- command_examples.json: ~8 KB  
-- TAP-001.md: ~8 KB
-- DIRECTORY_STRUCTURE.md: ~5 KB
-- COPILOT_PROMPT.txt: ~12 KB
-- QUICK_START.md: ~6 KB
-- **Total: ~100 KB**
-
-## Next Steps
-
-1. ✅ Download all files
-2. ✅ Add to your repository structure
-3. ✅ Commit and push to GitHub
-4. ✅ Open Copilot Chat
-5. ✅ Paste COPILOT_PROMPT.txt
-6. ✅ Let Copilot build the GUI
-7. ✅ Test and refine
-
-## Questions?
-
-If Copilot doesn't build correctly:
-- Make sure files are committed to the repo
-- Reference specific files in your prompts
-- Point out the vacant parameter rules explicitly
-- Ask Copilot to "read tl1_syntax.md"
-
-## Ready to Build!
-
-You have everything you need. Follow the QUICK_START.md guide and you'll have a working GUI in minutes.
-
-Good luck! 🚀
+- Command reference: `data/platforms/{platform_id}/commands/index.json`
+- Schema documentation: `data/shared/schemas/`
+- Troubleshooting guides: `docs/troubleshooting.md`

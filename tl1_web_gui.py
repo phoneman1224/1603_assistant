@@ -2,6 +2,7 @@
 """
 TL1 Assistant - Web-based GUI with Telnet Backend
 A hybrid solution that provides a web interface while maintaining direct device communication
+Version: 1.0.0
 """
 
 import json
@@ -15,6 +16,11 @@ from urllib.parse import urlparse, parse_qs
 import socket
 import sys
 import time
+
+# Version information
+__version__ = "1.0.0"
+__build_date__ = "2025-10-07"
+__build_number__ = "001"
 
 class TL1Backend:
     """Handles TL1 device communication via Telnet"""
@@ -102,6 +108,8 @@ class TL1WebHandler(SimpleHTTPRequestHandler):
             self.serve_commands_api()
         elif parsed_url.path == '/api/status':
             self.serve_status_api()
+        elif parsed_url.path == '/api/version':
+            self.serve_version_api()
         else:
             # Serve static files (CSS, JS, etc.)
             super().do_GET()
@@ -162,6 +170,16 @@ class TL1WebHandler(SimpleHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
         self.wfile.write(json.dumps(status).encode('utf-8'))
+    
+    def serve_version_api(self):
+        """Serve version information"""
+        version_info = load_version_info()
+        
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.end_headers()
+        self.wfile.write(json.dumps(version_info).encode('utf-8'))
     
     def handle_connect(self, data):
         """Handle connection request"""
@@ -237,12 +255,18 @@ class TL1WebHandler(SimpleHTTPRequestHandler):
     
     def generate_html_page(self):
         """Generate the main HTML page"""
+        # Load version information
+        version_info = load_version_info()
+        version_str = version_info.get('version', '1.0.0')
+        build_str = version_info.get('build_number', '001')
+        date_str = version_info.get('build_date', '2025-10-07')
+        
         return """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TL1 Assistant</title>
+    <title>TL1 Assistant v""" + version_str + """</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
@@ -250,6 +274,7 @@ class TL1WebHandler(SimpleHTTPRequestHandler):
         .header { background: #2563eb; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
         .header h1 { font-size: 24px; margin-bottom: 5px; }
         .header p { opacity: 0.9; }
+        .header .version-info { font-size: 12px; opacity: 0.8; margin-top: 10px; }
         
         .main-grid { display: grid; grid-template-columns: 300px 1fr; gap: 20px; }
         .sidebar { background: white; border-radius: 8px; padding: 20px; height: fit-content; }
@@ -304,6 +329,11 @@ class TL1WebHandler(SimpleHTTPRequestHandler):
         <div class="header">
             <h1>🚀 TL1 Assistant</h1>
             <p>Web-based GUI for 1603 SM/SMX Network Elements</p>
+            <div class="version-info">
+                Version """ + version_str + """ • 
+                Build """ + build_str + """ • 
+                """ + date_str + """
+            </div>
         </div>
         
         <div class="main-grid">
@@ -435,6 +465,7 @@ Ready to send TL1 commands...
                 
                 const commandsDiv = document.createElement('div');
                 commandsDiv.className = 'tree-commands';
+                commandsDiv.style.display = 'none'; // Start collapsed
                 
                 categories[category].forEach(cmd => {
                     const cmdDiv = document.createElement('div');
@@ -484,8 +515,14 @@ Ready to send TL1 commands...
             // Build parameter inputs based on schema
             if (selectedCommand.paramSchema) {
                 Object.entries(selectedCommand.paramSchema).forEach(([param, schema]) => {
-                    const isRequired = selectedCommand.requires && selectedCommand.requires.includes(param);
-                    const isOptional = selectedCommand.optional && selectedCommand.optional.includes(param);
+                    const isRequired = selectedCommand.requires && 
+                        (selectedCommand.requires.includes(param) || 
+                         selectedCommand.requires.includes(param.toLowerCase()) ||
+                         selectedCommand.requires.includes(param.toUpperCase()));
+                    const isOptional = selectedCommand.optional && 
+                        (selectedCommand.optional.includes(param) ||
+                         selectedCommand.optional.includes(param.toLowerCase()) ||
+                         selectedCommand.optional.includes(param.toUpperCase()));
                     
                     html += `<div class="param-group">`;
                     html += `<label for="param-${param.toLowerCase()}">`;
@@ -531,19 +568,30 @@ Ready to send TL1 commands...
             
             let command = selectedCommand.syntax || selectedCommand.id;
             
+            // Debug: Log the original command
+            console.log('Original command:', command);
+            
             // Get parameter values from form inputs
             if (selectedCommand.paramSchema) {
                 Object.keys(selectedCommand.paramSchema).forEach(param => {
                     const input = document.getElementById(`param-${param.toLowerCase()}`);
-                    const value = input ? input.value : '';
-                    const placeholder = `[${param.toLowerCase()}]`;
+                    const value = input ? input.value.trim() : '';
                     
-                    // Replace parameter placeholders with actual values
-                    const regex = new RegExp(`\\[${param.toLowerCase()}\\]`, 'gi');
-                    command = command.replace(regex, value || placeholder);
+                    // Create pattern to match lowercase placeholder in syntax
+                    const lowerParam = param.toLowerCase();
+                    const placeholder = `[${lowerParam}]`;
+                    
+                    console.log(`Processing param: ${param} -> ${lowerParam}, placeholder: ${placeholder}, value: "${value}"`);
+                    
+                    if (value) {
+                        // Use simple string replace instead of regex
+                        command = command.replaceAll(placeholder, value);
+                        console.log(`After replacing ${placeholder} with ${value}: ${command}`);
+                    }
                 });
             }
             
+            console.log('Final command:', command);
             document.getElementById('command-preview').textContent = command;
         }
         
@@ -683,6 +731,29 @@ def load_commands_data():
         print(f"❌ Error loading commands: {e}")
         return {}
 
+def load_version_info():
+    """Load version information from version.json"""
+    version_file = Path(__file__).parent / "version.json"
+    
+    default_version = {
+        "version": __version__,
+        "build_date": __build_date__,
+        "build_number": __build_number__,
+        "release_name": "Initial Release"
+    }
+    
+    if not version_file.exists():
+        return default_version
+    
+    try:
+        with open(version_file, 'r', encoding='utf-8') as f:
+            version_data = json.load(f)
+            # Merge with defaults to ensure all fields exist
+            return {**default_version, **version_data}
+    except Exception as e:
+        print(f"⚠️  Error loading version info: {e}")
+        return default_version
+
 def find_free_port(start_port=8080):
     """Find a free port starting from start_port"""
     for port in range(start_port, start_port + 100):
@@ -696,7 +767,12 @@ def find_free_port(start_port=8080):
 
 def main():
     """Main application entry point"""
+    # Load and display version information
+    version_info = load_version_info()
     print("🚀 Starting TL1 Assistant Web GUI...")
+    print(f"   Version: {version_info.get('version', '1.0.0')}")
+    print(f"   Build: {version_info.get('build_number', '001')} ({version_info.get('build_date', '2025-10-07')})")
+    print("")
     
     # Load commands data
     commands_data = load_commands_data()

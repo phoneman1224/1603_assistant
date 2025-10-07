@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "command_categories": {
     "alarm_management": {
       "description": "Commands for retrieving and managing alarms",
@@ -230,3 +231,97 @@
     "SROF": "Status, Resource Out of Service"
   }
 }
+=======
+  "metadata": {
+    "title": "TL1 Command Examples",
+    "description": "Common TL1 command examples for 1603 SM/SMX systems",
+    "version": "1.0",
+    "platforms": ["1603 SM", "1603 SMX"]
+  },
+  "examples": {
+    "basic_commands": {
+      "login": {
+        "command": "ACT-USER",
+        "syntax": "ACT-USER:[TID]:[UID]:[CTAG]::PID;",
+        "example": "ACT-USER:NE01:ADMIN:1::PASSWORD;",
+        "description": "Login to the system",
+        "response": "NE01 25-10-07 14:30:00 M 1 COMPLD"
+      },
+      "logout": {
+        "command": "CANC-USER",
+        "syntax": "CANC-USER:[TID]:[UID]:[CTAG]::;",
+        "example": "CANC-USER:NE01:ADMIN:2::;",
+        "description": "Logout from the system",
+        "response": "NE01 25-10-07 14:31:00 M 2 COMPLD"
+      },
+      "retrieve_header": {
+        "command": "RTRV-HDR",
+        "syntax": "RTRV-HDR:[TID]::[CTAG]::;",
+        "example": "RTRV-HDR:NE01::3::;",
+        "description": "Retrieve system header information",
+        "response": "NE01 25-10-07 14:32:00 M 3 COMPLD\n   \"NE01:1603 SM:R12.3.4:25-10-07:14:32:00\""
+      }
+    },
+    "monitoring_commands": {
+      "retrieve_alarms": {
+        "command": "RTRV-ALM-ALL",
+        "syntax": "RTRV-ALM-ALL:[TID]::[CTAG]::;",
+        "example": "RTRV-ALM-ALL:NE01::4::;",
+        "description": "Retrieve all active alarms",
+        "response": "NE01 25-10-07 14:33:00 M 4 COMPLD\n   \"1-1-1:CR,SA,12-25,\"\"LOS\"\"\"\n   \"1-2-3:MN,NSA,10-01,\"\"AIS\"\"\""
+      },
+      "retrieve_pm": {
+        "command": "RTRV-PM-OC12",
+        "syntax": "RTRV-PM-OC12:[TID]:[AID]:[CTAG]::;",
+        "example": "RTRV-PM-OC12:NE01:OC12-1-1:5::;",
+        "description": "Retrieve performance monitoring data for OC12",
+        "response": "NE01 25-10-07 14:34:00 M 5 COMPLD\n   \"OC12-1-1:::ES=0,SES=0,UAS=0,CV=5,FC=0\""
+      }
+    },
+    "configuration_commands": {
+      "provision_oc12": {
+        "command": "ENT-OC12",
+        "syntax": "ENT-OC12:[TID]:[AID]:[CTAG]::;",
+        "example": "ENT-OC12:NE01:OC12-1-2:6::;",
+        "description": "Provision an OC12 port",
+        "response": "NE01 25-10-07 14:35:00 M 6 COMPLD"
+      },
+      "delete_oc12": {
+        "command": "DLT-OC12",
+        "syntax": "DLT-OC12:[TID]:[AID]:[CTAG]::;",
+        "example": "DLT-OC12:NE01:OC12-1-2:7::;",
+        "description": "Delete an OC12 port",
+        "response": "NE01 25-10-07 14:36:00 M 7 COMPLD"
+      }
+    },
+    "maintenance_commands": {
+      "operate_loopback": {
+        "command": "OPR-LPBK-T1",
+        "syntax": "OPR-LPBK-T1:[TID]:[AID]:[CTAG]::;",
+        "example": "OPR-LPBK-T1:NE01:T1-1-1-1:8::;",
+        "description": "Operate loopback on T1 circuit",
+        "response": "NE01 25-10-07 14:37:00 M 8 COMPLD"
+      },
+      "release_loopback": {
+        "command": "RLS-LPBK-T1", 
+        "syntax": "RLS-LPBK-T1:[TID]:[AID]:[CTAG]::;",
+        "example": "RLS-LPBK-T1:NE01:T1-1-1-1:9::;",
+        "description": "Release loopback on T1 circuit",
+        "response": "NE01 25-10-07 14:38:00 M 9 COMPLD"
+      }
+    },
+    "common_errors": {
+      "deny": {
+        "code": "DENY",
+        "example": "NE01 25-10-07 14:39:00 M 10 DENY\n   ERCD=\"ICNV\"\n   \"Invalid Command\"",
+        "description": "Command denied due to invalid syntax or permissions"
+      },
+      "partial": {
+        "code": "PRTL",
+        "example": "NE01 25-10-07 14:40:00 M 11 PRTL\n   \"OC12-1-1:::Partial completion\"",
+        "description": "Command partially completed"
+      }
+    }
+  }
+}
+>>>>>>> 3ce9393 (Release: v1.0.0 - Command builder bugfix, collapsed categories, and updated release packages)
