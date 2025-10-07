@@ -663,7 +663,7 @@ function Invoke-Playbook {
 
 # Initial load with platform from settings
 $global:CurrentPlatform = $global:Settings.UI.Platform
-$Categories = Load-TL1Commands -selectedPlatform $global:CurrentPlatform
+$global:Categories = Load-TL1Commands -selectedPlatform $global:CurrentPlatform
 
 # -------------------- LIGHT THEME XAML --------------------
 $xaml=@"
@@ -1132,11 +1132,11 @@ function Populate-CategoryTree {
     $CommandBox.Items.Clear()
     $CmdDesc.Text = "Select a system and category to begin"
     
-    $Categories.Keys | ForEach-Object {
+    $global:Categories.Keys | ForEach-Object {
       $cat=$_
       $catNode=New-Object System.Windows.Controls.TreeViewItem
-      $catNode.Header="$cat ($(($Categories[$cat]).Count) commands)"
-      foreach($entry in $Categories[$cat]){
+      $catNode.Header="$cat ($(($global:Categories[$cat]).Count) commands)"
+      foreach($entry in $global:Categories[$cat]){
         $cmdNode=New-Object System.Windows.Controls.TreeViewItem
         $cmdNode.Header=$entry.Name
         $cmdNode.Tag=$entry
@@ -1145,7 +1145,7 @@ function Populate-CategoryTree {
       [void]$CategoryTree.Items.Add($catNode)
     }
     
-    Write-Log "Category tree populated with $($Categories.Keys.Count) categories for $global:CurrentPlatform"
+    Write-Log "Category tree populated with $($global:Categories.Keys.Count) categories for $global:CurrentPlatform"
 }
 
 # Initial tree population
@@ -1167,9 +1167,15 @@ $SystemBox.Add_SelectionChanged({
             # Reload commands for new platform
             try {
                 $global:Categories = Load-TL1Commands -selectedPlatform $newPlatform
+                Write-Log "Reloaded categories: $($global:Categories.Keys.Count) categories for $newPlatform"
+                
+                # Force tree refresh
                 Populate-CategoryTree
-                $CmdDesc.Text = "Platform changed to $newPlatform. Select a category to view commands."
+                
+                $totalCommandsLoaded = ($global:Categories.Values | ForEach-Object { $_.Count } | Measure-Object -Sum).Sum
+                $CmdDesc.Text = "Platform changed to $newPlatform. Loaded $totalCommandsLoaded commands. Select a category to view commands."
                 $CmdDesc.Foreground = "#15803d"  # Green
+                Write-Log "Platform switch complete: $totalCommandsLoaded commands loaded for $newPlatform"
             } catch {
                 Write-Log "Error loading commands for ${newPlatform}: $_" "ERROR"
                 $CmdDesc.Text = "Error loading commands for $newPlatform. Check debug log."
