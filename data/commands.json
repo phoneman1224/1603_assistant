@@ -1,0 +1,2561 @@
+{
+  "metadata": {
+    "version": "5.0",
+    "lastUpdate": "2025-10-07",
+    "totalCommands": 56,
+    "platforms": [
+      "1603 SM",
+      "1603 SMX"
+    ],
+    "description": "Real TL1 command database built from platform files",
+    "source": "Platform index files uploaded by user"
+  },
+  "categories": {
+    "System Administration": {
+      "description": "System configuration, user management, and basic administration",
+      "icon": "settings"
+    },
+    "Alarm Management": {
+      "description": "Alarm retrieval, acknowledgment, and suppression",
+      "icon": "alarm"
+    },
+    "Testing & Diagnostics": {
+      "description": "Loopbacks, tests, and diagnostic commands",
+      "icon": "diagnostics"
+    },
+    "Performance Monitoring": {
+      "description": "Performance data collection and retrieval",
+      "icon": "chart"
+    },
+    "Service Provisioning": {
+      "description": "Cross-connects, circuits, and service configuration",
+      "icon": "network"
+    },
+    "Security & Access": {
+      "description": "Security settings, certificates, and access control",
+      "icon": "security"
+    }
+  },
+  "commands": {
+    "ALW-LPBK-T1": {
+      "id": "ALW-LPBK-T1",
+      "displayName": "ALW LPBK-T1",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Alarm Management",
+      "verb": "ALW",
+      "object": "LPBK-T1",
+      "modifier": null,
+      "description": " ALW LPBK T1",
+      "syntax": "ALW-LPBK-T1:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[LPBK-T1 data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "ALW-LPBK-T1:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ ALW-LPBK-T1.pdf",
+      "original_category": "alarms"
+    },
+    "ALW-SWDX-EQPT": {
+      "id": "ALW-SWDX-EQPT",
+      "displayName": "ALW SWDX-EQPT",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Alarm Management",
+      "verb": "ALW",
+      "object": "SWDX-EQPT",
+      "modifier": null,
+      "description": " ALW SWDX EQPT",
+      "syntax": "ALW-SWDX-EQPT:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[SWDX-EQPT data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "ALW-SWDX-EQPT:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ ALW-SWDX-EQPT.pdf",
+      "original_category": "alarms"
+    },
+    "ALW-PM-VPL": {
+      "id": "ALW-PM-VPL",
+      "displayName": "ALW PM-VPL",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Alarm Management",
+      "verb": "ALW",
+      "object": "PM-VPL",
+      "modifier": null,
+      "description": " ALW PM VPL",
+      "syntax": "ALW-PM-VPL:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[PM-VPL data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "ALW-PM-VPL:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ ALW-PM-VPL.pdf",
+      "original_category": "alarms"
+    },
+    "DLT-PORT": {
+      "id": "DLT-PORT",
+      "displayName": "DLT PORT",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "DLT",
+      "object": "PORT",
+      "modifier": null,
+      "description": " DLT PORT",
+      "syntax": "DLT-PORT:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[PORT data]\\n;",
+      "safety_level": "caution",
+      "service_affecting": true,
+      "examples": [
+        "DLT-PORT:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ DLT-PORT.pdf",
+      "original_category": "configuration"
+    },
+    "ED-ATMPROC": {
+      "id": "ED-ATMPROC",
+      "displayName": "ED ATMPROC",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "ED",
+      "object": "ATMPROC",
+      "modifier": null,
+      "description": " ED ATMPROC",
+      "syntax": "ED-ATMPROC:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[ATMPROC data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "ED-ATMPROC:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ ED-ATMPROC.pdf",
+      "original_category": "configuration"
+    },
+    "SET-ATTR-T1": {
+      "id": "SET-ATTR-T1",
+      "displayName": "SET ATTR-T1",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "SET",
+      "object": "ATTR-T1",
+      "modifier": null,
+      "description": " SET ATTR T1",
+      "syntax": "SET-ATTR-T1:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[ATTR-T1 data]\\n;",
+      "safety_level": "caution",
+      "service_affecting": true,
+      "examples": [
+        "SET-ATTR-T1:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ SET-ATTR-T1.pdf",
+      "original_category": "configuration"
+    },
+    "ED-SECU-USER": {
+      "id": "ED-SECU-USER",
+      "displayName": "ED SECU-USER",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "ED",
+      "object": "SECU-USER",
+      "modifier": null,
+      "description": " ED SECU USER",
+      "syntax": "ED-SECU-USER:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[SECU-USER data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "ED-SECU-USER:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ ED-SECU-USER.pdf",
+      "original_category": "configuration"
+    },
+    "SET-SYNCN-(1)": {
+      "id": "SET-SYNCN-(1)",
+      "displayName": "SET SYNCN (1)",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "SET",
+      "object": "SYNCN (1)",
+      "modifier": null,
+      "description": " SET SYNCN (1)",
+      "syntax": "SET-SYNCN (1):[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[SYNCN (1) data]\\n;",
+      "safety_level": "caution",
+      "service_affecting": true,
+      "examples": [
+        "SET-SYNCN (1):SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ SET-SYNCN (1).pdf",
+      "original_category": "configuration"
+    },
+    "DLT-OC12": {
+      "id": "DLT-OC12",
+      "displayName": "DLT OC12",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "DLT",
+      "object": "OC12",
+      "modifier": null,
+      "description": " DLT OC12",
+      "syntax": "DLT-OC12:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[OC12 data]\\n;",
+      "safety_level": "caution",
+      "service_affecting": true,
+      "examples": [
+        "DLT-OC12:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ DLT-OC12.pdf",
+      "original_category": "configuration"
+    },
+    "ED-FFP-STS3C": {
+      "id": "ED-FFP-STS3C",
+      "displayName": "ED FFP-STS3C",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "ED",
+      "object": "FFP-STS3C",
+      "modifier": null,
+      "description": " ED FFP STS3C",
+      "syntax": "ED-FFP-STS3C:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[FFP-STS3C data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "ED-FFP-STS3C:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ ED-FFP-STS3C.pdf",
+      "original_category": "configuration"
+    },
+    "SET-ATTR-PORT": {
+      "id": "SET-ATTR-PORT",
+      "displayName": "SET ATTR-PORT",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "SET",
+      "object": "ATTR-PORT",
+      "modifier": null,
+      "description": " SET ATTR PORT",
+      "syntax": "SET-ATTR-PORT:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[ATTR-PORT data]\\n;",
+      "safety_level": "caution",
+      "service_affecting": true,
+      "examples": [
+        "SET-ATTR-PORT:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ SET-ATTR-PORT.pdf",
+      "original_category": "configuration"
+    },
+    "DLT-SML": {
+      "id": "DLT-SML",
+      "displayName": "DLT SML",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "DLT",
+      "object": "SML",
+      "modifier": null,
+      "description": " DLT SML",
+      "syntax": "DLT-SML:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[SML data]\\n;",
+      "safety_level": "caution",
+      "service_affecting": true,
+      "examples": [
+        "DLT-SML:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ DLT-SML.pdf",
+      "original_category": "configuration"
+    },
+    "ENT-PROFILE-TRAFDSC": {
+      "id": "ENT-PROFILE-TRAFDSC",
+      "displayName": "ENT PROFILE-TRAFDSC",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "ENT",
+      "object": "PROFILE-TRAFDSC",
+      "modifier": null,
+      "description": " ENT PROFILE TRAFDSC",
+      "syntax": "ENT-PROFILE-TRAFDSC:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[PROFILE-TRAFDSC data]\\n;",
+      "safety_level": "caution",
+      "service_affecting": true,
+      "examples": [
+        "ENT-PROFILE-TRAFDSC:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ ENT-PROFILE-TRAFDSC.pdf",
+      "original_category": "configuration"
+    },
+    "ENT-AAL5": {
+      "id": "ENT-AAL5",
+      "displayName": "ENT AAL5",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "ENT",
+      "object": "AAL5",
+      "modifier": null,
+      "description": " ENT AAL5",
+      "syntax": "ENT-AAL5:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[AAL5 data]\\n;",
+      "safety_level": "caution",
+      "service_affecting": true,
+      "examples": [
+        "ENT-AAL5:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ ENT-AAL5.pdf",
+      "original_category": "configuration"
+    },
+    "ED-LLSDCC": {
+      "id": "ED-LLSDCC",
+      "displayName": "ED LLSDCC",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "ED",
+      "object": "LLSDCC",
+      "modifier": null,
+      "description": " ED LLSDCC",
+      "syntax": "ED-LLSDCC:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[LLSDCC data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "ED-LLSDCC:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ ED-LLSDCC.pdf",
+      "original_category": "configuration"
+    },
+    "SET-PMMODE-STS1": {
+      "id": "SET-PMMODE-STS1",
+      "displayName": "SET PMMODE-STS1",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "SET",
+      "object": "PMMODE-STS1",
+      "modifier": null,
+      "description": " SET PMMODE STS1",
+      "syntax": "SET-PMMODE-STS1:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[PMMODE-STS1 data]\\n;",
+      "safety_level": "caution",
+      "service_affecting": true,
+      "examples": [
+        "SET-PMMODE-STS1:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ SET-PMMODE-STS1.pdf",
+      "original_category": "configuration"
+    },
+    "SET-ATTR-LAN": {
+      "id": "SET-ATTR-LAN",
+      "displayName": "SET ATTR-LAN",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "SET",
+      "object": "ATTR-LAN",
+      "modifier": null,
+      "description": " SET ATTR LAN",
+      "syntax": "SET-ATTR-LAN:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[ATTR-LAN data]\\n;",
+      "safety_level": "caution",
+      "service_affecting": true,
+      "examples": [
+        "SET-ATTR-LAN:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ SET-ATTR-LAN.pdf",
+      "original_category": "configuration"
+    },
+    "ENT-OC12": {
+      "id": "ENT-OC12",
+      "displayName": "ENT OC12",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "ENT",
+      "object": "OC12",
+      "modifier": null,
+      "description": " ENT OC12",
+      "syntax": "ENT-OC12:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[OC12 data]\\n;",
+      "safety_level": "caution",
+      "service_affecting": true,
+      "examples": [
+        "ENT-OC12:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ ENT-OC12.pdf",
+      "original_category": "configuration"
+    },
+    "DLT-IPT": {
+      "id": "DLT-IPT",
+      "displayName": "DLT IPT",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "DLT",
+      "object": "IPT",
+      "modifier": null,
+      "description": " DLT IPT",
+      "syntax": "DLT-IPT:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[IPT data]\\n;",
+      "safety_level": "caution",
+      "service_affecting": true,
+      "examples": [
+        "DLT-IPT:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ DLT-IPT.pdf",
+      "original_category": "configuration"
+    },
+    "ED-OC12": {
+      "id": "ED-OC12",
+      "displayName": "ED OC12",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "ED",
+      "object": "OC12",
+      "modifier": null,
+      "description": " ED OC12",
+      "syntax": "ED-OC12:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[OC12 data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "ED-OC12:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ ED-OC12.pdf",
+      "original_category": "configuration"
+    },
+    "ENT-USRLAN": {
+      "id": "ENT-USRLAN",
+      "displayName": "ENT USRLAN",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "ENT",
+      "object": "USRLAN",
+      "modifier": null,
+      "description": " ENT USRLAN",
+      "syntax": "ENT-USRLAN:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[USRLAN data]\\n;",
+      "safety_level": "caution",
+      "service_affecting": true,
+      "examples": [
+        "ENT-USRLAN:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ ENT-USRLAN.pdf",
+      "original_category": "configuration"
+    },
+    "DLT-IPAREA": {
+      "id": "DLT-IPAREA",
+      "displayName": "DLT IPAREA",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "DLT",
+      "object": "IPAREA",
+      "modifier": null,
+      "description": " DLT IPAREA",
+      "syntax": "DLT-IPAREA:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[IPAREA data]\\n;",
+      "safety_level": "caution",
+      "service_affecting": true,
+      "examples": [
+        "DLT-IPAREA:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ DLT-IPAREA.pdf",
+      "original_category": "configuration"
+    },
+    "ED-STS3C": {
+      "id": "ED-STS3C",
+      "displayName": "ED STS3C",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "ED",
+      "object": "STS3C",
+      "modifier": null,
+      "description": " ED STS3C",
+      "syntax": "ED-STS3C:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[STS3C data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "ED-STS3C:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ ED-STS3C.pdf",
+      "original_category": "configuration"
+    },
+    "ENT-BITS": {
+      "id": "ENT-BITS",
+      "displayName": "ENT BITS",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "ENT",
+      "object": "BITS",
+      "modifier": null,
+      "description": " ENT BITS",
+      "syntax": "ENT-BITS:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[BITS data]\\n;",
+      "safety_level": "caution",
+      "service_affecting": true,
+      "examples": [
+        "ENT-BITS:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ ENT-BITS.pdf",
+      "original_category": "configuration"
+    },
+    "SET-ACO-COM": {
+      "id": "SET-ACO-COM",
+      "displayName": "SET ACO-COM",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "SET",
+      "object": "ACO-COM",
+      "modifier": null,
+      "description": " SET ACO COM",
+      "syntax": "SET-ACO-COM:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[ACO-COM data]\\n;",
+      "safety_level": "caution",
+      "service_affecting": true,
+      "examples": [
+        "SET-ACO-COM:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ SET-ACO-COM.pdf",
+      "original_category": "configuration"
+    },
+    "SET-TH-STS1": {
+      "id": "SET-TH-STS1",
+      "displayName": "SET TH-STS1",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "SET",
+      "object": "TH-STS1",
+      "modifier": null,
+      "description": " SET TH STS1",
+      "syntax": "SET-TH-STS1:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[TH-STS1 data]\\n;",
+      "safety_level": "caution",
+      "service_affecting": true,
+      "examples": [
+        "SET-TH-STS1:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ SET-TH-STS1.pdf",
+      "original_category": "configuration"
+    },
+    "ED-SECU-PID": {
+      "id": "ED-SECU-PID",
+      "displayName": "ED SECU-PID",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "System Administration",
+      "verb": "ED",
+      "object": "SECU-PID",
+      "modifier": null,
+      "description": " ED SECU PID",
+      "syntax": "ED-SECU-PID:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[SECU-PID data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "ED-SECU-PID:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ ED-SECU-PID.pdf",
+      "original_category": "configuration"
+    },
+    "RLS-LPBK-OC48": {
+      "id": "RLS-LPBK-OC48",
+      "displayName": "RLS LPBK-OC48",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Testing & Diagnostics",
+      "verb": "RLS",
+      "object": "LPBK-OC48",
+      "modifier": null,
+      "description": " RLS LPBK OC48",
+      "syntax": "RLS-LPBK-OC48:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[LPBK-OC48 data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RLS-LPBK-OC48:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RLS-LPBK-OC48.pdf",
+      "original_category": "maintenance"
+    },
+    "OPR-LPBK-T3": {
+      "id": "OPR-LPBK-T3",
+      "displayName": "OPR LPBK-T3",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Testing & Diagnostics",
+      "verb": "OPR",
+      "object": "LPBK-T3",
+      "modifier": null,
+      "description": " OPR LPBK T3",
+      "syntax": "OPR-LPBK-T3:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[LPBK-T3 data]\\n;",
+      "safety_level": "caution",
+      "service_affecting": true,
+      "examples": [
+        "OPR-LPBK-T3:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ OPR-LPBK-T3.pdf",
+      "original_category": "maintenance"
+    },
+    "RLS-LPBK-T1": {
+      "id": "RLS-LPBK-T1",
+      "displayName": "RLS LPBK-T1",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Testing & Diagnostics",
+      "verb": "RLS",
+      "object": "LPBK-T1",
+      "modifier": null,
+      "description": " RLS LPBK T1",
+      "syntax": "RLS-LPBK-T1:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[LPBK-T1 data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RLS-LPBK-T1:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RLS-LPBK-T1.pdf",
+      "original_category": "maintenance"
+    },
+    "INIT-REG-T3": {
+      "id": "INIT-REG-T3",
+      "displayName": "INIT REG-T3",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Testing & Diagnostics",
+      "verb": "INIT",
+      "object": "REG-T3",
+      "modifier": null,
+      "description": " INIT REG T3",
+      "syntax": "INIT-REG-T3:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[REG-T3 data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "INIT-REG-T3:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ INIT-REG-T3.pdf",
+      "original_category": "maintenance"
+    },
+    "OPR-LPBK-T1": {
+      "id": "OPR-LPBK-T1",
+      "displayName": "OPR LPBK-T1",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Testing & Diagnostics",
+      "verb": "OPR",
+      "object": "LPBK-T1",
+      "modifier": null,
+      "description": " OPR LPBK T1",
+      "syntax": "OPR-LPBK-T1:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[LPBK-T1 data]\\n;",
+      "safety_level": "caution",
+      "service_affecting": true,
+      "examples": [
+        "OPR-LPBK-T1:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ OPR-LPBK-T1.pdf",
+      "original_category": "maintenance"
+    },
+    "RTRV-AO": {
+      "id": "RTRV-AO",
+      "displayName": "RTRV AO",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "AO",
+      "modifier": null,
+      "description": " RTRV AO",
+      "syntax": "RTRV-AO:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[AO data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-AO:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-AO.pdf",
+      "original_category": "monitoring"
+    },
+    "RTRV-ALM-USRLAN": {
+      "id": "RTRV-ALM-USRLAN",
+      "displayName": "RTRV ALM-USRLAN",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "ALM-USRLAN",
+      "modifier": null,
+      "description": " RTRV ALM USRLAN",
+      "syntax": "RTRV-ALM-USRLAN:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[ALM-USRLAN data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-ALM-USRLAN:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-ALM-USRLAN.pdf",
+      "original_category": "monitoring"
+    },
+    "RTRV-IPTABLE": {
+      "id": "RTRV-IPTABLE",
+      "displayName": "RTRV IPTABLE",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "IPTABLE",
+      "modifier": null,
+      "description": " RTRV IPTABLE",
+      "syntax": "RTRV-IPTABLE:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[IPTABLE data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-IPTABLE:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-IPTABLE.pdf",
+      "original_category": "monitoring"
+    },
+    "RTRV-ATTR-USRLAN": {
+      "id": "RTRV-ATTR-USRLAN",
+      "displayName": "RTRV ATTR-USRLAN",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "ATTR-USRLAN",
+      "modifier": null,
+      "description": " RTRV ATTR USRLAN",
+      "syntax": "RTRV-ATTR-USRLAN:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[ATTR-USRLAN data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-ATTR-USRLAN:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-ATTR-USRLAN.pdf",
+      "original_category": "monitoring"
+    },
+    "RTRV-ALM-TADRMAP": {
+      "id": "RTRV-ALM-TADRMAP",
+      "displayName": "RTRV ALM-TADRMAP",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "ALM-TADRMAP",
+      "modifier": null,
+      "description": " RTRV ALM TADRMAP",
+      "syntax": "RTRV-ALM-TADRMAP:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[ALM-TADRMAP data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-ALM-TADRMAP:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-ALM-TADRMAP.pdf",
+      "original_category": "monitoring"
+    },
+    "RTRV-ATTR-EC1": {
+      "id": "RTRV-ATTR-EC1",
+      "displayName": "RTRV ATTR-EC1",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "ATTR-EC1",
+      "modifier": null,
+      "description": " RTRV ATTR EC1",
+      "syntax": "RTRV-ATTR-EC1:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[ATTR-EC1 data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-ATTR-EC1:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-ATTR-EC1.pdf",
+      "original_category": "monitoring"
+    },
+    "RTRV-COND-LAN": {
+      "id": "RTRV-COND-LAN",
+      "displayName": "RTRV COND-LAN",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "COND-LAN",
+      "modifier": null,
+      "description": " RTRV COND LAN",
+      "syntax": "RTRV-COND-LAN:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[COND-LAN data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-COND-LAN:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-COND-LAN.pdf",
+      "original_category": "monitoring"
+    },
+    "RTRV-PM-OC12": {
+      "id": "RTRV-PM-OC12",
+      "displayName": "RTRV PM-OC12",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "PM-OC12",
+      "modifier": null,
+      "description": " RTRV PM OC12",
+      "syntax": "RTRV-PM-OC12:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[PM-OC12 data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-PM-OC12:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-PM-OC12.pdf",
+      "original_category": "monitoring"
+    },
+    "RTRV-ATTR-X25": {
+      "id": "RTRV-ATTR-X25",
+      "displayName": "RTRV ATTR-X25",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "ATTR-X25",
+      "modifier": null,
+      "description": " RTRV ATTR X25",
+      "syntax": "RTRV-ATTR-X25:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[ATTR-X25 data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-ATTR-X25:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-ATTR-X25.pdf",
+      "original_category": "monitoring"
+    },
+    "RTRV-VCL": {
+      "id": "RTRV-VCL",
+      "displayName": "RTRV VCL",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "VCL",
+      "modifier": null,
+      "description": " RTRV VCL",
+      "syntax": "RTRV-VCL:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[VCL data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-VCL:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-VCL.pdf",
+      "original_category": "monitoring"
+    },
+    "RTRV-PMMODE-EQPT": {
+      "id": "RTRV-PMMODE-EQPT",
+      "displayName": "RTRV PMMODE-EQPT",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "PMMODE-EQPT",
+      "modifier": null,
+      "description": " RTRV PMMODE EQPT",
+      "syntax": "RTRV-PMMODE-EQPT:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[PMMODE-EQPT data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-PMMODE-EQPT:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-PMMODE-EQPT.pdf",
+      "original_category": "monitoring"
+    },
+    "RTRV-PM-ATMPORT": {
+      "id": "RTRV-PM-ATMPORT",
+      "displayName": "RTRV PM-ATMPORT",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "PM-ATMPORT",
+      "modifier": null,
+      "description": " RTRV PM ATMPORT",
+      "syntax": "RTRV-PM-ATMPORT:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[PM-ATMPORT data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-PM-ATMPORT:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-PM-ATMPORT.pdf",
+      "original_category": "monitoring"
+    },
+    "RTRV-HDR": {
+      "id": "RTRV-HDR",
+      "displayName": "RTRV HDR",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "HDR",
+      "modifier": null,
+      "description": " RTRV HDR",
+      "syntax": "RTRV-HDR:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[HDR data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-HDR:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-HDR.pdf",
+      "original_category": "monitoring"
+    },
+    "RTRV-COND-COM": {
+      "id": "RTRV-COND-COM",
+      "displayName": "RTRV COND-COM",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "COND-COM",
+      "modifier": null,
+      "description": " RTRV COND COM",
+      "syntax": "RTRV-COND-COM:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[COND-COM data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-COND-COM:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-COND-COM.pdf",
+      "original_category": "monitoring"
+    },
+    "RTRV-SYNCN": {
+      "id": "RTRV-SYNCN",
+      "displayName": "RTRV SYNCN",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "SYNCN",
+      "modifier": null,
+      "description": " RTRV SYNCN",
+      "syntax": "RTRV-SYNCN:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[SYNCN data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-SYNCN:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-SYNCN.pdf",
+      "original_category": "monitoring"
+    },
+    "RTRV-IP": {
+      "id": "RTRV-IP",
+      "displayName": "RTRV IP",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "IP",
+      "modifier": null,
+      "description": " RTRV IP",
+      "syntax": "RTRV-IP:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[IP data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-IP:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-IP.pdf",
+      "original_category": "monitoring"
+    },
+    "RTRV-TH-OC12": {
+      "id": "RTRV-TH-OC12",
+      "displayName": "RTRV TH-OC12",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "TH-OC12",
+      "modifier": null,
+      "description": " RTRV TH OC12",
+      "syntax": "RTRV-TH-OC12:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[TH-OC12 data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-TH-OC12:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-TH-OC12.pdf",
+      "original_category": "monitoring"
+    },
+    "RTRV-PM-VPL": {
+      "id": "RTRV-PM-VPL",
+      "displayName": "RTRV PM-VPL",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "PM-VPL",
+      "modifier": null,
+      "description": " RTRV PM VPL",
+      "syntax": "RTRV-PM-VPL:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[PM-VPL data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-PM-VPL:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-PM-VPL.pdf",
+      "original_category": "monitoring"
+    },
+    "RTRV-SECU-CMD": {
+      "id": "RTRV-SECU-CMD",
+      "displayName": "RTRV SECU-CMD",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "SECU-CMD",
+      "modifier": null,
+      "description": " RTRV SECU CMD",
+      "syntax": "RTRV-SECU-CMD:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[SECU-CMD data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-SECU-CMD:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-SECU-CMD.pdf",
+      "original_category": "monitoring"
+    },
+    "RTRV-FFP-OC12": {
+      "id": "RTRV-FFP-OC12",
+      "displayName": "RTRV FFP-OC12",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "FFP-OC12",
+      "modifier": null,
+      "description": " RTRV FFP OC12",
+      "syntax": "RTRV-FFP-OC12:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[FFP-OC12 data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-FFP-OC12:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-FFP-OC12.pdf",
+      "original_category": "monitoring"
+    },
+    "RTRV-PMMODE-T1": {
+      "id": "RTRV-PMMODE-T1",
+      "displayName": "RTRV PMMODE-T1",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "PMMODE-T1",
+      "modifier": null,
+      "description": " RTRV PMMODE T1",
+      "syntax": "RTRV-PMMODE-T1:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[PMMODE-T1 data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-PMMODE-T1:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-PMMODE-T1.pdf",
+      "original_category": "monitoring"
+    },
+    "RTRV-NE-ATM": {
+      "id": "RTRV-NE-ATM",
+      "displayName": "RTRV NE-ATM",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "NE-ATM",
+      "modifier": null,
+      "description": " RTRV NE ATM",
+      "syntax": "RTRV-NE-ATM:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[NE-ATM data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-NE-ATM:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ RTRV-NE-ATM.pdf",
+      "original_category": "monitoring"
+    },
+    "DISC-TACC": {
+      "id": "DISC-TACC",
+      "displayName": "DISC TACC",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Service Provisioning",
+      "verb": "DISC",
+      "object": "TACC",
+      "modifier": null,
+      "description": " DISC TACC",
+      "syntax": "DISC-TACC:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[TACC data]\\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "DISC-TACC:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ DISC-TACC.pdf",
+      "original_category": "provisioning"
+    },
+    "CANC-USER": {
+      "id": "CANC-USER",
+      "displayName": "CANC USER",
+      "platforms": [
+        "1603 SM"
+      ],
+      "category": "Security & Access",
+      "verb": "CANC",
+      "object": "USER",
+      "modifier": null,
+      "description": " CANC USER",
+      "syntax": "CANC-USER:[tid]:[aid]:[ctag]::;",
+      "requires": [
+        "TID",
+        "CTAG"
+      ],
+      "optional": [
+        "AID"
+      ],
+      "response_format": "M [ctag] COMPLD\\n[USER data]\\n;",
+      "safety_level": "caution",
+      "service_affecting": false,
+      "examples": [
+        "CANC-USER:SITE01::123::;"
+      ],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target identifier"
+        },
+        "AID": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Access identifier"
+        },
+        "CTAG": {
+          "type": "string",
+          "maxLength": 6,
+          "description": "Correlation tag"
+        }
+      },
+      "source_file": "Command_ CANC-USER.pdf",
+      "original_category": "security"
+    }
+  }
+}
