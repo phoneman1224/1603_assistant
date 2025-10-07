@@ -1,0 +1,229 @@
+metadata:
+  description: Command comparison between 1603_SM and 1603_SMX network systems
+  version: 1.0.0
+  generated: '2025-10-07'
+systems:
+  1603_SM:
+    total_commands: 564
+    unique_commands: 21
+    description: Base system with IPAREA support and extended VPL operations
+  1603_SMX:
+    total_commands: 609
+    unique_commands: 69
+    description: Extended system with STS12C, POSPORT, and BLSR support
+statistics:
+  common_commands: 540
+  total_unique_commands: 630
+  compatibility_percentage: 85.71
+commands:
+  only_in_1603_SM:
+  - DLT-CRS-VPL
+  - DLT-IP
+  - DLT-IPAREA
+  - DLT-VPL
+  - ED-CRS-VPL
+  - ED-FFP-VPL
+  - ED-IP
+  - ED-IPAREA
+  - ENT-CRS-VPL
+  - ENT-IP
+  - ENT-IPAREA
+  - ENT-VPL
+  - INH-PMREPT-VPL
+  - INIT-LOLOG-ATMPORT
+  - OPR-PROTNSW-VPL
+  - RLS-PROTNSW-VPL
+  - RTRV-CRS-VPL
+  - RTRV-FFP-VPL
+  - RTRV-IPAREA
+  - RTRV-LOLOG-ATMPORT
+  - SET-PMMODE-SYNCN
+  only_in_1603_SMX:
+  - ALW-EX-OC48
+  - ALW-PMREPT-POSPORT
+  - ALW-PMREPT-STS12C
+  - DGN-STS12C
+  - DLT-CRS-STS12C
+  - DLT-RINGMAP
+  - DLT-SQLMAP
+  - DLT-STS12C
+  - ED-CRS-STS12C
+  - ED-FFP-OC48
+  - ED-FFP-STS12C
+  - ED-POSPORT
+  - ED-STS12C
+  - ENT-CRS-STS12C
+  - ENT-RINGMAP
+  - ENT-SQLMAP
+  - ENT-STS12C
+  - EX-SW-OC48
+  - IINH-PMREPT-VPL
+  - INH-EX-OC48
+  - INH-PMREPT-POSPORT
+  - INH-PMREPT-STS12C
+  - INIT-REG-POSPORT
+  - INIT-REG-STS12C
+  - OPR-PROTNSW-OC48
+  - OPR-PROTNSW-STS12C
+  - RLS-PROTNSW-OC48
+  - RLS-PROTNSW-STS12C
+  - RTRV-ALM-BLSR
+  - RTRV-ALM-IPT
+  - RTRV-ALM-POSPORT
+  - RTRV-ALM-STS12C
+  - RTRV-ATTR-BLSR
+  - RTRV-ATTR-IPT
+  - RTRV-ATTR-POSPORT
+  - RTRV-ATTR-STS12C
+  - RTRV-COND-BLSR
+  - RTRV-COND-IPT
+  - RTRV-COND-POSPORT
+  - RTRV-COND-STS12C
+  - RTRV-CRS-STS12C
+  - RTRV-FFP-OC48
+  - RTRV-FFP-STS12C
+  - RTRV-NE-BLSR
+  - RTRV-PM-POSPORT
+  - RTRV-PM-STS12C
+  - RTRV-PMMODE-POSPORT
+  - RTRV-PMMODE-STS12C
+  - RTRV-POSPORT
+  - RTRV-PTHTRC-STS12C
+  - RTRV-RINGMAP
+  - RTRV-SQLMAP
+  - RTRV-STS12C
+  - RTRV-TH-POSPORT
+  - RTRV-TH-STS12C
+  - SET-ATTR-BLSR
+  - SET-ATTR-IPT
+  - SET-ATTR-POSPORT
+  - SET-ATTR-STS12C
+  - SET-IP
+  - SET-NE-BLSR
+  - SET-PMMMODE-SYNCN
+  - SET-PMMODE-POSPORT
+  - SET-PMMODE-STS12C
+  - SET-TH-AAL5
+  - SET-TH-ATMPORT
+  - SET-TH-ATMPROC
+  - SET-TH-POSPORT
+  - SET-TH-STS12C
+  common:
+  - ABT-CPY
+  - ACT-USER
+  - ALW-AUTORST
+  - ALW-CONT-VCL
+  - ALW-CONT-VPL
+  - ALW-DGN-EQPT
+  - ALW-LPBK-T1
+  - ALW-LPBK-T3
+  - ALW-MSG-ALL
+  - ALW-PM-VCL
+  - ALW-PM-VPL
+  - ALW-PMREPT-AAL5
+  - ALW-PMREPT-ALL
+  - ALW-PMREPT-ATMPORT
+  - ALW-PMREPT-ATMPROC
+  - ALW-PMREPT-EC1
+  - ALW-PMREPT-EQPT
+  - ALW-PMREPT-OC12
+  - ALW-PMREPT-OC3
+  - ALW-PMREPT-OC48
+  - '... (540 total common commands)'
+device_support:
+  exclusive_to_1603_SM:
+    IPAREA:
+      command_count: 4
+      description: IP area management
+      commands:
+      - DLT-IPAREA
+      - ED-IPAREA
+      - ENT-IPAREA
+      - RTRV-IPAREA
+  exclusive_to_1603_SMX:
+    STS12C:
+      command_count: 26
+      description: High-speed concatenated transport
+      key_capabilities:
+      - provisioning
+      - cross-connects
+      - performance_monitoring
+      - protection_switching
+    POSPORT:
+      command_count: 14
+      description: Packet over SONET/SDH
+      key_capabilities:
+      - provisioning
+      - alarms
+      - performance_monitoring
+      - thresholds
+    BLSR:
+      command_count: 6
+      description: Bidirectional Line Switched Ring topology
+      key_capabilities:
+      - alarms
+      - attributes
+      - conditions
+      - configuration
+    RINGMAP:
+      command_count: 3
+      description: Ring mapping functionality
+    SQLMAP:
+      command_count: 3
+      description: SQL mapping functionality
+  supported_in_both:
+    note: See full list in JSON file
+    examples:
+    - AAL5
+    - ATMPORT
+    - ATMPROC
+    - EC1
+    - EQPT
+    - OC12
+    - OC3
+    - OC48
+    - T1
+    - T3
+    - VCL
+    - VPL
+command_prefixes:
+  RTRV: Retrieve (read data)
+  ENT: Enter (create new)
+  ED: Edit (modify existing)
+  DLT: Delete (remove)
+  SET: Set (configure parameters)
+  OPR: Operate (perform action)
+  RLS: Release (free resource)
+  INH: Inhibit (disable feature)
+  ALW: Allow (enable feature)
+  INIT: Initialize
+  DGN: Diagnose
+migration_notes:
+  1603_SM_to_1603_SMX:
+  - All 1603_SM commands except 21 are available in 1603_SMX
+  - 'VPL commands reduced: 11 VPL-specific commands not available in SMX'
+  - IPAREA commands not available in SMX (4 commands)
+  - 'New capabilities: STS12C, POSPORT, BLSR available in SMX'
+  - 'Enhanced features: OC48 has 7 additional commands in SMX'
+  incompatible_commands_sm_to_smx:
+  - DLT-CRS-VPL
+  - DLT-IP
+  - DLT-IPAREA
+  - DLT-VPL
+  - ED-CRS-VPL
+  - ED-FFP-VPL
+  - ED-IP
+  - ED-IPAREA
+  - ENT-CRS-VPL
+  - ENT-IP
+  - ENT-IPAREA
+  - ENT-VPL
+  - INH-PMREPT-VPL
+  - INIT-LOLOG-ATMPORT
+  - OPR-PROTNSW-VPL
+  - RLS-PROTNSW-VPL
+  - RTRV-CRS-VPL
+  - RTRV-FFP-VPL
+  - RTRV-IPAREA
+  - RTRV-LOLOG-ATMPORT
+  - SET-PMMODE-SYNCN
