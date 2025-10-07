@@ -1,17 +1,22 @@
 # Error handling and logging setup
-$ErrorActionPreference = 'Stop'
+$ErrorActionPreference = 'Continue'  # Changed from 'Stop' to prevent immediate exit
 $DebugPreference = 'Continue'
 $VerbosePreference = 'Continue'
 
+# Add console output for debugging
+Write-Host "🚀 TL1 Command Builder Starting..." -ForegroundColor Cyan
+Write-Host "Current Directory: $($PWD.Path)" -ForegroundColor Gray
+
 # Version and environment checks
-Write-Debug "PowerShell Version: $($PSVersionTable.PSVersion)"
-Write-Debug "OS Version: $([System.Environment]::OSVersion.Version)"
-Write-Debug "Current Directory: $($PWD.Path)"
+Write-Host "PowerShell Version: $($PSVersionTable.PSVersion)" -ForegroundColor Gray
+Write-Host "OS Version: $([System.Environment]::OSVersion.Version)" -ForegroundColor Gray
 
 if ($PSVersionTable.PSVersion.Major -gt 5) {
-    Write-Error "This script requires Windows PowerShell 5.1. Current version: $($PSVersionTable.PSVersion)"
-    Write-Error "Please run using 'Windows PowerShell' (blue icon) instead of 'PowerShell Core' (black icon)"
-    Start-Sleep -Seconds 5
+    Write-Host "❌ ERROR: This script requires Windows PowerShell 5.1" -ForegroundColor Red
+    Write-Host "Current version: $($PSVersionTable.PSVersion)" -ForegroundColor Red
+    Write-Host "Please run using 'Windows PowerShell' (blue icon) instead of 'PowerShell Core' (black icon)" -ForegroundColor Yellow
+    Write-Host "Press any key to exit..." -ForegroundColor Gray
+    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
     exit 1
 }
 
@@ -32,16 +37,24 @@ if (-not $isSta) {
 
 # Load required assemblies
 try {
-    Write-Debug "Loading WPF assemblies..."
+    Write-Host "Loading WPF assemblies..." -ForegroundColor Yellow
     Add-Type -AssemblyName PresentationFramework
     Add-Type -AssemblyName PresentationCore
     Add-Type -AssemblyName WindowsBase
-    Write-Debug "WPF assemblies loaded successfully"
+    Write-Host "✅ WPF assemblies loaded successfully" -ForegroundColor Green
 } catch {
-    Write-Error "Failed to load WPF assemblies. Error: $_"
-    Write-Error "This might indicate Windows Desktop features are not installed."
-    Write-Debug "Stack Trace: $($_.Exception.StackTrace)"
-    Write-Host "Press any key to exit..."
+    Write-Host "❌ Failed to load WPF assemblies" -ForegroundColor Red
+    Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "" -ForegroundColor Red
+    Write-Host "This might indicate:" -ForegroundColor Yellow
+    Write-Host "• Windows Desktop features are not installed" -ForegroundColor Yellow
+    Write-Host "• .NET Framework version is too old" -ForegroundColor Yellow
+    Write-Host "• Running on Windows Server Core (GUI not available)" -ForegroundColor Yellow
+    Write-Host "" -ForegroundColor Yellow
+    Write-Host "Stack Trace:" -ForegroundColor Gray
+    Write-Host $_.Exception.StackTrace -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "Press any key to exit..." -ForegroundColor Gray
     $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
     exit 1
 }
