@@ -402,7 +402,7 @@ function Load-TL1Commands {
     # Log detailed breakdown
     foreach ($category in $AllCommands.Keys) {
         $count = $AllCommands[$category].Count
-        Write-Log "  $category: $count commands"
+        Write-Log "  ${category}: $count commands"
     }
     
     return $AllCommands
@@ -1602,7 +1602,7 @@ function Update-Preview{
   if ($null -eq $aid)  { $aid  = "" }
   if ($null -eq $ctag) { $ctag = "" }
   $opt=Build-OptionalList
-  $left = "$cmd:$($tid):$($aid):$($ctag)"
+  $left = "${cmd}:$($tid):$($aid):$($ctag)"
   $right = if([string]::IsNullOrWhiteSpace($opt)) { "" } else { "::" + $opt }
   $PreviewBox.Text = "$left$right;"
 }
