@@ -122,7 +122,7 @@ function Write-Log {
     )
     
     $timestamp = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss.fff')
-    $pid = $PID
+    $processId = $PID
     $thread = [System.Threading.Thread]::CurrentThread.ManagedThreadId
     
     # Build structured log entry
@@ -131,7 +131,7 @@ function Write-Log {
         level = $Level.ToUpper()
         message = $Message
         context = $Context
-        process_id = $pid
+        process_id = $processId
         thread_id = $thread
         metadata = $Metadata
     }
