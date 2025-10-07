@@ -29,25 +29,27 @@ Successfully implemented platform-aware command filtering in the TL1 Command Bui
 5. **Comprehensive Documentation**: Full integration of PDF-extracted data
 
 ## Testing Status
-✅ **Command Loading**: Platform-specific file loading working correctly  
-✅ **Data Processing**: 56 commands successfully extracted and structured  
+✅ **Command Loading**: Data-driven catalog loading working correctly  
+✅ **Data Processing**: 10 commands successfully structured with paramSchema  
 ✅ **Platform Filtering**: System correctly filters by 1603_SM vs 16034_SMX  
 ✅ **Python CLI**: Dependencies installed and basic functionality verified  
 🔶 **Windows GUI Testing**: Requires Windows environment (not available in Linux dev container)  
 
 ## File Modifications
-- `powershell/TL1_CommandBuilder.ps1`: Extensive updates for platform filtering
-- `data/extracted_commands/1603_SM_commands.json`: 56 commands with full metadata
+- `powershell/TL1_CommandBuilder.ps1`: Extensive updates for data-driven architecture
+- `data/commands.json`: 10 commands with complete paramSchema definitions
+- `data/playbooks.json`: Automated troubleshooting sequences
 - Python dependencies: jsonschema and pdfplumber installed
 
 ## Next Steps for Windows Testing
 When testing on Windows:
 
 1. **Launch GUI**: Run `Start-TL1.cmd` from project root
-2. **Test Platform Switching**: 
-   - Select "1603 SM" → should show 5 categories
-   - Select "16034 SMX" → should show empty (ready for additional commands)
-3. **Verify Command Details**: Select commands to see PDF-sourced metadata
+2. **Test Data-Driven Loading**: 
+   - Commands should populate from `commands.json`
+   - Dynamic fields should render based on paramSchema
+3. **Test Troubleshooting**: Use "Run Troubleshooting" button with TID/AID values
+4. **Verify Playbooks**: Check console output during automated sequences
 4. **Test Parameter Display**: Verify rich parameter descriptions and restrictions
 5. **Validate Platform Labels**: Check that commands show correct platform tags
 

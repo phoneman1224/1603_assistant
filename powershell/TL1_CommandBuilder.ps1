@@ -171,50 +171,17 @@ function Load-TL1Commands {
             Write-Log "Error loading data-driven catalog: $_" "ERROR"
         }
     } else {
-        Write-Log "Data-driven catalog not found at $CatalogPath" "WARN"
-    }
-    
-    # Fallback: Load from extracted PDF data if data-driven catalog has few commands
-    if (($AllCommands.Values | ForEach-Object { $_.Count } | Measure-Object -Sum).Sum -lt 5) {
-        Write-Log "Loading fallback PDF-extracted commands" "WARN"
-        
-        $ExtractedDir = Join-Path $RootDir "data\extracted_commands"
-        $platformFile = Join-Path $ExtractedDir "${selectedPlatform}_commands.json"
-        
-        if (Test-Path $platformFile) {
-            try {
-                $content = Get-Content $platformFile -Raw -Encoding UTF8 | ConvertFrom-Json
-                
-                $content.PSObject.Properties | ForEach-Object {
-                    $categoryName = $_.Name
-                    $commands = $_.Value
-                    
-                    if (-not $AllCommands.Contains($categoryName)) {
-                        $AllCommands[$categoryName] = @()
-                    }
-                    
-                    $commands | ForEach-Object {
-                        $cmd = $_
-                        $AllCommands[$categoryName] += @{
-                            Name = $cmd.command_code
-                            Desc = $cmd.description
-                            DetailedDesc = $cmd.function
-                            Required = @("TID", "CTAG")  # Basic required params
-                            Optional = @()
-                            Parameters = $cmd.parameters
-                            Syntax = $cmd.syntax
-                            Restrictions = $cmd.restrictions
-                            ResponseFormat = $cmd.response_format
-                            SafetyLevel = if ($cmd.safety_level) { $cmd.safety_level } else { "safe" }
-                            ServiceAffecting = if ($cmd.service_affecting) { $cmd.service_affecting } else { $false }
-                            SourceFile = $cmd.source_file
-                            Platform = $selectedPlatform
-                        }
-                    }
-                }
-            } catch {
-                Write-Log "Error loading PDF fallback: $_" "ERROR"
-            }
+        Write-Log "Data-driven catalog not found at $CatalogPath" "ERROR"
+        # Fallback to basic commands if catalog is missing
+        $AllCommands = @{
+            "Network Maintenance" = @(
+                @{Name="RTRV-ALM";Desc="Retrieve Alarms";Required=@("TID","CTAG");Optional=@("ALMCD","NTFCNCDE");Platform=$selectedPlatform},
+                @{Name="RTRV-HDR";Desc="Retrieve Header";Required=@("TID","CTAG");Optional=@();Platform=$selectedPlatform}
+            )
+            "System Administration" = @(
+                @{Name="ACT-USER";Desc="Activate User";Required=@("UID");Optional=@("PID");Platform=$selectedPlatform},
+                @{Name="CANC-USER";Desc="Cancel User Session";Required=@("UID");Optional=@();Platform=$selectedPlatform}
+            )
         }
     }
     
@@ -222,82 +189,6 @@ function Load-TL1Commands {
     Write-Log "Loaded $($AllCommands.Keys.Count) categories with $totalCommands total commands for $selectedPlatform"
     return $AllCommands
 }
-        if (Test-Path $platformFile) {
-            try {
-                $content = Get-Content $platformFile -Raw -Encoding UTF8 | ConvertFrom-Json
-                Write-Log "Processing platform-specific file: $($platformIds[1])_commands.json"
-                
-                # Process extracted PDF data structure
-                $content.PSObject.Properties | ForEach-Object {
-                    $categoryName = $_.Name
-                    $commands = $_.Value
-                    
-                    if (-not $AllCommands.Contains($categoryName)) {
-                        $AllCommands[$categoryName] = @()
-                    }
-                    
-                    $commands | ForEach-Object {
-                        $cmd = $_
-                        $requiredParams = @()
-                        $optionalParams = @()
-                        
-                        # Parse parameters from detailed parameter info
-                        if ($cmd.parameters) {
-                            $cmd.parameters.PSObject.Properties | ForEach-Object {
-                                $paramName = $_.Name
-                                $paramDesc = $_.Value
-                                
-                                # Determine if required based on syntax and description
-                                if ($cmd.syntax -and $cmd.syntax -like "*[$paramName]*") {
-                                    if ($cmd.syntax -like "*:$paramName:*" -or $paramDesc -like "*required*") {
-                                        $requiredParams += $paramName
-                                    } else {
-                                        $optionalParams += $paramName
-                                    }
-                                } else {
-                                    $optionalParams += $paramName
-                                }
-                            }
-                        }
-                        
-                        $AllCommands[$categoryName] += @{
-                            Name = $cmd.command_code
-                            Desc = $cmd.description
-                            DetailedDesc = $cmd.function
-                            Required = $requiredParams
-                            Optional = $optionalParams
-                            Parameters = $cmd.parameters
-                            Syntax = if ($cmd.syntax) { $cmd.syntax } else { "" }
-                            Restrictions = if ($cmd.restrictions) { $cmd.restrictions } else { "" }
-                            ResponseFormat = if ($cmd.response_format) { $cmd.response_format } else { "" }
-                            SafetyLevel = if ($cmd.safety_level) { $cmd.safety_level } else { "safe" }
-                            ServiceAffecting = if ($cmd.service_affecting) { $cmd.service_affecting } else { $false }
-                            SourceFile = if ($cmd.source_file) { $cmd.source_file } else { "" }
-                            Platform = $selectedPlatform
-                        }
-                    }
-                }
-            } catch {
-                Write-Log "Error loading platform file $platformFile: $_" "ERROR"
-            }
-        }
-    }
-    
-    # Then load from shared TL1 catalogs (supplement any missing) with platform filtering
-    $TL1Dir = Join-Path $RootDir "data\shared\catalogs\tl1"
-    if (Test-Path $TL1Dir) {
-        Write-Log "Loading shared TL1 catalogs from $TL1Dir with platform filter"
-        Get-ChildItem -Path $TL1Dir -Filter "*.json" | ForEach-Object {
-            try {
-                $content = Get-Content $_.FullName -Raw -Encoding UTF8 | ConvertFrom-Json
-                Write-Log "Processing shared catalog: $($_.Name)"
-                
-                # Handle different JSON structures with platform filtering
-                if ($content.commands -and $content.commands -is [PSCustomObject]) {
-                    # Object with categories
-                    $content.commands.PSObject.Properties | ForEach-Object {
-                        $categoryName = $_.Name
-                        $commands = $_.Value
                         
                         if (-not $AllCommands.Contains($categoryName)) {
                             $AllCommands[$categoryName] = @()

@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 """
 Extract TL1 command information from PDF documentation
-Creates a comprehensive command database from all PDF files
+Creates raw extraction files from PDF files for manual review and catalog creation
+
+NOTE: This script produces raw extractions for manual review.
+The main system now uses the structured data/commands.json catalog.
+Use this script only when adding new PDFs or updating existing ones.
 """
 
 import os
@@ -157,7 +161,7 @@ def main():
     """Main extraction process."""
     repo_root = Path(__file__).parent.parent
     platforms_dir = repo_root / "data" / "platforms"
-    output_dir = repo_root / "data" / "extracted_commands"
+    output_dir = repo_root / "data" / "raw_pdf_extractions"
     
     # Create output directory
     output_dir.mkdir(exist_ok=True)
