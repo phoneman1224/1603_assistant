@@ -70,8 +70,7 @@ if (!(Test-Path $AppDataDir)) {
 }
 
 # Set up logging
-# Initialize structured logging system
-Initialize-StructuredLogging
+# Initialize logging system after all functions are defined
 
 # Settings with safe defaults - store in script directory for portability
 $SettingsPath = Join-Path $ScriptDir "appsettings.json"
@@ -1738,6 +1737,9 @@ $WizardBtn.Add_Click({
     Write-Log "Wizard error: $($_.Exception.Message)" "ERROR"
   }
 })
+
+# Initialize logging system before main GUI
+Initialize-StructuredLogging
 
 Write-Log "=== TL1 Command Builder started ===" "BOOT"
 [void]$Window.ShowDialog()

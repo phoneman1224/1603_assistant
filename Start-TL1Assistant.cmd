@@ -17,7 +17,7 @@ if %errorlevel% neq 0 (
 
 REM Get the directory where this batch file is located
 set "SCRIPT_DIR=%~dp0"
-set "LAUNCHER_SCRIPT=%SCRIPT_DIR%Launch-TL1Assistant.ps1"
+set "LAUNCHER_SCRIPT=%SCRIPT_DIR%utils\Launch-TL1Assistant.ps1"
 
 echo Script Directory: %SCRIPT_DIR%
 echo Launcher Script: %LAUNCHER_SCRIPT%

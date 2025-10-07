@@ -10,8 +10,8 @@ A comprehensive PowerShell GUI application for managing Alcatel 1603 SM and 1603
 3. **Double-click** `Start-TL1Assistant.cmd` to launch
 
 ### **Alternative Launch Methods**
-- **PowerShell**: Right-click `Launch-TL1Assistant.ps1` → "Run with PowerShell"
-- **Command Line**: `powershell -ExecutionPolicy Bypass -File Launch-TL1Assistant.ps1`
+- **PowerShell**: Right-click `utils\Launch-TL1Assistant.ps1` → "Run with PowerShell"
+- **Command Line**: `powershell -ExecutionPolicy Bypass -File utils\Launch-TL1Assistant.ps1`
 
 ## ⚠️ **Important Requirements**
 
@@ -51,7 +51,8 @@ A comprehensive PowerShell GUI application for managing Alcatel 1603 SM and 1603
 ```
 1603_assistant/
 ├── Start-TL1Assistant.cmd          # Easy launcher (double-click to start)
-├── Launch-TL1Assistant.ps1         # PowerShell launcher with diagnostics
+├── utils/
+│   └── Launch-TL1Assistant.ps1     # PowerShell launcher with diagnostics
 ├── powershell/
 │   ├── TL1_CommandBuilder.ps1      # Main GUI application
 │   └── appsettings.json            # Configuration settings
