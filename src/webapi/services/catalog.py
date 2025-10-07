@@ -66,20 +66,21 @@ class CommandCatalog:
         for cmd_id, cmd_data in self._commands.items():
             # Filter by platform if specified
             if platform:
-                platforms = cmd_data.get('platform', [])
+                # Handle both 'platform' and 'platforms' keys
+                platforms = cmd_data.get('platforms', cmd_data.get('platform', []))
                 if platform not in platforms:
                     continue
             
             command = {
                 'id': cmd_id,
-                'name': cmd_data.get('name', cmd_id),
+                'name': cmd_data.get('displayName', cmd_data.get('name', cmd_id)),
                 'verb': cmd_data.get('verb', ''),
                 'object': cmd_data.get('object', ''),
-                'modifier': cmd_data.get('modifier', ''),
+                'modifier': cmd_data.get('modifier', '') or '',
                 'category': cmd_data.get('category', 'Other'),
-                'platform': cmd_data.get('platform', []),
+                'platform': cmd_data.get('platforms', cmd_data.get('platform', [])),
                 'description': cmd_data.get('description', ''),
-                'required': cmd_data.get('required', []),
+                'required': cmd_data.get('requires', cmd_data.get('required', [])),
                 'optional': cmd_data.get('optional', []),
                 'paramSchema': cmd_data.get('paramSchema', {}),
                 'examples': cmd_data.get('examples', []),
@@ -99,14 +100,14 @@ class CommandCatalog:
         
         return {
             'id': cmd_id,
-            'name': cmd_data.get('name', cmd_id),
+            'name': cmd_data.get('displayName', cmd_data.get('name', cmd_id)),
             'verb': cmd_data.get('verb', ''),
             'object': cmd_data.get('object', ''),
-            'modifier': cmd_data.get('modifier', ''),
+            'modifier': cmd_data.get('modifier', '') or '',
             'category': cmd_data.get('category', 'Other'),
-            'platform': cmd_data.get('platform', []),
+            'platform': cmd_data.get('platforms', cmd_data.get('platform', [])),
             'description': cmd_data.get('description', ''),
-            'required': cmd_data.get('required', []),
+            'required': cmd_data.get('requires', cmd_data.get('required', [])),
             'optional': cmd_data.get('optional', []),
             'paramSchema': cmd_data.get('paramSchema', {}),
             'examples': cmd_data.get('examples', []),
@@ -122,7 +123,7 @@ class CommandCatalog:
         for cmd_data in self._commands.values():
             # Filter by platform if specified
             if platform:
-                platforms = cmd_data.get('platform', [])
+                platforms = cmd_data.get('platforms', cmd_data.get('platform', []))
                 if platform not in platforms:
                     continue
             
