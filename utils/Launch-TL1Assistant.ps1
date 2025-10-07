@@ -17,7 +17,8 @@ Write-Host "=========================" -ForegroundColor Cyan
 Write-Host ""
 
 # Get script directory
-$RootDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$RootDir = Split-Path -Parent $ScriptDir  # Go up one level from utils/ to repository root
 $PowerShellDir = Join-Path $RootDir "powershell"
 $MainScript = Join-Path $PowerShellDir "TL1_CommandBuilder.ps1"
 
