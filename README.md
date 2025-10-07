@@ -1,6 +1,77 @@
-# 1603 Assistant Documentation Package
+# TL1 Assistant - Hybrid Web GUI
 
-All the files you need to get GitHub Copilot to build your GUI application.
+A complete TL1 command management system with both **Web UI** and **Desktop WPF** interfaces for Alcatel 1603 SM/SMX network equipment.
+
+## Architecture
+
+This is a **hybrid application** that provides:
+
+- **FastAPI Backend**: Python-based REST API with structured logging
+- **React Frontend**: Modern web interface with dynamic forms
+- **Desktop WPF**: PowerShell-based desktop GUI (optional)
+- **Native TCP/Telnet**: Direct device communication without SecureCRT
+- **Data-Driven**: JSON-based command catalogs and playbooks
+
+## Quick Start
+
+### Prerequisites
+
+- Python 3.8+ (required)
+- Node.js 18+ (required for Web UI)
+- PowerShell 5.1+ (required for send script and optional desktop GUI)
+
+### Installation and Launch
+
+**Option 1: Web UI (Recommended)**
+
+```powershell
+# Run the bootstrap script - it does everything!
+.\scripts\windows_bootstrap.ps1
+```
+
+This will:
+1. Create Python virtual environment
+2. Install all dependencies (Python + Node)
+3. Validate data files
+4. Start FastAPI backend on http://127.0.0.1:8000
+5. Start Vite dev server on http://127.0.0.1:5173
+6. Open your browser automatically
+
+**Option 2: Desktop GUI**
+
+```powershell
+.\scripts\windows_bootstrap.ps1 -LaunchDesktop
+```
+
+**Option 3: Production Build**
+
+```powershell
+.\scripts\windows_bootstrap.ps1 -Production
+```
+
+This builds a static UI and serves everything from the API server.
+
+## Features
+
+### Web UI Features
+
+- **System Selector**: Choose between 1603 SM and 1603 SMX platforms
+- **Category Browser**: Browse commands organized by function
+- **Dynamic Forms**: Auto-generated forms based on command schemas
+- **Live Preview**: Real-time TL1 command preview with validation
+- **Console Output**: Structured logs with [SEND], [RECV], [INFO] levels
+- **Command History**: Track all sent commands and responses
+- **Troubleshooting Playbooks**: Run automated diagnostic workflows
+- **Provisioning Wizard**: Step-by-step circuit provisioning
+
+### Backend API Features
+
+- **RESTful API**: Standard HTTP endpoints for all operations
+- **Structured Logging**: Daily log rotation with proper formatting
+- **CTAG Management**: Automatic correlation tag incrementing
+- **Job Management**: Async command execution with status polling
+- **Settings Persistence**: Centralized configuration in settings.json
+- **Command Validation**: Lenient validation with warnings
 
 ## Files Included
 
@@ -167,8 +238,103 @@ If Copilot doesn't build correctly:
 - Point out the vacant parameter rules explicitly
 - Ask Copilot to "read tl1_syntax.md"
 
-## Ready to Build!
+## API Endpoints
 
-You have everything you need. Follow the QUICK_START.md guide and you'll have a working GUI in minutes.
+The FastAPI backend provides the following endpoints:
 
-Good luck! 🚀
+### Health & Status
+- `GET /api/health` - Health check with version info
+
+### Commands
+- `GET /api/commands` - List all commands (filter by `?platform=`)
+- `GET /api/commands/categories` - List categories with counts
+- `GET /api/commands/{id}` - Get specific command details
+- `POST /api/commands/preview` - Build and preview command
+- `POST /api/commands/reload` - Reload command catalog
+
+### Settings
+- `GET /api/settings` - Get current settings
+- `PUT /api/settings` - Update settings
+- `POST /api/settings/ctag/increment` - Increment CTAG counter
+
+### Send Commands
+- `POST /api/send` - Send TL1 command (returns job ID)
+- `GET /api/send/jobs/{id}` - Get job status and output
+- `DELETE /api/send/jobs/{id}` - Delete completed job
+
+### Playbooks
+- `GET /api/playbooks` - List all troubleshooting & provisioning playbooks
+- `GET /api/playbooks/{flowName}` - Get specific playbook
+- `POST /api/playbooks/troubleshoot` - Run troubleshooting playbook
+- `POST /api/playbooks/provision` - Run provisioning workflow
+
+## Project Structure
+
+```
+1603_assistant/
+├── data/                    # Data files
+│   ├── commands.json        # TL1 command catalog (630 commands)
+│   └── playbooks.json       # Troubleshooting & provisioning flows
+├── logs/                    # Structured logs (YYYY-MM/tl1_YYYY-MM-DD.log)
+├── powershell/              # PowerShell scripts
+│   ├── send_tl1.ps1        # Native TCP sender (authoritative)
+│   └── TL1_CommandBuilder.ps1  # Desktop WPF GUI
+├── scripts/                 # Build & launch scripts
+│   ├── windows_bootstrap.ps1   # Complete setup & launch
+│   ├── serve_web.ps1           # Run API + UI concurrently
+│   ├── validate_data.py        # JSON schema validation
+│   └── build_database.ps1      # Deterministic DB build
+├── src/webapi/              # FastAPI backend
+│   ├── app.py              # Main FastAPI application
+│   ├── logging_conf.py     # Structured logging setup
+│   ├── models/             # Pydantic schemas
+│   ├── routers/            # API route handlers
+│   └── services/           # Business logic (catalog, builder, runner)
+├── webui/                   # React frontend
+│   ├── src/
+│   │   ├── api/            # API client layer
+│   │   ├── components/     # React components
+│   │   ├── state/          # Zustand state management
+│   │   └── App.tsx         # Main app component
+│   ├── package.json        # Node dependencies
+│   └── vite.config.ts      # Vite configuration
+├── settings.json            # Unified settings (shared by desktop & web)
+└── requirements.txt         # Python dependencies
+```
+
+## Development
+
+### Run Tests
+
+```powershell
+# Validate data files
+python scripts/validate_data.py
+
+# Run API tests
+pytest
+
+# Type-check UI
+cd webui
+npm run build
+```
+
+### CI/CD
+
+GitHub Actions workflow (`.github/workflows/web-ci.yml`) runs on every push:
+- Validates JSON data schemas
+- Tests API imports
+- Builds and type-checks React UI
+
+## Documentation
+
+- **tl1_syntax.md** - Complete TL1 command syntax reference
+- **TAP-001.md** - Sample troubleshooting procedure
+- **command_examples.json** - Legacy command examples
+
+## License
+
+Internal tool for network equipment management.
+
+## Support
+
+For issues or questions, please open a GitHub issue.
