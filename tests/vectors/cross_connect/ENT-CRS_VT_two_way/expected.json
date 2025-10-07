@@ -1,6 +1,0 @@
-{
-  "sequence": [
-    {"cmd":"ENT-CRS-VT","from":"VT1-1-1","to":"VT1-1-2","dir":"2W","completion":"MDCMPLD"},
-    {"cmd":"RTRV-CRS","scope":"ENDPOINT","completion":"COMPLD","rows":[{"FROM":"VT1-1-1","TO":"VT1-1-2","DIR":"2W","STATE":"UP","ADMSTATE":"IS","PST":"IS-NR"}]}
-  ]
-}

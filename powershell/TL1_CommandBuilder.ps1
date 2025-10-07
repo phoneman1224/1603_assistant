@@ -507,7 +507,13 @@ function Load-Playbooks {
             return $playbooks
         } catch {
             Write-Log "Error loading playbooks: $_" "ERROR"
-            return $null
+            return @{}
+        }
+    } else {
+        Write-Log "Playbooks file not found at $PlaybooksPath - using empty playbooks" "WARN"
+        return @{}
+    }
+}
         }
     } else {
         Write-Log "No playbooks file found at $PlaybooksPath" "WARN"
