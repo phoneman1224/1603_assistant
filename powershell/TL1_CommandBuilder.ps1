@@ -1136,24 +1136,43 @@ function Execute-Wizard {
 
 # ---- Populate categories tree
 function Populate-CategoryTree {
-    $CategoryTree.Items.Clear()
-    $CommandBox.Items.Clear()
-    $CmdDesc.Text = "Select a system and category to begin"
-    
-    $global:Categories.Keys | ForEach-Object {
-      $cat=$_
-      $catNode=New-Object System.Windows.Controls.TreeViewItem
-      $catNode.Header="$cat ($(($global:Categories[$cat]).Count) commands)"
-      foreach($entry in $global:Categories[$cat]){
-        $cmdNode=New-Object System.Windows.Controls.TreeViewItem
-        $cmdNode.Header=$entry.Name
-        $cmdNode.Tag=$entry
-        [void]$catNode.Items.Add($cmdNode)
-      }
-      [void]$CategoryTree.Items.Add($catNode)
+    try {
+        if (-not $CategoryTree -or -not $CommandBox -or -not $CmdDesc) {
+            Write-Log "UI elements not initialized in Populate-CategoryTree" "ERROR"
+            return
+        }
+        
+        $CategoryTree.Items.Clear()
+        $CommandBox.Items.Clear()
+        $CmdDesc.Text = "Select a system and category to begin"
+        
+        if (-not $global:Categories) {
+            Write-Log "Categories not loaded" "ERROR"
+            $CmdDesc.Text = "Error: No categories loaded. Please select a platform."
+            return
+        }
+        
+        $global:Categories.Keys | ForEach-Object {
+          $cat=$_
+          $catNode=New-Object System.Windows.Controls.TreeViewItem
+          $catNode.Header="$cat ($(($global:Categories[$cat]).Count) commands)"
+          foreach($entry in $global:Categories[$cat]){
+            $cmdNode=New-Object System.Windows.Controls.TreeViewItem
+            $cmdNode.Header=$entry.Name
+            $cmdNode.Tag=$entry
+            [void]$catNode.Items.Add($cmdNode)
+          }
+          [void]$CategoryTree.Items.Add($catNode)
+        }
+        
+        Write-Log "Category tree populated with $($global:Categories.Keys.Count) categories for $global:CurrentPlatform"
+    } catch {
+        Write-Log "Error in Populate-CategoryTree: $_" "ERROR"
+        if ($CmdDesc) {
+            $CmdDesc.Text = "Error populating categories. Please restart the application."
+            $CmdDesc.Foreground = "#dc2626"
+        }
     }
-    
-    Write-Log "Category tree populated with $($global:Categories.Keys.Count) categories for $global:CurrentPlatform"
 }
 
 # Initial tree population
@@ -1195,70 +1214,88 @@ $SystemBox.Add_SelectionChanged({
 
 # ---- Tree selection handler
 $CategoryTree.Add_SelectedItemChanged({
-  $selected = $CategoryTree.SelectedItem
-  if ($selected -and $selected.Tag) {
-    # Command selected
-    $entry = $selected.Tag
-    $CommandBox.Items.Clear()
-    $cmdItem = New-Object System.Windows.Controls.ComboBoxItem
-    $cmdItem.Content = $entry.Name
-    $cmdItem.Tag = $entry
-    [void]$CommandBox.Items.Add($cmdItem)
-    $CommandBox.SelectedIndex = 0
-    
-    # Show platform-specific description
-    $platformInfo = if ($entry.Platform) { " [$($entry.Platform)]" } else { "" }
-    $CmdDesc.Text = $entry.Desc + $platformInfo
-    
-    # Show safety warnings
-    if ($entry.SafetyLevel -eq "caution" -or $entry.ServiceAffecting) {
-      $warning = ""
-      if ($entry.SafetyLevel -eq "caution") { $warning += "[CAUTION] " }
-      if ($entry.ServiceAffecting) { $warning += "[SERVICE AFFECTING] " }
-      $CmdDesc.Text = $warning + $entry.Desc + $platformInfo
-      $CmdDesc.Foreground = "#b91c1c"  # Red warning
-    } else {
-      $CmdDesc.Foreground = "#6b7280"  # Normal gray
-    }
-    
-    Refresh-OptionalFields
-  } elseif ($selected -and $selected.Header -and $Categories.ContainsKey($selected.Header.Split('(')[0].Trim())) {
-    # Category selected - populate command dropdown with all commands in category
-    $categoryHeader = $selected.Header.Split('(')[0].Trim()  # Remove count from header
-    $CommandBox.Items.Clear()
-    $CmdDesc.Text = "Select a command from the '$categoryHeader' category for $global:CurrentPlatform"
-    foreach($entry in $Categories[$categoryHeader]) {
+  try {
+    $selected = $CategoryTree.SelectedItem
+    if ($selected -and $selected.Tag -and $CommandBox -and $CmdDesc) {
+      # Command selected
+      $entry = $selected.Tag
+      $CommandBox.Items.Clear()
       $cmdItem = New-Object System.Windows.Controls.ComboBoxItem
       $cmdItem.Content = $entry.Name
       $cmdItem.Tag = $entry
       [void]$CommandBox.Items.Add($cmdItem)
+      $CommandBox.SelectedIndex = 0
+      
+      # Show platform-specific description
+      $platformInfo = if ($entry.Platform) { " [$($entry.Platform)]" } else { "" }
+      $CmdDesc.Text = $entry.Desc + $platformInfo
+      
+      # Show safety warnings
+      if ($entry.SafetyLevel -eq "caution" -or $entry.ServiceAffecting) {
+        $warning = ""
+        if ($entry.SafetyLevel -eq "caution") { $warning += "[CAUTION] " }
+        if ($entry.ServiceAffecting) { $warning += "[SERVICE AFFECTING] " }
+        $CmdDesc.Text = $warning + $entry.Desc + $platformInfo
+        $CmdDesc.Foreground = "#b91c1c"  # Red warning
+      } else {
+        $CmdDesc.Foreground = "#6b7280"  # Normal gray
+      }
+      
+      Refresh-OptionalFields
+    } elseif ($selected -and $selected.Header -and $global:Categories -and $CommandBox -and $CmdDesc) {
+      # Category selected - populate command dropdown with all commands in category
+      $categoryHeader = $selected.Header.Split('(')[0].Trim()  # Remove count from header
+      if ($global:Categories.ContainsKey($categoryHeader)) {
+        $CommandBox.Items.Clear()
+        $CmdDesc.Text = "Select a command from the '$categoryHeader' category for $global:CurrentPlatform"
+        foreach($entry in $global:Categories[$categoryHeader]) {
+          $cmdItem = New-Object System.Windows.Controls.ComboBoxItem
+          $cmdItem.Content = $entry.Name
+          $cmdItem.Tag = $entry
+          [void]$CommandBox.Items.Add($cmdItem)
+        }
+      }
+    }
+  } catch {
+    Write-Log "Error in tree selection handler: $_" "ERROR"
+    if ($CmdDesc) {
+      $CmdDesc.Text = "Error loading commands. Please try selecting a different platform."
+      $CmdDesc.Foreground = "#dc2626"
     }
   }
 })
 
 # ---- Command dropdown handler
 $CommandBox.Add_SelectionChanged({
-  $selected = $CommandBox.SelectedItem
-  if ($selected -and $selected.Tag) {
-    $entry = $selected.Tag
-    
-    # Show platform-specific description
-    $platformInfo = if ($entry.Platform) { " [$($entry.Platform)]" } else { "" }
-    $CmdDesc.Text = $entry.Desc + $platformInfo
-    
-    # Show safety warnings
-    if ($entry.SafetyLevel -eq "caution" -or $entry.ServiceAffecting) {
-      $warning = ""
-      if ($entry.SafetyLevel -eq "caution") { $warning += "[CAUTION] " }
-      if ($entry.ServiceAffecting) { $warning += "[SERVICE AFFECTING] " }
-      $CmdDesc.Text = $warning + $entry.Desc + $platformInfo
-      $CmdDesc.Foreground = "#b91c1c"  # Red warning
-    } else {
-      $CmdDesc.Foreground = "#6b7280"  # Normal gray
+  try {
+    $selected = $CommandBox.SelectedItem
+    if ($selected -and $selected.Tag -and $CmdDesc) {
+      $entry = $selected.Tag
+      
+      # Show platform-specific description
+      $platformInfo = if ($entry.Platform) { " [$($entry.Platform)]" } else { "" }
+      $CmdDesc.Text = $entry.Desc + $platformInfo
+      
+      # Show safety warnings
+      if ($entry.SafetyLevel -eq "caution" -or $entry.ServiceAffecting) {
+        $warning = ""
+        if ($entry.SafetyLevel -eq "caution") { $warning += "[CAUTION] " }
+        if ($entry.ServiceAffecting) { $warning += "[SERVICE AFFECTING] " }
+        $CmdDesc.Text = $warning + $entry.Desc + $platformInfo
+        $CmdDesc.Foreground = "#b91c1c"  # Red warning
+      } else {
+        $CmdDesc.Foreground = "#6b7280"  # Normal gray
+      }
+      
+      Refresh-OptionalFields
+      Update-Preview
     }
-    
-    Refresh-OptionalFields
-    Update-Preview
+  } catch {
+    Write-Log "Error in command selection handler: $_" "ERROR"
+    if ($CmdDesc) {
+      $CmdDesc.Text = "Error loading command details."
+      $CmdDesc.Foreground = "#dc2626"
+    }
   }
 })
 
