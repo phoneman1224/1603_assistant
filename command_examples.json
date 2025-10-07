@@ -1,0 +1,232 @@
+{
+  "command_categories": {
+    "alarm_management": {
+      "description": "Commands for retrieving and managing alarms",
+      "commands": [
+        {
+          "name": "Retrieve All Alarms",
+          "format": "RTRV-ALM-ALL:::CTAG::;",
+          "example": "RTRV-ALM-ALL:::123::;",
+          "description": "Retrieves all active alarms from the equipment",
+          "parameters": {
+            "tid": "vacant",
+            "aid": "vacant",
+            "ctag": "required"
+          }
+        },
+        {
+          "name": "Retrieve Critical Alarms",
+          "format": "RTRV-ALM-ALL:::CTAG::NTFCNCDE=CR;",
+          "example": "RTRV-ALM-ALL:::124::NTFCNCDE=CR;",
+          "description": "Retrieves only critical severity alarms",
+          "parameters": {
+            "tid": "vacant",
+            "aid": "vacant",
+            "ctag": "required",
+            "ntfcncde": "CR, MJ, MN, or WN"
+          }
+        },
+        {
+          "name": "Retrieve OC12 Conditions",
+          "format": "RTRV-COND-OC12:::CTAG::;",
+          "example": "RTRV-COND-OC12:::125::;",
+          "description": "Retrieves condition information for OC12 circuits",
+          "parameters": {
+            "tid": "vacant",
+            "aid": "vacant",
+            "ctag": "required"
+          }
+        },
+        {
+          "name": "Retrieve Specific Circuit Alarms",
+          "format": "RTRV-ALM-OC12::AID:CTAG::;",
+          "example": "RTRV-ALM-OC12::DG1-OC12-1:126::;",
+          "description": "Retrieves alarms for a specific OC12 circuit",
+          "parameters": {
+            "tid": "vacant",
+            "aid": "required (e.g., DG1-OC12-1)",
+            "ctag": "required"
+          }
+        }
+      ]
+    },
+    "provisioning": {
+      "description": "Commands for provisioning and configuring circuits",
+      "commands": [
+        {
+          "name": "Provision T1 Circuit",
+          "format": "ENT-T1:TID:AID:CTAG::RATE=T1,CODING=B8ZS,FRAMING=ESF;",
+          "example": "ENT-T1:SITE01:DG1-T1-1:200::RATE=T1,CODING=B8ZS,FRAMING=ESF;",
+          "description": "Provisions a new T1 circuit with standard parameters",
+          "parameters": {
+            "tid": "optional (site identifier)",
+            "aid": "required (e.g., DG1-T1-1)",
+            "ctag": "required",
+            "rate": "T1",
+            "coding": "B8ZS or AMI",
+            "framing": "ESF or D4"
+          }
+        },
+        {
+          "name": "Provision OC12 Circuit",
+          "format": "ENT-OC12:TID:AID:CTAG::RATE=OC12;",
+          "example": "ENT-OC12:SITE01:DG1-OC12-1:201::RATE=OC12;",
+          "description": "Provisions a new OC12 circuit",
+          "parameters": {
+            "tid": "optional (site identifier)",
+            "aid": "required (e.g., DG1-OC12-1)",
+            "ctag": "required",
+            "rate": "OC12"
+          }
+        },
+        {
+          "name": "Edit T1 State",
+          "format": "ED-T1:TID:AID:CTAG::STATE=IS;",
+          "example": "ED-T1:SITE01:DG1-T1-1:202::STATE=IS;",
+          "description": "Changes T1 circuit to In-Service state",
+          "parameters": {
+            "tid": "optional",
+            "aid": "required",
+            "ctag": "required",
+            "state": "IS (In-Service) or OOS (Out-of-Service)"
+          }
+        },
+        {
+          "name": "Delete T1 Circuit",
+          "format": "DLT-T1:TID:AID:CTAG::;",
+          "example": "DLT-T1:SITE01:DG1-T1-1:203::;",
+          "description": "Deletes a T1 circuit configuration",
+          "parameters": {
+            "tid": "optional",
+            "aid": "required",
+            "ctag": "required"
+          }
+        }
+      ]
+    },
+    "equipment_status": {
+      "description": "Commands for checking equipment status and inventory",
+      "commands": [
+        {
+          "name": "Retrieve All Equipment",
+          "format": "RTRV-EQPT:::CTAG::;",
+          "example": "RTRV-EQPT:::300::;",
+          "description": "Retrieves status of all equipment in the system",
+          "parameters": {
+            "tid": "vacant",
+            "aid": "vacant",
+            "ctag": "required"
+          }
+        },
+        {
+          "name": "Retrieve Specific Shelf Equipment",
+          "format": "RTRV-EQPT:TID:AID:CTAG::;",
+          "example": "RTRV-EQPT:SITE01:DG1-ALL:301::;",
+          "description": "Retrieves equipment status for a specific shelf",
+          "parameters": {
+            "tid": "optional",
+            "aid": "required (e.g., DG1-ALL)",
+            "ctag": "required"
+          }
+        }
+      ]
+    },
+    "loopback_testing": {
+      "description": "Commands for initiating and releasing loopback tests",
+      "commands": [
+        {
+          "name": "Operate Facility Loopback",
+          "format": "OPR-LOOPBACK:TID:AID:CTAG::TYPE=FACILITY;",
+          "example": "OPR-LOOPBACK:SITE01:DG1-T1-1:400::TYPE=FACILITY;",
+          "description": "Initiates a facility loopback for testing",
+          "parameters": {
+            "tid": "optional",
+            "aid": "required",
+            "ctag": "required",
+            "type": "FACILITY or TERMINAL"
+          }
+        },
+        {
+          "name": "Release Loopback",
+          "format": "RLS-LOOPBACK:TID:AID:CTAG::;",
+          "example": "RLS-LOOPBACK:SITE01:DG1-T1-1:401::;",
+          "description": "Releases an active loopback",
+          "parameters": {
+            "tid": "optional",
+            "aid": "required",
+            "ctag": "required"
+          }
+        }
+      ]
+    },
+    "performance_monitoring": {
+      "description": "Commands for performance monitoring and statistics",
+      "commands": [
+        {
+          "name": "Retrieve OC12 Performance",
+          "format": "RTRV-PM-OC12:TID:AID:CTAG::;",
+          "example": "RTRV-PM-OC12:SITE01:DG1-OC12-1:500::;",
+          "description": "Retrieves performance monitoring data for OC12",
+          "parameters": {
+            "tid": "optional",
+            "aid": "required",
+            "ctag": "required"
+          }
+        },
+        {
+          "name": "Retrieve T1 Performance",
+          "format": "RTRV-PM-T1:TID:AID:CTAG::;",
+          "example": "RTRV-PM-T1:SITE01:DG1-T1-1:501::;",
+          "description": "Retrieves performance monitoring data for T1",
+          "parameters": {
+            "tid": "optional",
+            "aid": "required",
+            "ctag": "required"
+          }
+        }
+      ]
+    }
+  },
+  "verbs": [
+    "RTRV", "ENT", "ED", "DLT", "RMV", "OPR", "RLS", "RST", "SET", "INIT"
+  ],
+  "modifiers": [
+    "ALM", "COND", "TH", "PM", "ATTR", "STS", "LOOPBACK"
+  ],
+  "objects": {
+    "circuits": ["T1", "DS3", "OC12", "OC48", "EC1", "STS"],
+    "equipment": ["EQPT", "PLUG", "SHELF", "ALL"],
+    "system": ["ATTR", "SYS", "LOG"]
+  },
+  "aid_patterns": [
+    "DG{shelf}-{type}-{slot}",
+    "AID-{shelf}-{slot}-{port}",
+    "DG1-T1-1",
+    "DG1-DS3-5",
+    "DG1-OC12-2"
+  ],
+  "parameter_options": {
+    "rate": ["T1", "DS3", "OC12", "OC48"],
+    "coding": ["B8ZS", "AMI", "HDB3"],
+    "framing": ["ESF", "D4", "SLC96"],
+    "state": ["IS", "OOS", "MT"],
+    "adminstate": ["IS", "OOS"],
+    "ntfcncde": ["CR", "MJ", "MN", "WN"],
+    "type": ["FACILITY", "TERMINAL"]
+  },
+  "response_codes": {
+    "COMPLD": "Command completed successfully",
+    "DENY": "Command denied",
+    "IP": "In progress",
+    "RTRV": "Retrieval response",
+    "RL": "Resource list"
+  },
+  "error_codes": {
+    "IITA": "Input, Invalid TID or AID",
+    "ICNV": "Input, Command Not Valid",
+    "IIET": "Input, Invalid Equipment Type",
+    "IIST": "Input, Invalid State",
+    "SNVS": "Status, Not Valid State",
+    "SROF": "Status, Resource Out of Service"
+  }
+}
