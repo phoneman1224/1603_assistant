@@ -213,14 +213,25 @@ class TL1WebHandler(SimpleHTTPRequestHandler):
             if category and cmd_data.get('category', '') != category:
                 continue
             
-            commands.append({
+            # Include full command data for proper command building
+            command_info = {
                 'id': cmd_id,
                 'name': cmd_data.get('displayName', cmd_id),
+                'displayName': cmd_data.get('displayName', cmd_id),
                 'description': cmd_data.get('description', ''),
                 'syntax': cmd_data.get('syntax', ''),
                 'category': cmd_data.get('category', ''),
-                'platforms': cmd_data.get('platforms', [])
-            })
+                'platforms': cmd_data.get('platforms', []),
+                'requires': cmd_data.get('requires', []),
+                'optional': cmd_data.get('optional', []),
+                'paramSchema': cmd_data.get('paramSchema', {}),
+                'examples': cmd_data.get('examples', []),
+                'safety_level': cmd_data.get('safety_level', 'safe'),
+                'service_affecting': cmd_data.get('service_affecting', False),
+                'response_format': cmd_data.get('response_format', '')
+            }
+            
+            commands.append(command_info)
         
         return sorted(commands, key=lambda x: x['name'])
     
@@ -270,6 +281,14 @@ class TL1WebHandler(SimpleHTTPRequestHandler):
         
         .command-builder { margin-bottom: 20px; }
         .command-preview { background: #1f2937; color: #e5e7eb; padding: 15px; border-radius: 6px; font-family: 'Consolas', monospace; margin: 15px 0; }
+        
+        .parameter-inputs { margin: 15px 0; }
+        .param-group { margin-bottom: 15px; }
+        .param-group label { display: block; margin-bottom: 5px; font-weight: 500; }
+        .param-group input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .param-group small { color: #666; font-size: 12px; }
+        
+        .warning-box { background: #fef3c7; border: 1px solid #f59e0b; color: #92400e; padding: 10px; border-radius: 4px; margin: 10px 0; }
         
         .response-area { background: #1f2937; color: #e5e7eb; padding: 15px; border-radius: 6px; font-family: 'Consolas', monospace; min-height: 200px; max-height: 400px; overflow-y: auto; white-space: pre-wrap; }
         
@@ -330,19 +349,8 @@ class TL1WebHandler(SimpleHTTPRequestHandler):
                 <div class="command-builder">
                     <h3>Command Builder</h3>
                     
-                    <div class="form-group">
-                        <label for="tid">TID:</label>
-                        <input type="text" id="tid" placeholder="TARGET">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="aid">AID:</label>
-                        <input type="text" id="aid" placeholder="ALL">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="ctag">CTAG:</label>
-                        <input type="text" id="ctag" placeholder="1">
+                    <div id="command-form">
+                        <p>Select a command from the sidebar to configure parameters...</p>
                     </div>
                     
                     <div class="command-preview" id="command-preview">
@@ -452,7 +460,67 @@ Ready to send TL1 commands...
         
         function selectCommand(command) {
             selectedCommand = command;
+            buildCommandForm();
             updateCommandPreview();
+        }
+        
+        function buildCommandForm() {
+            const formContainer = document.getElementById('command-form');
+            if (!selectedCommand) {
+                formContainer.innerHTML = '<p>Select a command to configure parameters...</p>';
+                return;
+            }
+            
+            let html = `<h3>${selectedCommand.displayName}</h3>`;
+            html += `<p><strong>Description:</strong> ${selectedCommand.description}</p>`;
+            html += `<p><strong>Syntax:</strong> <code>${selectedCommand.syntax}</code></p>`;
+            
+            if (selectedCommand.examples && selectedCommand.examples.length > 0) {
+                html += `<p><strong>Example:</strong> <code>${selectedCommand.examples[0]}</code></p>`;
+            }
+            
+            html += '<div class="parameter-inputs">';
+            
+            // Build parameter inputs based on schema
+            if (selectedCommand.paramSchema) {
+                Object.entries(selectedCommand.paramSchema).forEach(([param, schema]) => {
+                    const isRequired = selectedCommand.requires && selectedCommand.requires.includes(param);
+                    const isOptional = selectedCommand.optional && selectedCommand.optional.includes(param);
+                    
+                    html += `<div class="param-group">`;
+                    html += `<label for="param-${param.toLowerCase()}">`;
+                    html += `${param}${isRequired ? '*' : ''}`;
+                    html += `</label>`;
+                    html += `<input type="text" id="param-${param.toLowerCase()}" `;
+                    html += `placeholder="${schema.description || param}"`;
+                    if (schema.maxLength) {
+                        html += ` maxlength="${schema.maxLength}"`;
+                    }
+                    if (isRequired) {
+                        html += ` required`;
+                    }
+                    html += ` oninput="updateCommandPreview()">`;
+                    html += `<small>${schema.description || ''}</small>`;
+                    html += `</div>`;
+                });
+            }
+            
+            html += '</div>';
+            
+            // Safety and service impact warnings
+            if (selectedCommand.safety_level === 'dangerous' || selectedCommand.service_affecting) {
+                html += '<div class="warning-box">';
+                html += '<strong>⚠️ Warning:</strong> ';
+                if (selectedCommand.safety_level === 'dangerous') {
+                    html += 'This command may affect system operation. ';
+                }
+                if (selectedCommand.service_affecting) {
+                    html += 'This command may affect active services.';
+                }
+                html += '</div>';
+            }
+            
+            formContainer.innerHTML = html;
         }
         
         function updateCommandPreview() {
@@ -461,17 +529,20 @@ Ready to send TL1 commands...
                 return;
             }
             
-            const tid = document.getElementById('tid').value || 'TARGET';
-            const aid = document.getElementById('aid').value || 'ALL';
-            const ctag = document.getElementById('ctag').value || '1';
-            
-            // Build TL1 command based on syntax
             let command = selectedCommand.syntax || selectedCommand.id;
             
-            // Replace placeholders
-            command = command.replace(/\\[tid\\]/g, tid);
-            command = command.replace(/\\[aid\\]/g, aid);
-            command = command.replace(/\\[ctag\\]/g, ctag);
+            // Get parameter values from form inputs
+            if (selectedCommand.paramSchema) {
+                Object.keys(selectedCommand.paramSchema).forEach(param => {
+                    const input = document.getElementById(`param-${param.toLowerCase()}`);
+                    const value = input ? input.value : '';
+                    const placeholder = `[${param.toLowerCase()}]`;
+                    
+                    // Replace parameter placeholders with actual values
+                    const regex = new RegExp(`\\[${param.toLowerCase()}\\]`, 'gi');
+                    command = command.replace(regex, value || placeholder);
+                });
+            }
             
             document.getElementById('command-preview').textContent = command;
         }
