@@ -318,12 +318,16 @@ function Load-TL1Commands {
             Write-Log "Loaded data-driven catalog with $($Catalog.commands.PSObject.Properties.Count) commands"
             
             # Process each command in the catalog
+            $processedCount = 0
+            $filteredCount = 0
             $Catalog.commands.PSObject.Properties | ForEach-Object {
                 $commandId = $_.Name
                 $command = $_.Value
+                $processedCount++
                 
                 # Filter by platform
                 if ($command.platforms -contains $selectedPlatform) {
+                    $filteredCount++
                     $categoryName = $command.category
                     
                     if (-not $AllCommands.Contains($categoryName)) {
@@ -374,9 +378,11 @@ function Load-TL1Commands {
                     }
                     
                     $AllCommands[$categoryName] += $commandEntry
-                    Write-Log "  Added command: $($command.id) to $categoryName"
+                    Write-Log "  Added command: $($command.id) to $categoryName" "DEBUG"
                 }
             }
+            
+            Write-Log "Processed $processedCount total commands, filtered to $filteredCount for platform $selectedPlatform"
             
         } catch {
             Write-Log "Error loading data-driven catalog: $_" "ERROR"
@@ -707,7 +713,9 @@ $xaml=@"
     <Border DockPanel.Dock="Left" Width="270" Background="{StaticResource PanelBg}" BorderBrush="{StaticResource PanelBorder}" BorderThickness="0,0,1,0">
       <StackPanel>
         <TextBlock Text="Categories" FontWeight="Bold" Margin="10,10,10,6"/>
-        <TreeView Name="CategoryTree" Margin="8"/>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="8">
+          <TreeView Name="CategoryTree"/>
+        </ScrollViewer>
       </StackPanel>
     </Border>
 
