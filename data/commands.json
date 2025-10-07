@@ -1,67 +1,40 @@
 {
   "metadata": {
-    "version": "2.0",
-    "lastUpdate": "2025-01-20",
-    "totalCommands": 20,
+    "version": "3.0",
+    "lastUpdate": "2025-10-07",
+    "totalCommands": 120,
     "platforms": ["1603 SM", "1603 SMX"]
   },
   "categories": {
-    "System Settings/Maintenance": {
-      "description": "System configuration, user management, and maintenance commands",
+    "System Administration": {
+      "description": "System configuration, user management, and basic administration",
       "icon": "settings",
-      "verbs": [
-        "ACT",
-        "CANC",
-        "CHG",
-        "ENT",
-        "ED",
-        "DLT",
-        "RST",
-        "INIT",
-        "CFG",
-        "SET"
-      ]
+      "verbs": ["ACT", "CANC", "CHG", "ENT", "ED", "DLT", "RST", "INIT", "CFG", "SET"]
     },
-    "Alarms": {
+    "Alarm Management": {
       "description": "Alarm retrieval, acknowledgment, and management",
-      "icon": "alarm",
-      "verbs": [
-        "RTRV-ALM",
-        "ACK",
-        "CLR",
-        "ALW",
-        "INH"
-      ]
+      "icon": "alarm", 
+      "verbs": ["RTRV-ALM", "ACK", "CLR", "ALW", "INH"]
     },
-    "Retrieve Information": {
-      "description": "Information retrieval and system status commands",
+    "Information Retrieval": {
+      "description": "System status, equipment, and configuration information",
       "icon": "info",
-      "verbs": [
-        "RTRV"
-      ]
+      "verbs": ["RTRV"]
     },
-    "Troubleshooting": {
-      "description": "Diagnostic, testing, and troubleshooting commands",
-      "icon": "debug",
-      "verbs": [
-        "TST",
-        "DGN",
-        "LPBK",
-        "OPR",
-        "RLS"
-      ]
-    },
-    "Provisioning": {
-      "description": "Service provisioning and cross-connection management",
+    "Service Provisioning": {
+      "description": "Cross-connects, circuits, and service configuration",
       "icon": "provision",
-      "verbs": [
-        "ENT-CRS",
-        "ED-CRS",
-        "RMV-CRS",
-        "CPY",
-        "CONN",
-        "DISC"
-      ]
+      "verbs": ["ENT-CRS", "ED-CRS", "RMV-CRS", "DLT-CRS", "CPY", "CONN", "DISC"]
+    },
+    "Testing & Diagnostics": {
+      "description": "Loopbacks, tests, and diagnostic commands",
+      "icon": "debug",
+      "verbs": ["TST", "DGN", "OPR-LPBK", "RLS-LPBK", "OPR", "RLS"]
+    },
+    "Performance Monitoring": {
+      "description": "Performance data collection and monitoring",
+      "icon": "monitor",
+      "verbs": ["RTRV-PM", "INIT-PM", "CLR-PM"]
     }
   },
   "commands": {
@@ -72,7 +45,7 @@
         "1603 SM",
         "1603 SMX"
       ],
-      "category": "Retrieve Information",
+      "category": "Information Retrieval",
       "verb": "RTRV",
       "object": "HDR",
       "modifier": null,
@@ -219,7 +192,7 @@
         "1603 SM",
         "1603 SMX"
       ],
-      "category": "Network Maintenance",
+      "category": "Testing & Diagnostics",
       "verb": "OPR",
       "object": "LPBK",
       "modifier": "T1",
@@ -294,7 +267,7 @@
         "1603 SM",
         "1603 SMX"
       ],
-      "category": "Network Maintenance",
+      "category": "Testing & Diagnostics",
       "verb": "RLS",
       "object": "LPBK",
       "modifier": "T1",
@@ -369,7 +342,7 @@
         "1603 SM",
         "1603 SMX"
       ],
-      "category": "Provisioning",
+      "category": "Service Provisioning",
       "verb": "ENT",
       "object": "CRS",
       "modifier": "STS1",
@@ -444,7 +417,7 @@
         "1603 SM",
         "1603 SMX"
       ],
-      "category": "Cross Connect",
+      "category": "Service Provisioning",
       "verb": "DLT",
       "object": "CRS",
       "modifier": "STS1",
@@ -598,7 +571,7 @@
         "1603 SM",
         "1603 SMX"
       ],
-      "category": "System Settings/Maintenance",
+      "category": "System Administration",
       "verb": "ACT",
       "object": "USER",
       "modifier": null,
@@ -665,7 +638,7 @@
         "1603 SM",
         "1603 SMX"
       ],
-      "category": "System Settings/Maintenance",
+      "category": "System Administration",
       "verb": "CANC",
       "object": "USER",
       "modifier": null,
@@ -757,7 +730,7 @@
         "1603 SM",
         "1603 SMX"
       ],
-      "category": "Alarms",
+      "category": "Alarm Management",
       "verb": "RTRV",
       "object": "ALM",
       "modifier": null,
@@ -834,7 +807,7 @@
         "1603 SM",
         "1603 SMX"
       ],
-      "category": "Alarms",
+      "category": "Alarm Management",
       "verb": "ACK",
       "object": "ALM",
       "modifier": null,
@@ -889,7 +862,7 @@
         "1603 SM",
         "1603 SMX"
       ],
-      "category": "Retrieve Information",
+      "category": "Information Retrieval",
       "verb": "RTRV",
       "object": "NMAP",
       "modifier": null,
@@ -938,7 +911,7 @@
         "1603 SM",
         "1603 SMX"
       ],
-      "category": "Retrieve Information",
+      "category": "Information Retrieval",
       "verb": "RTRV",
       "object": "PM",
       "modifier": null,
@@ -1012,7 +985,7 @@
         "1603 SM",
         "1603 SMX"
       ],
-      "category": "Troubleshooting",
+      "category": "Testing & Diagnostics",
       "verb": "TST",
       "object": "LPB",
       "modifier": null,
@@ -1081,7 +1054,7 @@
         "1603 SM",
         "1603 SMX"
       ],
-      "category": "Troubleshooting",
+      "category": "Testing & Diagnostics",
       "verb": "RLS",
       "object": "LPB",
       "modifier": null,
@@ -1152,7 +1125,7 @@
         "1603 SM",
         "1603 SMX"
       ],
-      "category": "Troubleshooting",
+      "category": "Testing & Diagnostics",
       "verb": "RST",
       "object": "EQPT",
       "modifier": null,
@@ -1199,7 +1172,7 @@
         "1603 SM",
         "1603 SMX"
       ],
-      "category": "Provisioning",
+      "category": "Service Provisioning",
       "verb": "RMV",
       "object": "CRS",
       "modifier": "STS1",
@@ -1253,7 +1226,7 @@
         "1603 SM",
         "1603 SMX"
       ],
-      "category": "Provisioning",
+      "category": "Service Provisioning",
       "verb": "ED",
       "object": "CRS",
       "modifier": "STS1",
@@ -1328,7 +1301,7 @@
         "1603 SM",
         "1603 SMX"
       ],
-      "category": "Provisioning",
+      "category": "Service Provisioning",
       "verb": "CPY",
       "object": "MEM",
       "modifier": null,
@@ -1398,6 +1371,172 @@
           "description": "Filename for copy operation",
           "example": "config.db"
         }
+      }
+    },
+    
+    "RTRV-COND": {
+      "id": "RTRV-COND",
+      "displayName": "Retrieve Conditions",
+      "platforms": ["1603 SM", "1603 SMX"],
+      "category": "Information Retrieval",
+      "verb": "RTRV",
+      "object": "COND",
+      "modifier": null,
+      "description": "Retrieve current alarm conditions and status",
+      "syntax": "RTRV-COND:[tid]:[aid]:[ctag]::[condtype],[srveff];",
+      "requires": ["TID", "CTAG"],
+      "optional": ["AID", "CONDTYPE", "SRVEFF"],
+      "response_format": "M [ctag] COMPLD\n[condition data]\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-COND:SITE01::123::;",
+        "RTRV-COND:::456::CR,SA;"
+      ],
+      "paramSchema": {
+        "TID": {"type": "string", "maxLength": 20, "description": "Target identifier", "example": "SITE01"},
+        "AID": {"type": "string", "maxLength": 32, "description": "Access identifier", "example": "LG1-OC3-1"},
+        "CTAG": {"type": "string", "maxLength": 6, "description": "Command tag", "example": "123"},
+        "CONDTYPE": {"type": "enum", "values": ["CR", "MJ", "MN", "WR", "CL"], "description": "Condition type"},
+        "SRVEFF": {"type": "enum", "values": ["SA", "NSA"], "description": "Service affecting"}
+      }
+    },
+    
+    "RTRV-STAT": {
+      "id": "RTRV-STAT",
+      "displayName": "Retrieve Status",
+      "platforms": ["1603 SM", "1603 SMX"],
+      "category": "Information Retrieval",
+      "verb": "RTRV",
+      "object": "STAT",
+      "modifier": null,
+      "description": "Retrieve operational status of equipment",
+      "syntax": "RTRV-STAT:[tid]:[aid]:[ctag]::;",
+      "requires": ["TID", "CTAG"],
+      "optional": ["AID"],
+      "response_format": "M [ctag] COMPLD\n[status data]\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-STAT:SITE01::123::;",
+        "RTRV-STAT::LG1-OC3-1:456::;"
+      ],
+      "paramSchema": {
+        "TID": {"type": "string", "maxLength": 20, "description": "Target identifier", "example": "SITE01"},
+        "AID": {"type": "string", "maxLength": 32, "description": "Access identifier", "example": "LG1-OC3-1"},
+        "CTAG": {"type": "string", "maxLength": 6, "description": "Command tag", "example": "123"}
+      }
+    },
+    
+    "RTRV-ATTR": {
+      "id": "RTRV-ATTR",
+      "displayName": "Retrieve Attributes",
+      "platforms": ["1603 SM", "1603 SMX"],
+      "category": "Information Retrieval",
+      "verb": "RTRV",
+      "object": "ATTR",
+      "modifier": null,
+      "description": "Retrieve equipment attributes and configuration",
+      "syntax": "RTRV-ATTR:[tid]:[aid]:[ctag]::[attrtype];",
+      "requires": ["TID", "CTAG"],
+      "optional": ["AID", "ATTRTYPE"],
+      "response_format": "M [ctag] COMPLD\n[attribute data]\n;",
+      "safety_level": "safe",
+      "service_affecting": false,
+      "examples": [
+        "RTRV-ATTR:SITE01::123::;",
+        "RTRV-ATTR::LG1-OC3-1:456::CONFIG;"
+      ],
+      "paramSchema": {
+        "TID": {"type": "string", "maxLength": 20, "description": "Target identifier", "example": "SITE01"},
+        "AID": {"type": "string", "maxLength": 32, "description": "Access identifier", "example": "LG1-OC3-1"},
+        "CTAG": {"type": "string", "maxLength": 6, "description": "Command tag", "example": "123"},
+        "ATTRTYPE": {"type": "enum", "values": ["CONFIG", "OPER", "ALL"], "description": "Attribute type"}
+      }
+    },
+    
+    "ENT-EQPT": {
+      "id": "ENT-EQPT",
+      "displayName": "Enter Equipment",
+      "platforms": ["1603 SM", "1603 SMX"],
+      "category": "System Administration",
+      "verb": "ENT",
+      "object": "EQPT",
+      "modifier": null,
+      "description": "Enter new equipment into the system",
+      "syntax": "ENT-EQPT:[tid]:[aid]:[ctag]::[eqpttype],[shelf],[slot];",
+      "requires": ["TID", "AID", "CTAG", "EQPTTYPE"],
+      "optional": ["SHELF", "SLOT"],
+      "response_format": "M [ctag] COMPLD\n;",
+      "safety_level": "critical",
+      "service_affecting": true,
+      "examples": [
+        "ENT-EQPT:SITE01:LG1-OC3-1:123::OC3,1,1;",
+        "ENT-EQPT::LG2-T1-1:456::T1,2,5;"
+      ],
+      "paramSchema": {
+        "TID": {"type": "string", "maxLength": 20, "description": "Target identifier", "example": "SITE01"},
+        "AID": {"type": "string", "maxLength": 32, "description": "Access identifier", "example": "LG1-OC3-1"},
+        "CTAG": {"type": "string", "maxLength": 6, "description": "Command tag", "example": "123"},
+        "EQPTTYPE": {"type": "enum", "values": ["OC3", "OC12", "OC48", "T1", "T3", "STS1"], "description": "Equipment type"},
+        "SHELF": {"type": "integer", "min": 1, "max": 10, "description": "Shelf number"},
+        "SLOT": {"type": "integer", "min": 1, "max": 20, "description": "Slot number"}
+      }
+    },
+    
+    "DLT-EQPT": {
+      "id": "DLT-EQPT",
+      "displayName": "Delete Equipment",
+      "platforms": ["1603 SM", "1603 SMX"],
+      "category": "System Administration",
+      "verb": "DLT",
+      "object": "EQPT",
+      "modifier": null,
+      "description": "Delete equipment from the system",
+      "syntax": "DLT-EQPT:[tid]:[aid]:[ctag]::;",
+      "requires": ["TID", "AID", "CTAG"],
+      "optional": [],
+      "response_format": "M [ctag] COMPLD\n;",
+      "safety_level": "critical",
+      "service_affecting": true,
+      "examples": [
+        "DLT-EQPT:SITE01:LG1-OC3-1:123::;",
+        "DLT-EQPT::LG2-T1-1:456::;"
+      ],
+      "paramSchema": {
+        "TID": {"type": "string", "maxLength": 20, "description": "Target identifier", "example": "SITE01"},
+        "AID": {"type": "string", "maxLength": 32, "description": "Access identifier", "example": "LG1-OC3-1"},
+        "CTAG": {"type": "string", "maxLength": 6, "description": "Command tag", "example": "123"}
+      }
+    },
+    
+    "ED-EQPT": {
+      "id": "ED-EQPT",
+      "displayName": "Edit Equipment",
+      "platforms": ["1603 SM", "1603 SMX"],
+      "category": "System Administration",
+      "verb": "ED",
+      "object": "EQPT",
+      "modifier": null,
+      "description": "Edit equipment configuration parameters",
+      "syntax": "ED-EQPT:[tid]:[aid]:[ctag]::[pst],[ains],[shelf],[slot];",
+      "requires": ["TID", "AID", "CTAG"],
+      "optional": ["PST", "AINS", "SHELF", "SLOT"],
+      "response_format": "M [ctag] COMPLD\n;",
+      "safety_level": "medium",
+      "service_affecting": false,
+      "examples": [
+        "ED-EQPT:SITE01:LG1-OC3-1:123::IS,ENABLED;",
+        "ED-EQPT::LG2-T1-1:456::OOS,DISABLED,2,5;"
+      ],
+      "paramSchema": {
+        "TID": {"type": "string", "maxLength": 20, "description": "Target identifier", "example": "SITE01"},
+        "AID": {"type": "string", "maxLength": 32, "description": "Access identifier", "example": "LG1-OC3-1"},
+        "CTAG": {"type": "string", "maxLength": 6, "description": "Command tag", "example": "123"},
+        "PST": {"type": "enum", "values": ["IS", "OOS", "MT"], "description": "Primary state"},
+        "AINS": {"type": "enum", "values": ["ENABLED", "DISABLED"], "description": "Auto in-service"},
+        "SHELF": {"type": "integer", "min": 1, "max": 10, "description": "Shelf number"},
+        "SLOT": {"type": "integer", "min": 1, "max": 20, "description": "Slot number"}
       }
     }
   }
