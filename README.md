@@ -1,53 +1,107 @@
-# 1603_SM vs 1603_SMX Command Reference
+# TL1 Assistant - Web-based TL1 Command Interface
 
-## Quick Reference for GitHub Copilot
+A simple, web-based TL1 (Transaction Language 1) command interface for network device management. No installation or admin rights required - runs entirely from a web browser.
 
-This directory contains command definitions for two network device systems that share similar functionality but have key differences.
+## Features
 
-### Systems Overview
+- **Web-based interface** - No software installation required
+- **Direct Telnet communication** - Connect directly to TL1 devices
+- **630 pre-loaded commands** - Comprehensive command database
+- **Platform support** - 1603 SM and 1603 SMX systems
+- **Cross-platform** - Works on Windows, Linux, and Mac
+- **No admin rights** - Run without elevated permissions
 
-| System | Total Commands | Unique Commands | Description |
-|--------|----------------|-----------------|-------------|
-| **1603_SM** | 564 | 21 | Base system with IPAREA support and extended VPL operations |
-| **1603_SMX** | 609 | 69 | Extended system with STS12C, POSPORT, and BLSR support |
-| **Common** | 540 | - | Commands available in both systems |
+## Quick Start
 
----
-
-## Files in This Directory
-
-### 1. `1603_commands.json`
-Complete structured data of all commands and device support.
-
-**Use this for:**
-- Data-driven applications
-- Command validation
-- Building command parsers
-- API integrations
-
-### 2. `1603_commands.ts`
-TypeScript/JavaScript constants and type definitions.
-
-**Use this for:**
-- TypeScript projects
-- Frontend applications
-- Type-safe command validation
-- React/Vue/Angular apps
-
-**Example Usage:**
-```typescript
-import { isCommandSupported, SystemType, COMMANDS_ONLY_IN_1603_SMX } from './1603_commands';
-
-// Check if a command is supported
-if (isCommandSupported('RTRV-STS12C', SystemType.SMX_1603)) {
-  console.log('Command supported in 1603_SMX');
-}
-
-// Get all SMX-exclusive commands
-const smxCommands = COMMANDS_ONLY_IN_1603_SMX;
+### Windows
+```cmd
+Start-WebGUI.cmd
 ```
 
-### 3. `commands_1603.py`
+### Linux/Mac
+```bash
+./start-webgui.sh
+```
+
+### Manual Start
+```bash
+python3 tl1_web_gui.py
+```
+
+The web interface will open automatically at `http://localhost:8081`
+
+## Requirements
+
+- Python 3.6 or later
+- Flask (will be installed automatically)
+
+## Installation
+
+1. Clone or download this repository
+2. Run the startup script for your platform
+3. That's it! The web GUI will open in your browser
+
+## Usage
+
+1. **Start the application** using one of the startup scripts
+2. **Connect to device** by entering the IP address and port (default: 23)
+3. **Select commands** from the dropdown (filtered by platform)
+4. **Send commands** to your TL1 device
+5. **View responses** in the output area
+
+## Repository Structure
+
+```
+/
+├── tl1_web_gui.py          # Main web application
+├── data/
+│   └── commands.json       # TL1 commands database (630 commands)
+├── requirements.txt        # Python dependencies
+├── Start-WebGUI.cmd       # Windows startup script
+├── start-webgui.sh        # Linux/Mac startup script
+└── README.md              # This file
+```
+
+## Command Database
+
+The application includes 630 TL1 commands:
+- **561 commands** for 1603 SM platform
+- **609 commands** for 1603 SMX platform
+- **540 commands** common to both platforms
+
+Commands are automatically filtered based on the selected platform.
+
+## Platform Differences
+
+| Platform | Features |
+|----------|----------|
+| **1603 SM** | Base system with IPAREA support and extended VPL operations |
+| **1603 SMX** | Extended system with STS12C, POSPORT, and BLSR support |
+
+## Development
+
+The application is built with:
+- **Backend**: Python Flask with Telnet communication
+- **Frontend**: HTML5, CSS3, JavaScript (embedded in the Python file)
+- **Database**: JSON file with structured command data
+
+## Troubleshooting
+
+### Connection Issues
+- Ensure the device IP and port are correct
+- Check network connectivity to the device
+- Verify the device supports Telnet on the specified port
+
+### Python Issues
+- Make sure Python 3.6+ is installed
+- Install Flask if missing: `pip install flask`
+
+### Port Conflicts
+- If port 8081 is in use, modify the port in `tl1_web_gui.py`
+
+## License
+
+This project is provided as-is for network device management purposes.
 Python module with constants and helper functions.
 
 **Use this for:**
