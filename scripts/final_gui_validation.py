@@ -127,14 +127,14 @@ def validate_powershell_gui_flow():
 
 def main():
     print("🚀 TL1 ASSISTANT GUI FINAL VALIDATION")
-    print("This test validates that ALL 116 commands will load properly in the GUI\n")
+    print("This test validates that ALL 896 commands will load properly in the GUI\n")
     
     success = validate_powershell_gui_flow()
     
     if success:
         print("\n" + "="*70)
         print("🎉 VALIDATION COMPLETE - ALL TESTS PASSED! 🎉")
-        print("✅ The TL1 Assistant GUI will successfully load all 116 commands")
+        print("✅ The TL1 Assistant GUI will successfully load all 896 commands")
         print("✅ Platform filtering will work correctly for both 1603 SM and 1603 SMX")
         print("✅ Category organization will display properly")
         print("✅ Command selection and TL1 syntax generation will work")
