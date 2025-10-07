@@ -1,4 +1,5 @@
 @echo off
+setlocal enabledelayedexpansion
 echo.
 echo ============================================
 echo          TL1 Assistant Launcher
@@ -36,7 +37,16 @@ echo Launching TL1 Assistant...
 echo.
 
 REM Launch the PowerShell launcher with bypass execution policy
-powershell.exe -ExecutionPolicy Bypass -File "%LAUNCHER_SCRIPT%"
+REM Use -EncodedCommand to avoid quote issues
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%LAUNCHER_SCRIPT%"
+
+REM Check if PowerShell exited with an error
+if %errorlevel% neq 0 (
+    echo.
+    echo WARNING: PowerShell exited with error code %errorlevel%
+    echo This might indicate a script error or requirement issue
+    echo.
+)
 
 echo.
 echo TL1 Assistant has closed.
