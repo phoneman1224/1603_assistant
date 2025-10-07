@@ -1577,7 +1577,7 @@ function Build-OptionalList{
         if($nestedChild -is [System.Windows.Controls.StackPanel] -and $nestedChild.Children.Count -ge 2){
           $k=$nestedChild.Children[0].Text.Trim('=')
           $v=$nestedChild.Children[1].Text
-          if($v -and $v.Trim() -ne ""){ $pairs+=("{0}={1}" -f $k,$v.Trim()) }
+          if($v -and $v.Trim() -ne ""){ $pairs+=$v.Trim() }  # Just the value, not key=value
           break  # Only process first input panel per container
         }
       }
@@ -1586,7 +1586,7 @@ function Build-OptionalList{
   ($pairs -join ",")
 }
 
-# ---- Preview builder  <CMD>::<TID>:<AID>:<CTAG>::op1=val,...;
+# ---- Preview builder  <CMD>:<TID>:<AID>:<CTAG>::op1,op2,...;
 function Update-Preview{
   $cmd= if($CommandBox.SelectedItem){ $CommandBox.SelectedItem.Content } else { "" }
   $tid=$TidBox.Text; $aid=$AidBox.Text; $ctag=$CtagBox.Text
@@ -1595,7 +1595,7 @@ function Update-Preview{
   if ($null -eq $aid)  { $aid  = "" }
   if ($null -eq $ctag) { $ctag = "" }
   $opt=Build-OptionalList
-  $left = "$cmd::$($tid):$($aid):$($ctag)"
+  $left = "$cmd:$($tid):$($aid):$($ctag)"
   $right = if([string]::IsNullOrWhiteSpace($opt)) { "" } else { "::" + $opt }
   $PreviewBox.Text = "$left$right;"
 }

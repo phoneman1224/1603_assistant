@@ -3,7 +3,7 @@
     "version": "2.0",
     "lastUpdate": "2025-01-20",
     "totalCommands": 20,
-    "platforms": ["1603_SM", "16034_SMX"]
+    "platforms": ["1603 SM", "1603 SMX"]
   },
   "categories": {
     "System Settings/Maintenance": {
@@ -69,8 +69,8 @@
       "id": "RTRV-HDR",
       "displayName": "Retrieve Header",
       "platforms": [
-        "1603_SM",
-        "16034_SMX"
+        "1603 SM",
+        "1603 SMX"
       ],
       "category": "Retrieve Information",
       "verb": "RTRV",
@@ -120,8 +120,8 @@
       "id": "RTRV-ALM-ALL",
       "displayName": "Retrieve All Alarms",
       "platforms": [
-        "1603_SM",
-        "16034_SMX"
+        "1603 SM",
+        "1603 SMX"
       ],
       "category": "Alarm Management",
       "verb": "RTRV",
@@ -216,8 +216,8 @@
       "id": "OPR-LPBK-T1",
       "displayName": "Operate T1 Loopback",
       "platforms": [
-        "1603_SM",
-        "16034_SMX"
+        "1603 SM",
+        "1603 SMX"
       ],
       "category": "Network Maintenance",
       "verb": "OPR",
@@ -291,8 +291,8 @@
       "id": "RLS-LPBK-T1",
       "displayName": "Release T1 Loopback",
       "platforms": [
-        "1603_SM",
-        "16034_SMX"
+        "1603 SM",
+        "1603 SMX"
       ],
       "category": "Network Maintenance",
       "verb": "RLS",
@@ -366,8 +366,8 @@
       "id": "ENT-CRS-STS1",
       "displayName": "Enter Cross Connect STS1",
       "platforms": [
-        "1603_SM",
-        "16034_SMX"
+        "1603 SM",
+        "1603 SMX"
       ],
       "category": "Provisioning",
       "verb": "ENT",
@@ -441,8 +441,8 @@
       "id": "DLT-CRS-STS1",
       "displayName": "Delete STS-1 Cross Connect",
       "platforms": [
-        "1603_SM",
-        "16034_SMX"
+        "1603 SM",
+        "1603 SMX"
       ],
       "category": "Cross Connect",
       "verb": "DLT",
@@ -493,8 +493,8 @@
       "id": "RTRV-PM-STS1",
       "displayName": "Retrieve STS-1 Performance Monitoring",
       "platforms": [
-        "1603_SM",
-        "16034_SMX"
+        "1603 SM",
+        "1603 SMX"
       ],
       "category": "Performance Monitoring",
       "verb": "RTRV",
@@ -595,8 +595,8 @@
       "id": "ACT-USER",
       "displayName": "Activate User",
       "platforms": [
-        "1603_SM",
-        "16034_SMX"
+        "1603 SM",
+        "1603 SMX"
       ],
       "category": "System Settings/Maintenance",
       "verb": "ACT",
@@ -662,8 +662,8 @@
       "id": "CANC-USER",
       "displayName": "Cancel User",
       "platforms": [
-        "1603_SM",
-        "16034_SMX"
+        "1603 SM",
+        "1603 SMX"
       ],
       "category": "System Settings/Maintenance",
       "verb": "CANC",
@@ -709,8 +709,8 @@
       "id": "RTRV-EQPT",
       "displayName": "Retrieve Equipment",
       "platforms": [
-        "1603_SM",
-        "16034_SMX"
+        "1603 SM",
+        "1603 SMX"
       ],
       "category": "System Administration",
       "verb": "RTRV",
@@ -754,8 +754,8 @@
       "id": "RTRV-ALM",
       "displayName": "Retrieve Alarms",
       "platforms": [
-        "1603_SM",
-        "16034_SMX"
+        "1603 SM",
+        "1603 SMX"
       ],
       "category": "Alarms",
       "verb": "RTRV",
@@ -831,8 +831,8 @@
       "id": "ACK-ALM",
       "displayName": "Acknowledge Alarm",
       "platforms": [
-        "1603_SM",
-        "16034_SMX"
+        "1603 SM",
+        "1603 SMX"
       ],
       "category": "Alarms",
       "verb": "ACK",
@@ -886,8 +886,8 @@
       "id": "RTRV-NMAP",
       "displayName": "Retrieve Network Map",
       "platforms": [
-        "1603_SM",
-        "16034_SMX"
+        "1603 SM",
+        "1603 SMX"
       ],
       "category": "Retrieve Information",
       "verb": "RTRV",
@@ -935,8 +935,8 @@
       "id": "RTRV-PM",
       "displayName": "Retrieve Performance Monitoring",
       "platforms": [
-        "1603_SM",
-        "16034_SMX"
+        "1603 SM",
+        "1603 SMX"
       ],
       "category": "Retrieve Information",
       "verb": "RTRV",
@@ -1009,8 +1009,8 @@
       "id": "TST-LPB",
       "displayName": "Test Loopback",
       "platforms": [
-        "1603_SM",
-        "16034_SMX"
+        "1603 SM",
+        "1603 SMX"
       ],
       "category": "Troubleshooting",
       "verb": "TST",
@@ -1078,8 +1078,8 @@
       "id": "RLS-LPB",
       "displayName": "Release Loopback",
       "platforms": [
-        "1603_SM",
-        "16034_SMX"
+        "1603 SM",
+        "1603 SMX"
       ],
       "category": "Troubleshooting",
       "verb": "RLS",
@@ -1149,8 +1149,8 @@
       "id": "RST-EQPT",
       "displayName": "Reset Equipment",
       "platforms": [
-        "1603_SM",
-        "16034_SMX"
+        "1603 SM",
+        "1603 SMX"
       ],
       "category": "Troubleshooting",
       "verb": "RST",
@@ -1196,8 +1196,8 @@
       "id": "RMV-CRS-STS1",
       "displayName": "Remove Cross Connect STS1",
       "platforms": [
-        "1603_SM",
-        "16034_SMX"
+        "1603 SM",
+        "1603 SMX"
       ],
       "category": "Provisioning",
       "verb": "RMV",
@@ -1250,8 +1250,8 @@
       "id": "ED-CRS-STS1",
       "displayName": "Edit Cross Connect STS1",
       "platforms": [
-        "1603_SM",
-        "16034_SMX"
+        "1603 SM",
+        "1603 SMX"
       ],
       "category": "Provisioning",
       "verb": "ED",
@@ -1325,8 +1325,8 @@
       "id": "CPY-MEM",
       "displayName": "Copy Memory",
       "platforms": [
-        "1603_SM",
-        "16034_SMX"
+        "1603 SM",
+        "1603 SMX"
       ],
       "category": "Provisioning",
       "verb": "CPY",
