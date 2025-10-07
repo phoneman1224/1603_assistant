@@ -1,0 +1,528 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "last_updated": "2025-10-07",
+    "platforms": {
+      "1603_SM": "Alcatel 1603 SM - SONET Multiplexer",
+      "16034_SMX": "Alcatel 16034 SMX - Enhanced SONET Multiplexer"
+    }
+  },
+  "categories": {
+    "Network Maintenance": {
+      "description": "Commands for testing, diagnosing, and maintaining network facilities",
+      "icon": "network"
+    },
+    "System Administration": {
+      "description": "User management, security, and system configuration commands",
+      "icon": "admin"
+    },
+    "Cross Connect": {
+      "description": "Provisioning and managing cross-connections between facilities",
+      "icon": "connect"
+    },
+    "Performance Monitoring": {
+      "description": "Retrieving and managing performance monitoring data",
+      "icon": "monitor"
+    },
+    "Alarm Management": {
+      "description": "Retrieving, acknowledging, and managing system alarms",
+      "icon": "alarm"
+    }
+  },
+  "commands": {
+    "RTRV-HDR": {
+      "id": "RTRV-HDR",
+      "displayName": "Retrieve Header",
+      "platforms": ["1603_SM", "16034_SMX"],
+      "category": "System Administration",
+      "verb": "RTRV",
+      "object": "HDR",
+      "modifier": null,
+      "description": "Retrieve system header information including software version, NE type, and system status",
+      "syntax": "RTRV-HDR:[tid]:[aid]:[ctag]::;",
+      "requires": ["TID", "CTAG"],
+      "optional": ["AID"],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target Network Element identifier",
+          "example": "SITE01",
+          "default": ""
+        },
+        "AID": {
+          "type": "string",
+          "description": "Access identifier (optional for this command)",
+          "example": "",
+          "default": ""
+        },
+        "CTAG": {
+          "type": "integer",
+          "min": 1,
+          "max": 999999,
+          "description": "Correlation tag for command tracking",
+          "example": "100"
+        }
+      },
+      "safety_level": "safe",
+      "service_affecting": false,
+      "response_format": "System header with software version and status"
+    },
+    "RTRV-ALM-ALL": {
+      "id": "RTRV-ALM-ALL",
+      "displayName": "Retrieve All Alarms",
+      "platforms": ["1603_SM", "16034_SMX"],
+      "category": "Alarm Management",
+      "verb": "RTRV",
+      "object": "ALM",
+      "modifier": "ALL",
+      "description": "Retrieve all active alarms from the system",
+      "syntax": "RTRV-ALM-ALL:[tid]:[aid]:[ctag]::[ntfcncod],[condtype],[srveff],[ocrdat],[locn];",
+      "requires": ["TID", "CTAG"],
+      "optional": ["AID", "NTFCNCOD", "CONDTYPE", "SRVEFF", "OCRDAT", "LOCN"],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target Network Element identifier",
+          "example": "SITE01"
+        },
+        "AID": {
+          "type": "string",
+          "description": "Access identifier (optional - retrieves all if blank)",
+          "example": "ALL",
+          "default": ""
+        },
+        "CTAG": {
+          "type": "integer",
+          "min": 1,
+          "max": 999999,
+          "description": "Correlation tag for command tracking",
+          "example": "101"
+        },
+        "NTFCNCOD": {
+          "type": "enum",
+          "values": ["CR", "MJ", "MN", "WR", "CL", "ALL"],
+          "description": "Notification code filter",
+          "default": "ALL"
+        },
+        "CONDTYPE": {
+          "type": "string",
+          "description": "Condition type filter",
+          "example": "LOS",
+          "default": ""
+        },
+        "SRVEFF": {
+          "type": "enum",
+          "values": ["SA", "NSA", "ALL"],
+          "description": "Service affecting filter",
+          "default": "ALL"
+        },
+        "OCRDAT": {
+          "type": "string",
+          "pattern": "\\d{2}-\\d{2}-\\d{2}",
+          "description": "Occurrence date (YY-MM-DD)",
+          "example": "25-10-07",
+          "default": ""
+        },
+        "LOCN": {
+          "type": "enum",
+          "values": ["NEND", "FEND", "ALL"],
+          "description": "Location filter",
+          "default": "ALL"
+        }
+      },
+      "safety_level": "safe",
+      "service_affecting": false,
+      "response_format": "List of active alarms with details"
+    },
+    "OPR-LPBK-T1": {
+      "id": "OPR-LPBK-T1",
+      "displayName": "Operate T1 Loopback",
+      "platforms": ["1603_SM", "16034_SMX"],
+      "category": "Network Maintenance",
+      "verb": "OPR",
+      "object": "LPBK",
+      "modifier": "T1",
+      "description": "Operate loopback test on DS1 facility for testing and diagnostics",
+      "syntax": "OPR-LPBK-T1:[tid]:aidt1:[ctag]::[locn],[orgn],,[lpbktype];",
+      "requires": ["TID", "AIDT1", "CTAG"],
+      "optional": ["LOCN", "ORGN", "LPBKTYPE"],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target Network Element identifier",
+          "example": "SITE01"
+        },
+        "AIDT1": {
+          "type": "string",
+          "description": "DS1 facility access identifier",
+          "example": "DG1-T1-1",
+          "pattern": "DG[1-3]-T1-[1-4]"
+        },
+        "CTAG": {
+          "type": "integer",
+          "min": 1,
+          "max": 999999,
+          "description": "Correlation tag for command tracking",
+          "example": "102"
+        },
+        "LOCN": {
+          "type": "enum",
+          "values": ["NEND", "FEND"],
+          "description": "Location where loopback occurs",
+          "default": "NEND"
+        },
+        "ORGN": {
+          "type": "enum",
+          "values": ["NEND", "FEND"],
+          "description": "Origin of signal to be looped back",
+          "default": "NEND"
+        },
+        "LPBKTYPE": {
+          "type": "enum",
+          "values": ["FACILITY", "TERMINAL"],
+          "description": "Point at which signal is looped back",
+          "default": "TERMINAL"
+        }
+      },
+      "safety_level": "caution",
+      "service_affecting": true,
+      "response_format": "Confirmation of loopback operation"
+    },
+    "RLS-LPBK-T1": {
+      "id": "RLS-LPBK-T1",
+      "displayName": "Release T1 Loopback",
+      "platforms": ["1603_SM", "16034_SMX"],
+      "category": "Network Maintenance",
+      "verb": "RLS",
+      "object": "LPBK",
+      "modifier": "T1",
+      "description": "Release loopback test on DS1 facility",
+      "syntax": "RLS-LPBK-T1:[tid]:aidt1:[ctag]::[locn],[orgn],,[lpbktype];",
+      "requires": ["TID", "AIDT1", "CTAG"],
+      "optional": ["LOCN", "ORGN", "LPBKTYPE"],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target Network Element identifier",
+          "example": "SITE01"
+        },
+        "AIDT1": {
+          "type": "string",
+          "description": "DS1 facility access identifier",
+          "example": "DG1-T1-1",
+          "pattern": "DG[1-3]-T1-[1-4]"
+        },
+        "CTAG": {
+          "type": "integer",
+          "min": 1,
+          "max": 999999,
+          "description": "Correlation tag for command tracking",
+          "example": "103"
+        },
+        "LOCN": {
+          "type": "enum",
+          "values": ["NEND", "FEND"],
+          "description": "Location where loopback occurs",
+          "default": "NEND"
+        },
+        "ORGN": {
+          "type": "enum",
+          "values": ["NEND", "FEND"],
+          "description": "Origin of signal to be looped back",
+          "default": "NEND"
+        },
+        "LPBKTYPE": {
+          "type": "enum",
+          "values": ["FACILITY", "TERMINAL"],
+          "description": "Point at which signal is looped back",
+          "default": "TERMINAL"
+        }
+      },
+      "safety_level": "safe",
+      "service_affecting": false,
+      "response_format": "Confirmation of loopback release"
+    },
+    "ENT-CRS-STS1": {
+      "id": "ENT-CRS-STS1",
+      "displayName": "Enter STS-1 Cross Connect",
+      "platforms": ["1603_SM", "16034_SMX"],
+      "category": "Cross Connect",
+      "verb": "ENT",
+      "object": "CRS",
+      "modifier": "STS1",
+      "description": "Enter a bi-directional STS-1 cross-connection between two facilities",
+      "syntax": "ENT-CRS-STS1:[tid]:[ctag]::aidsts1from,aidsts1to,[cct];",
+      "requires": ["TID", "CTAG", "AIDSTS1FROM", "AIDSTS1TO"],
+      "optional": ["CCT"],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target Network Element identifier",
+          "example": "SITE01"
+        },
+        "CTAG": {
+          "type": "integer",
+          "min": 1,
+          "max": 999999,
+          "description": "Correlation tag for command tracking",
+          "example": "104"
+        },
+        "AIDSTS1FROM": {
+          "type": "string",
+          "description": "Source STS-1 facility identifier",
+          "example": "LG1-STS1-1",
+          "pattern": "LG[1-2]-STS1-[1-48]"
+        },
+        "AIDSTS1TO": {
+          "type": "string",
+          "description": "Destination STS-1 facility identifier", 
+          "example": "LG2-STS1-1",
+          "pattern": "LG[1-2]-STS1-[1-48]"
+        },
+        "CCT": {
+          "type": "enum",
+          "values": ["2WAY", "1WAY"],
+          "description": "Cross-connection type",
+          "default": "2WAY"
+        }
+      },
+      "safety_level": "caution",
+      "service_affecting": true,
+      "response_format": "Confirmation of cross-connection creation",
+      "provisioning": true
+    },
+    "DLT-CRS-STS1": {
+      "id": "DLT-CRS-STS1",
+      "displayName": "Delete STS-1 Cross Connect",
+      "platforms": ["1603_SM", "16034_SMX"],
+      "category": "Cross Connect",
+      "verb": "DLT",
+      "object": "CRS",
+      "modifier": "STS1",
+      "description": "Delete an existing STS-1 cross-connection",
+      "syntax": "DLT-CRS-STS1:[tid]:[ctag]::aidsts1from,aidsts1to;",
+      "requires": ["TID", "CTAG", "AIDSTS1FROM", "AIDSTS1TO"],
+      "optional": [],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target Network Element identifier",
+          "example": "SITE01"
+        },
+        "CTAG": {
+          "type": "integer",
+          "min": 1,
+          "max": 999999,
+          "description": "Correlation tag for command tracking",
+          "example": "105"
+        },
+        "AIDSTS1FROM": {
+          "type": "string",
+          "description": "Source STS-1 facility identifier",
+          "example": "LG1-STS1-1",
+          "pattern": "LG[1-2]-STS1-[1-48]"
+        },
+        "AIDSTS1TO": {
+          "type": "string",
+          "description": "Destination STS-1 facility identifier",
+          "example": "LG2-STS1-1", 
+          "pattern": "LG[1-2]-STS1-[1-48]"
+        }
+      },
+      "safety_level": "caution",
+      "service_affecting": true,
+      "response_format": "Confirmation of cross-connection deletion",
+      "provisioning": true
+    },
+    "RTRV-PM-STS1": {
+      "id": "RTRV-PM-STS1",
+      "displayName": "Retrieve STS-1 Performance Monitoring",
+      "platforms": ["1603_SM", "16034_SMX"],
+      "category": "Performance Monitoring",
+      "verb": "RTRV",
+      "object": "PM",
+      "modifier": "STS1",
+      "description": "Retrieve performance monitoring data for STS-1 facilities",
+      "syntax": "RTRV-PM-STS1:[tid]:aidsts1:[ctag]::[montype],[monlev],[locn],[dirn],[tmper];",
+      "requires": ["TID", "AIDSTS1", "CTAG"],
+      "optional": ["MONTYPE", "MONLEV", "LOCN", "DIRN", "TMPER"],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target Network Element identifier",
+          "example": "SITE01"
+        },
+        "AIDSTS1": {
+          "type": "string",
+          "description": "STS-1 facility identifier",
+          "example": "LG1-STS1-1",
+          "pattern": "LG[1-2]-STS1-[1-48]"
+        },
+        "CTAG": {
+          "type": "integer",
+          "min": 1,
+          "max": 999999,
+          "description": "Correlation tag for command tracking",
+          "example": "106"
+        },
+        "MONTYPE": {
+          "type": "enum",
+          "values": ["ALL", "CVL", "ESL", "SESL", "UASL"],
+          "description": "Monitored parameter type",
+          "default": "ALL"
+        },
+        "MONLEV": {
+          "type": "enum",
+          "values": ["ALL", "PATH", "LINE", "SECTION"],
+          "description": "Monitoring level",
+          "default": "ALL"
+        },
+        "LOCN": {
+          "type": "enum",
+          "values": ["NEND", "FEND", "ALL"],
+          "description": "Location",
+          "default": "ALL"
+        },
+        "DIRN": {
+          "type": "enum",
+          "values": ["RCV", "TRMT", "ALL"],
+          "description": "Direction",
+          "default": "ALL"
+        },
+        "TMPER": {
+          "type": "enum",
+          "values": ["15-MIN", "1-DAY"],
+          "description": "Time period",
+          "default": "15-MIN"
+        }
+      },
+      "safety_level": "safe",
+      "service_affecting": false,
+      "response_format": "Performance monitoring statistics"
+    },
+    "ACT-USER": {
+      "id": "ACT-USER",
+      "displayName": "Activate User",
+      "platforms": ["1603_SM", "16034_SMX"],
+      "category": "System Administration",
+      "verb": "ACT",
+      "object": "USER",
+      "modifier": null,
+      "description": "Activate a user session with username and password",
+      "syntax": "ACT-USER:[tid]:uid:[ctag]::pid;",
+      "requires": ["TID", "UID", "CTAG", "PID"],
+      "optional": [],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target Network Element identifier",
+          "example": "SITE01"
+        },
+        "UID": {
+          "type": "string",
+          "maxLength": 10,
+          "description": "User identifier",
+          "example": "TECH01"
+        },
+        "CTAG": {
+          "type": "integer",
+          "min": 1,
+          "max": 999999,
+          "description": "Correlation tag for command tracking",
+          "example": "107"
+        },
+        "PID": {
+          "type": "password",
+          "maxLength": 10,
+          "description": "User password",
+          "example": "password"
+        }
+      },
+      "safety_level": "caution",
+      "service_affecting": false,
+      "response_format": "User activation confirmation"
+    },
+    "CANC-USER": {
+      "id": "CANC-USER",
+      "displayName": "Cancel User",
+      "platforms": ["1603_SM", "16034_SMX"],
+      "category": "System Administration",
+      "verb": "CANC",
+      "object": "USER",
+      "modifier": null,
+      "description": "Cancel/logout a user session",
+      "syntax": "CANC-USER:[tid]:uid:[ctag]::;",
+      "requires": ["TID", "UID", "CTAG"],
+      "optional": [],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target Network Element identifier",
+          "example": "SITE01"
+        },
+        "UID": {
+          "type": "string",
+          "maxLength": 10,
+          "description": "User identifier to cancel",
+          "example": "TECH01"
+        },
+        "CTAG": {
+          "type": "integer",
+          "min": 1,
+          "max": 999999,
+          "description": "Correlation tag for command tracking",
+          "example": "108"
+        }
+      },
+      "safety_level": "caution",
+      "service_affecting": false,
+      "response_format": "User cancellation confirmation"
+    },
+    "RTRV-EQPT": {
+      "id": "RTRV-EQPT",
+      "displayName": "Retrieve Equipment",
+      "platforms": ["1603_SM", "16034_SMX"],
+      "category": "System Administration",
+      "verb": "RTRV",
+      "object": "EQPT",
+      "modifier": null,
+      "description": "Retrieve equipment information and status",
+      "syntax": "RTRV-EQPT:[tid]:aid:[ctag]::;",
+      "requires": ["TID", "CTAG"],
+      "optional": ["AID"],
+      "paramSchema": {
+        "TID": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Target Network Element identifier",
+          "example": "SITE01"
+        },
+        "AID": {
+          "type": "string",
+          "description": "Equipment access identifier (ALL for all equipment)",
+          "example": "ALL",
+          "default": "ALL"
+        },
+        "CTAG": {
+          "type": "integer",
+          "min": 1,
+          "max": 999999,
+          "description": "Correlation tag for command tracking",
+          "example": "109"
+        }
+      },
+      "safety_level": "safe",
+      "service_affecting": false,
+      "response_format": "Equipment inventory and status"
+    }
+  }
+}

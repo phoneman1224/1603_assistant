@@ -91,31 +91,137 @@ function Write-Log([string]$Message,[string]$Level="INFO"){
   if($global:ConsoleBox){ $global:ConsoleBox.AppendText("$line`r`n"); $global:ConsoleBox.ScrollToEnd() }
 }
 
-# Load TL1 commands from JSON files and extracted PDF data with platform filtering
+# Load TL1 commands from the data-driven catalog
 function Load-TL1Commands {
-    param([string]$selectedPlatform = "SM")  # Default to SM
+    param([string]$selectedPlatform = "1603_SM")  # Default to 1603_SM
+    
+    Write-Log "Loading data-driven commands for platform: $selectedPlatform"
     
     $AllCommands = [ordered]@{}
-    $platformMap = @{
-        "1603 SM" = @("SM", "1603_SM")
-        "16034 SMX" = @("SMX", "16034_SMX")
+    
+    # Load the main data-driven catalog
+    $CatalogPath = Join-Path $RootDir "data\commands.json"
+    if (Test-Path $CatalogPath) {
+        try {
+            $Catalog = Get-Content $CatalogPath -Raw -Encoding UTF8 | ConvertFrom-Json
+            Write-Log "Loaded data-driven catalog with $($Catalog.commands.PSObject.Properties.Count) commands"
+            
+            # Process each command in the catalog
+            $Catalog.commands.PSObject.Properties | ForEach-Object {
+                $commandId = $_.Name
+                $command = $_.Value
+                
+                # Filter by platform
+                if ($command.platforms -contains $selectedPlatform) {
+                    $categoryName = $command.category
+                    
+                    if (-not $AllCommands.Contains($categoryName)) {
+                        $AllCommands[$categoryName] = @()
+                    }
+                    
+                    # Convert paramSchema to required/optional lists
+                    $requiredParams = @()
+                    $optionalParams = @()
+                    $paramDetails = @{}
+                    
+                    if ($command.paramSchema) {
+                        $command.paramSchema.PSObject.Properties | ForEach-Object {
+                            $paramName = $_.Name
+                            $paramInfo = $_.Value
+                            $paramDetails[$paramName] = $paramInfo
+                            
+                            if ($command.requires -contains $paramName) {
+                                $requiredParams += $paramName
+                            } else {
+                                $optionalParams += $paramName
+                            }
+                        }
+                    }
+                    
+                    # Create command entry compatible with existing GUI
+                    $commandEntry = @{
+                        Name = $command.id
+                        DisplayName = $command.displayName
+                        Desc = $command.description
+                        DetailedDesc = $command.description
+                        Required = $requiredParams
+                        Optional = $optionalParams
+                        Parameters = $paramDetails
+                        Syntax = $command.syntax
+                        Restrictions = ""
+                        ResponseFormat = $command.response_format
+                        SafetyLevel = $command.safety_level
+                        ServiceAffecting = $command.service_affecting
+                        SourceFile = "commands.json (data-driven)"
+                        Platform = $selectedPlatform
+                        Category = $command.category
+                        Verb = $command.verb
+                        Object = $command.object
+                        Modifier = $command.modifier
+                        ParamSchema = $command.paramSchema
+                        IsProvisioning = if ($command.provisioning) { $command.provisioning } else { $false }
+                    }
+                    
+                    $AllCommands[$categoryName] += $commandEntry
+                    Write-Log "  Added command: $($command.id) to $categoryName"
+                }
+            }
+            
+        } catch {
+            Write-Log "Error loading data-driven catalog: $_" "ERROR"
+        }
+    } else {
+        Write-Log "Data-driven catalog not found at $CatalogPath" "WARN"
     }
     
-    $platformIds = $platformMap[$selectedPlatform]
-    if (-not $platformIds) {
-        # Default mapping if not found
-        $platformIds = if ($selectedPlatform -like "*SMX*") { @("SMX", "16034_SMX") } else { @("SM", "1603_SM") }
-    }
-    
-    Write-Log "Loading commands for platform: $selectedPlatform (IDs: $($platformIds -join ', '))"
-    
-    # First load from extracted PDF data (comprehensive documentation)
-    $ExtractedDir = Join-Path $RootDir "data\extracted_commands"
-    if (Test-Path $ExtractedDir) {
-        Write-Log "Loading extracted PDF command data from $ExtractedDir"
+    # Fallback: Load from extracted PDF data if data-driven catalog has few commands
+    if (($AllCommands.Values | ForEach-Object { $_.Count } | Measure-Object -Sum).Sum -lt 5) {
+        Write-Log "Loading fallback PDF-extracted commands" "WARN"
         
-        # Load platform-specific extracted data
-        $platformFile = Join-Path $ExtractedDir "$($platformIds[1])_commands.json"
+        $ExtractedDir = Join-Path $RootDir "data\extracted_commands"
+        $platformFile = Join-Path $ExtractedDir "${selectedPlatform}_commands.json"
+        
+        if (Test-Path $platformFile) {
+            try {
+                $content = Get-Content $platformFile -Raw -Encoding UTF8 | ConvertFrom-Json
+                
+                $content.PSObject.Properties | ForEach-Object {
+                    $categoryName = $_.Name
+                    $commands = $_.Value
+                    
+                    if (-not $AllCommands.Contains($categoryName)) {
+                        $AllCommands[$categoryName] = @()
+                    }
+                    
+                    $commands | ForEach-Object {
+                        $cmd = $_
+                        $AllCommands[$categoryName] += @{
+                            Name = $cmd.command_code
+                            Desc = $cmd.description
+                            DetailedDesc = $cmd.function
+                            Required = @("TID", "CTAG")  # Basic required params
+                            Optional = @()
+                            Parameters = $cmd.parameters
+                            Syntax = $cmd.syntax
+                            Restrictions = $cmd.restrictions
+                            ResponseFormat = $cmd.response_format
+                            SafetyLevel = if ($cmd.safety_level) { $cmd.safety_level } else { "safe" }
+                            ServiceAffecting = if ($cmd.service_affecting) { $cmd.service_affecting } else { $false }
+                            SourceFile = $cmd.source_file
+                            Platform = $selectedPlatform
+                        }
+                    }
+                }
+            } catch {
+                Write-Log "Error loading PDF fallback: $_" "ERROR"
+            }
+        }
+    }
+    
+    $totalCommands = ($AllCommands.Values | ForEach-Object { $_.Count } | Measure-Object -Sum).Sum
+    Write-Log "Loaded $($AllCommands.Keys.Count) categories with $totalCommands total commands for $selectedPlatform"
+    return $AllCommands
+}
         if (Test-Path $platformFile) {
             try {
                 $content = Get-Content $platformFile -Raw -Encoding UTF8 | ConvertFrom-Json
@@ -303,8 +409,261 @@ function Load-TL1Commands {
     return $AllCommands
 }
 
-# Initial load with default platform
-$global:CurrentPlatform = "1603 SM"
+# Settings persistence functions
+function Load-Settings {
+    $SettingsPath = Join-Path $RootDir "settings.json"
+    
+    $DefaultSettings = @{
+        Connection = @{
+            Host = ""
+            Port = 23
+        }
+        LastUsed = @{
+            TID = ""
+            AID = ""
+            NextCTAG = 1
+        }
+        UI = @{
+            Platform = "1603_SM"
+        }
+        Window = @{
+            Width = 1150
+            Height = 760
+        }
+    }
+    
+    if (Test-Path $SettingsPath) {
+        try {
+            $loadedSettings = Get-Content $SettingsPath -Raw | ConvertFrom-Json
+            # Merge with defaults to ensure all properties exist
+            if ($loadedSettings.Connection) {
+                if ($loadedSettings.Connection.Host) { $DefaultSettings.Connection.Host = $loadedSettings.Connection.Host }
+                if ($loadedSettings.Connection.Port) { $DefaultSettings.Connection.Port = $loadedSettings.Connection.Port }
+            }
+            if ($loadedSettings.LastUsed) {
+                if ($loadedSettings.LastUsed.TID) { $DefaultSettings.LastUsed.TID = $loadedSettings.LastUsed.TID }
+                if ($loadedSettings.LastUsed.AID) { $DefaultSettings.LastUsed.AID = $loadedSettings.LastUsed.AID }
+                if ($loadedSettings.LastUsed.NextCTAG) { $DefaultSettings.LastUsed.NextCTAG = $loadedSettings.LastUsed.NextCTAG }
+            }
+            if ($loadedSettings.UI -and $loadedSettings.UI.Platform) {
+                $DefaultSettings.UI.Platform = $loadedSettings.UI.Platform
+            }
+            if ($loadedSettings.Window) {
+                if ($loadedSettings.Window.Width) { $DefaultSettings.Window.Width = $loadedSettings.Window.Width }
+                if ($loadedSettings.Window.Height) { $DefaultSettings.Window.Height = $loadedSettings.Window.Height }
+            }
+            Write-Log "Settings loaded from $SettingsPath"
+        } catch {
+            Write-Log "Error loading settings: $_" "WARN"
+        }
+    } else {
+        Write-Log "No settings file found, using defaults"
+    }
+    
+    return $DefaultSettings
+}
+
+function Save-Settings {
+    param([hashtable]$Settings)
+    
+    $SettingsPath = Join-Path $RootDir "settings.json"
+    try {
+        $Settings | ConvertTo-Json -Depth 3 | Set-Content $SettingsPath -Encoding UTF8
+        Write-Log "Settings saved to $SettingsPath"
+    } catch {
+        Write-Log "Error saving settings: $_" "ERROR"
+    }
+}
+
+function Update-CTAG {
+    param([int]$NewCTAG = -1)
+    
+    if ($NewCTAG -eq -1) {
+        $global:Settings.LastUsed.NextCTAG = $global:Settings.LastUsed.NextCTAG + 1
+    } else {
+        $global:Settings.LastUsed.NextCTAG = $NewCTAG
+    }
+    
+    Save-Settings -Settings $global:Settings
+    return $global:Settings.LastUsed.NextCTAG
+}
+
+# Load settings at startup
+$global:Settings = Load-Settings
+
+# Load playbooks
+function Load-Playbooks {
+    $PlaybooksPath = Join-Path $RootDir "data\playbooks.json"
+    
+    if (Test-Path $PlaybooksPath) {
+        try {
+            $playbooks = Get-Content $PlaybooksPath -Raw | ConvertFrom-Json
+            Write-Log "Loaded playbooks from $PlaybooksPath"
+            return $playbooks
+        } catch {
+            Write-Log "Error loading playbooks: $_" "ERROR"
+            return $null
+        }
+    } else {
+        Write-Log "No playbooks file found at $PlaybooksPath" "WARN"
+        return $null
+    }
+}
+
+# Execute a playbook with token substitution
+function Invoke-Playbook {
+    param(
+        [string]$PlaybookCategory,
+        [string]$PlaybookName,
+        [hashtable]$Tokens = @{}
+    )
+    
+    $playbooks = Load-Playbooks
+    if (-not $playbooks) {
+        Write-Log "No playbooks available" "ERROR"
+        return
+    }
+    
+    $playbook = $playbooks.playbooks.$PlaybookCategory.$PlaybookName
+    if (-not $playbook) {
+        Write-Log "Playbook not found: $PlaybookCategory.$PlaybookName" "ERROR"
+        return
+    }
+    
+    Write-Log "Starting playbook: $($playbook.name)" "TROUBLESHOOT"
+    $global:ConsoleBox.AppendText("[TROUBLESHOOT] Starting: $($playbook.name)`r`n")
+    $global:ConsoleBox.AppendText("[TROUBLESHOOT] Description: $($playbook.description)`r`n")
+    $global:ConsoleBox.ScrollToEnd()
+    
+    $stepCount = 0
+    $successCount = 0
+    
+    foreach ($step in $playbook.steps) {
+        $stepCount++
+        
+        # Check conditions if specified
+        if ($step.condition) {
+            $conditionMet = $false
+            try {
+                # Simple condition evaluation for $AID checks
+                if ($step.condition -like "*`$AID*") {
+                    $aidValue = $Tokens['AID']
+                    if ($step.condition -eq "`$AID != ''" -and $aidValue -and $aidValue.Trim() -ne "") {
+                        $conditionMet = $true
+                    }
+                }
+            } catch {
+                Write-Log "Error evaluating condition: $($step.condition)" "WARN"
+            }
+            
+            if (-not $conditionMet) {
+                Write-Log "Step $stepCount skipped - condition not met: $($step.condition)" "TROUBLESHOOT"
+                continue
+            }
+        }
+        
+        Write-Log "Step $stepCount/$($playbook.steps.Count): $($step.name)" "TROUBLESHOOT"
+        $global:ConsoleBox.AppendText("[TROUBLESHOOT] Step $stepCount: $($step.name)`r`n")
+        $global:ConsoleBox.ScrollToEnd()
+        
+        # Find the command
+        $commandId = $step.command_id
+        $command = $null
+        
+        # Look for command in loaded categories
+        foreach ($category in $global:Categories.Keys) {
+            foreach ($cmd in $global:Categories[$category]) {
+                if ($cmd.Name -eq $commandId -or $cmd.id -eq $commandId) {
+                    $command = $cmd
+                    break
+                }
+            }
+            if ($command) { break }
+        }
+        
+        if (-not $command) {
+            Write-Log "Command not found: $commandId" "ERROR"
+            if ($step.on_error -eq "abort") {
+                Write-Log "Aborting playbook due to missing command" "ERROR"
+                return
+            }
+            continue
+        }
+        
+        # Build command with token substitution
+        $cmdText = ""
+        try {
+            # Substitute tokens in parameters
+            $substitutedParams = @{}
+            if ($step.params) {
+                $step.params.PSObject.Properties | ForEach-Object {
+                    $value = $_.Value
+                    # Substitute tokens
+                    foreach ($token in $Tokens.Keys) {
+                        $value = $value -replace "\`$$token", $Tokens[$token]
+                    }
+                    $substitutedParams[$_.Name] = $value
+                }
+            }
+            
+            # Build command using the syntax template
+            $cmdText = $command.Syntax
+            if ($cmdText) {
+                # Simple parameter substitution
+                foreach ($param in $substitutedParams.Keys) {
+                    $value = $substitutedParams[$param]
+                    $cmdText = $cmdText -replace "\[$param\]", $value
+                    $cmdText = $cmdText -replace "<$param>", $value
+                }
+                
+                # Clean up any remaining placeholders
+                $cmdText = $cmdText -replace "\[.*?\]", ""
+                $cmdText = $cmdText -replace "<.*?>", ""
+            }
+        } catch {
+            Write-Log "Error building command: $_" "ERROR"
+            if ($step.on_error -eq "abort") {
+                Write-Log "Aborting playbook due to command build error" "ERROR"
+                return
+            }
+            continue
+        }
+        
+        if ($cmdText.Trim() -eq "") {
+            Write-Log "Empty command generated for step $stepCount" "ERROR"
+            continue
+        }
+        
+        # Log the command
+        Write-Log "Executing: $cmdText" "TROUBLESHOOT"
+        $global:ConsoleBox.AppendText("[TROUBLESHOOT] > $cmdText`r`n")
+        $global:ConsoleBox.ScrollToEnd()
+        
+        # Execute the command (simplified - just log for now)
+        # In full implementation, this would actually send the command
+        $global:ConsoleBox.AppendText("[TROUBLESHOOT] < Command logged (execution not implemented)`r`n")
+        $successCount++
+        
+        # Increment CTAG for next command
+        $newCTAG = Update-CTAG
+        $Tokens['CTAG'] = $newCTAG
+        
+        # Delay if specified
+        if ($step.delay_after -and $step.delay_after -gt 0) {
+            Write-Log "Waiting $($step.delay_after) seconds..." "TROUBLESHOOT"
+            Start-Sleep -Seconds $step.delay_after
+        }
+    }
+    
+    # Summary
+    Write-Log "Playbook completed: $successCount/$stepCount steps successful" "TROUBLESHOOT"
+    $global:ConsoleBox.AppendText("[SUMMARY] Troubleshooting completed: $successCount/$stepCount steps successful`r`n")
+    $global:ConsoleBox.AppendText("[SUMMARY] $($playbook.name) finished`r`n")
+    $global:ConsoleBox.ScrollToEnd()
+}
+
+# Initial load with platform from settings
+$global:CurrentPlatform = $global:Settings.UI.Platform
 $Categories = Load-TL1Commands -selectedPlatform $global:CurrentPlatform
 
 # -------------------- LIGHT THEME XAML --------------------
@@ -437,6 +796,7 @@ $xaml=@"
             <TextBlock Text="Preview:"/>
             <TextBox Name="PreviewBox" Height="70" IsReadOnly="True" TextWrapping="Wrap" Background="#ffffff" Foreground="#111827"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+              <Button Name="TroubleshootBtn" Content="Run Troubleshooting" Width="150" Margin="6,0" Background="#f59e0b" Foreground="White"/>
               <Button Name="CopyBtn" Content="Copy" Width="100" Margin="6,0"/>
               <Button Name="SendBtn" Content="Send" Width="100" Margin="6,0"/>
               <Button Name="LogBtn" Content="Log Only" Width="100" Margin="6,0"/>
@@ -468,13 +828,18 @@ $CtagBox=$Window.FindName("CtagBox"); $CtagAuto=$Window.FindName("CtagAuto")
 $OptionalPanel=$Window.FindName("OptionalPanel"); $PreviewBox=$Window.FindName("PreviewBox")
 $ConsoleBox=$Window.FindName("ConsoleBox"); $CopyBtn=$Window.FindName("CopyBtn")
 $SendBtn=$Window.FindName("SendBtn"); $LogBtn=$Window.FindName("LogBtn")
+$TroubleshootBtn=$Window.FindName("TroubleshootBtn")
 $global:ConsoleBox=$ConsoleBox
 
-# ---- Init defaults
-$PortBox.Text = ([string]([int]($Settings.DefaultPort -as [int])))
-$HostBox.Text = [string]$Settings.DefaultHost
+# ---- Init defaults from settings
+$PortBox.Text = [string]$global:Settings.Connection.Port
+$HostBox.Text = $global:Settings.Connection.Host
 $StatusText.Text = "Disconnected"
-$DebugChk.IsChecked = [bool]$Settings.Debug
+
+# Populate last used values
+$TidBox.Text = $global:Settings.LastUsed.TID
+$AidBox.Text = $global:Settings.LastUsed.AID  
+$CtagBox.Text = [string]$global:Settings.LastUsed.NextCTAG
 
 # ---- Populate categories tree
 function Populate-CategoryTree {
@@ -666,16 +1031,97 @@ function Refresh-OptionalFields{
       $inputSp=New-Object System.Windows.Controls.StackPanel; $inputSp.Orientation="Horizontal"
       $lbl=New-Object System.Windows.Controls.TextBlock; 
       $lbl.Text="$name="; $lbl.FontWeight="Bold"; $lbl.Width=80
-      $tb=New-Object System.Windows.Controls.TextBox; 
-      $tb.Width=300; $tb.Margin="6,0,0,0"
-      $tb.BorderBrush="#dc2626"  # Red border for required
-      [void]$inputSp.Children.Add($lbl); [void]$inputSp.Children.Add($tb)
+      
+      # Create appropriate input control based on paramSchema
+      $inputControl = $null
+      $paramSchema = $null
+      if ($entry.ParamSchema -and $entry.ParamSchema.$name) {
+        $paramSchema = $entry.ParamSchema.$name
+        
+        if ($paramSchema.type -eq "enum") {
+          # Create ComboBox for enum types
+          $cb = New-Object System.Windows.Controls.ComboBox
+          $cb.Width = 300
+          $cb.Margin = "6,0,0,0"
+          $cb.BorderBrush = "#dc2626"  # Red border for required
+          
+          # Add enum values
+          if ($paramSchema.values) {
+            foreach ($value in $paramSchema.values) {
+              [void]$cb.Items.Add($value)
+            }
+          }
+          
+          # Set default if specified
+          if ($paramSchema.default) {
+            $cb.SelectedItem = $paramSchema.default
+          }
+          
+          $cb.Add_SelectionChanged({ Update-Preview })
+          $inputControl = $cb
+          
+        } elseif ($paramSchema.type -eq "password") {
+          # Create PasswordBox for password types
+          $pb = New-Object System.Windows.Controls.PasswordBox
+          $pb.Width = 300
+          $pb.Margin = "6,0,0,0" 
+          $pb.BorderBrush = "#dc2626"
+          $pb.Add_PasswordChanged({ Update-Preview })
+          $inputControl = $pb
+          
+        } else {
+          # Create TextBox for other types
+          $tb = New-Object System.Windows.Controls.TextBox
+          $tb.Width = 300
+          $tb.Margin = "6,0,0,0"
+          $tb.BorderBrush = "#dc2626"  # Red border for required
+          
+          # Set placeholder or example if available
+          if ($paramSchema.example) {
+            $tb.Text = $paramSchema.example
+            $tb.Foreground = "#9ca3af"  # Gray for placeholder
+            $tb.Add_GotFocus({
+              if ($this.Foreground.ToString() -eq "#FF9CA3AF") {
+                $this.Text = ""
+                $this.Foreground = "#000000"
+              }
+            })
+            $tb.Add_LostFocus({
+              if ($this.Text -eq "") {
+                $this.Text = $paramSchema.example
+                $this.Foreground = "#9ca3af"
+              }
+            })
+          }
+          
+          $tb.Add_TextChanged({ Update-Preview })
+          $inputControl = $tb
+        }
+      } else {
+        # Fallback to TextBox if no schema
+        $tb = New-Object System.Windows.Controls.TextBox
+        $tb.Width = 300
+        $tb.Margin = "6,0,0,0"
+        $tb.BorderBrush = "#dc2626"  # Red border for required
+        $tb.Add_TextChanged({ Update-Preview })
+        $inputControl = $tb
+      }
+      
+      [void]$inputSp.Children.Add($lbl)
+      [void]$inputSp.Children.Add($inputControl)
       [void]$sp.Children.Add($inputSp)
       
-      # Show detailed parameter description if available
-      if ($entry.Parameters -and $entry.Parameters.$name) {
+      # Show detailed parameter description
+      $description = ""
+      if ($paramSchema -and $paramSchema.description) {
+        $description = $paramSchema.description
+      } elseif ($entry.Parameters -and $entry.Parameters.$name) {
+        $description = $entry.Parameters.$name
+      }
+      
+      if ($description) {
         $paramDesc=New-Object System.Windows.Controls.TextBlock
-        $paramDesc.Text=$entry.Parameters.$name
+        $paramDesc.Text = $description
         $paramDesc.TextWrapping="Wrap"
         $paramDesc.FontSize=10
         $paramDesc.Foreground="#6b7280"
@@ -684,7 +1130,6 @@ function Refresh-OptionalFields{
       }
       
       [void]$OptionalPanel.Children.Add($sp)
-      $tb.Add_TextChanged({ Update-Preview })
     }
   }
   
@@ -709,15 +1154,89 @@ function Refresh-OptionalFields{
       $inputSp=New-Object System.Windows.Controls.StackPanel; $inputSp.Orientation="Horizontal"
       $lbl=New-Object System.Windows.Controls.TextBlock; 
       $lbl.Text="$name="; $lbl.Width=80
-      $tb=New-Object System.Windows.Controls.TextBox; 
-      $tb.Width=300; $tb.Margin="6,0,0,0"
-      [void]$inputSp.Children.Add($lbl); [void]$inputSp.Children.Add($tb)
+      
+      # Create appropriate input control based on paramSchema
+      $inputControl = $null
+      $paramSchema = $null
+      if ($entry.ParamSchema -and $entry.ParamSchema.$name) {
+        $paramSchema = $entry.ParamSchema.$name
+        
+        if ($paramSchema.type -eq "enum") {
+          # Create ComboBox for enum types
+          $cb = New-Object System.Windows.Controls.ComboBox
+          $cb.Width = 300
+          $cb.Margin = "6,0,0,0"
+          
+          # Add enum values
+          if ($paramSchema.values) {
+            foreach ($value in $paramSchema.values) {
+              [void]$cb.Items.Add($value)
+            }
+          }
+          
+          # Set default if specified
+          if ($paramSchema.default) {
+            $cb.SelectedItem = $paramSchema.default
+          }
+          
+          $cb.Add_SelectionChanged({ Update-Preview })
+          $inputControl = $cb
+          
+        } else {
+          # Create TextBox for other types
+          $tb = New-Object System.Windows.Controls.TextBox
+          $tb.Width = 300
+          $tb.Margin = "6,0,0,0"
+          
+          # Set placeholder or default if available
+          if ($paramSchema.default) {
+            $tb.Text = $paramSchema.default
+          } elseif ($paramSchema.example) {
+            $tb.Text = $paramSchema.example
+            $tb.Foreground = "#9ca3af"  # Gray for placeholder
+            $tb.Add_GotFocus({
+              if ($this.Foreground.ToString() -eq "#FF9CA3AF") {
+                $this.Text = ""
+                $this.Foreground = "#000000"
+              }
+            })
+            $tb.Add_LostFocus({
+              if ($this.Text -eq "") {
+                if ($paramSchema.example) {
+                  $this.Text = $paramSchema.example
+                  $this.Foreground = "#9ca3af"
+                }
+              }
+            })
+          }
+          
+          $tb.Add_TextChanged({ Update-Preview })
+          $inputControl = $tb
+        }
+      } else {
+        # Fallback to TextBox if no schema
+        $tb = New-Object System.Windows.Controls.TextBox
+        $tb.Width = 300
+        $tb.Margin = "6,0,0,0"
+        $tb.Add_TextChanged({ Update-Preview })
+        $inputControl = $tb
+      }
+      
+      [void]$inputSp.Children.Add($lbl)
+      [void]$inputSp.Children.Add($inputControl)
       [void]$sp.Children.Add($inputSp)
       
-      # Show detailed parameter description if available
-      if ($entry.Parameters -and $entry.Parameters.$name) {
+      # Show detailed parameter description
+      $description = ""
+      if ($paramSchema -and $paramSchema.description) {
+        $description = $paramSchema.description
+      } elseif ($entry.Parameters -and $entry.Parameters.$name) {
+        $description = $entry.Parameters.$name
+      }
+      
+      if ($description) {
         $paramDesc=New-Object System.Windows.Controls.TextBlock
-        $paramDesc.Text=$entry.Parameters.$name
+        $paramDesc.Text = $description
         $paramDesc.TextWrapping="Wrap"
         $paramDesc.FontSize=10
         $paramDesc.Foreground="#6b7280"
@@ -726,7 +1245,6 @@ function Refresh-OptionalFields{
       }
       
       [void]$OptionalPanel.Children.Add($sp)
-      $tb.Add_TextChanged({ Update-Preview })
     }
   }
   
@@ -842,9 +1360,15 @@ $ConnectBtn.Add_Click({
   }
 })
 
-# Send (session if connected; else one-shot helper)
 $SendBtn.Add_Click({
   $cmdText=$PreviewBox.Text
+  
+  # Update settings with current connection info and TID/AID
+  $global:Settings.Connection.Host = $HostBox.Text
+  $global:Settings.Connection.Port = [int]$PortBox.Text
+  $global:Settings.LastUsed.TID = $TidBox.Text
+  $global:Settings.LastUsed.AID = $AidBox.Text
+  
   if (-not $global:tl1_client -or -not $global:tl1_client.Connected) {
     Write-Log "Not connected. Using one-shot send helper..." "WARN"
     try {
@@ -853,6 +1377,11 @@ $SendBtn.Add_Click({
       $resp = & powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -Sta -File $sendScript -CommandText $cmdText -Host $HostBox.Text -Port ([int]$PortBox.Text)
       if ($resp) { foreach($line in $resp -split "`r?`n"){ if($line){ $ConsoleBox.AppendText("$line`r`n") } } $ConsoleBox.ScrollToEnd() }
       Write-Log "One-shot send complete." "SEND"
+      
+      # Increment CTAG and save settings after successful send
+      $newCTAG = Update-CTAG
+      $CtagBox.Text = [string]$newCTAG
+      
     } catch {
       Write-Log ("Send failed: {0}" -f $_.Exception.Message) "ERROR"
     }
@@ -878,6 +1407,11 @@ $SendBtn.Add_Click({
     if([string]::IsNullOrWhiteSpace($resp)){ $resp = "<no response>" }
     foreach($line in $resp -split "`r?`n"){ if($line){ $ConsoleBox.AppendText("$line`r`n") } }
     $ConsoleBox.ScrollToEnd()
+    
+    # Increment CTAG and save settings after successful send
+    $newCTAG = Update-CTAG
+    $CtagBox.Text = [string]$newCTAG
+    
   } catch {
     Write-Log ("Send failed: {0}" -f $_.Exception.Message) "ERROR"
   }
@@ -891,6 +1425,23 @@ $DisconnectBtn.Add_Click({
     Write-Log "Disconnected." "NET"
   } finally {
     $StatusText.Text="Disconnected"; $StatusText.Foreground="#b91c1c"
+  }
+})
+
+# Troubleshooting button event handler
+$TroubleshootBtn.Add_Click({
+  try {
+    $tid = $TidBox.Text
+    $aid = $AidBox.Text
+    if([string]::IsNullOrWhiteSpace($tid) -or [string]::IsNullOrWhiteSpace($aid)) {
+      Write-Log "TID and AID required for troubleshooting." "ERROR"
+      return
+    }
+    
+    # Execute Port_Check playbook
+    Invoke-Playbook -playbookName "Port_Check" -tid $tid -aid $aid
+  } catch {
+    Write-Log "Troubleshooting error: $($_.Exception.Message)" "ERROR"
   }
 })
 
