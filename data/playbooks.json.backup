@@ -1,0 +1,233 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "last_updated": "2025-10-07",
+    "description": "Automated troubleshooting and diagnostic sequences"
+  },
+  "playbooks": {
+    "Troubleshooting": {
+      "Port_Check": {
+        "name": "Port Check Troubleshooting",
+        "description": "Comprehensive port diagnostic sequence - checks alarms, header info, equipment status, and basic connectivity",
+        "category": "diagnostics",
+        "estimated_time": "30 seconds",
+        "steps": [
+          {
+            "step": 1,
+            "name": "Retrieve System Header",
+            "command_id": "RTRV-HDR",
+            "description": "Get basic system information and verify connectivity",
+            "params": {
+              "TID": "$TID",
+              "CTAG": "$CTAG"
+            },
+            "delay_after": 2,
+            "expected_responses": ["COMPLD"],
+            "on_error": "continue"
+          },
+          {
+            "step": 2,
+            "name": "Check Active Alarms",
+            "command_id": "RTRV-ALM-ALL",
+            "description": "Retrieve all active alarms to identify issues",
+            "params": {
+              "TID": "$TID",
+              "CTAG": "$CTAG",
+              "NTFCNCOD": "ALL"
+            },
+            "delay_after": 3,
+            "expected_responses": ["COMPLD"],
+            "parse_response": true,
+            "on_error": "continue"
+          },
+          {
+            "step": 3,
+            "name": "Retrieve Equipment Status",
+            "command_id": "RTRV-EQPT",
+            "description": "Check equipment inventory and operational status",
+            "params": {
+              "TID": "$TID",
+              "AID": "ALL",
+              "CTAG": "$CTAG"
+            },
+            "delay_after": 2,
+            "expected_responses": ["COMPLD"],
+            "on_error": "continue"
+          },
+          {
+            "step": 4,
+            "name": "Performance Monitoring Check",
+            "command_id": "RTRV-PM-STS1",
+            "description": "Check recent performance statistics for main interfaces",
+            "params": {
+              "TID": "$TID",
+              "AIDSTS1": "$AID",
+              "CTAG": "$CTAG",
+              "TMPER": "15-MIN"
+            },
+            "delay_after": 2,
+            "expected_responses": ["COMPLD"],
+            "condition": "$AID != ''",
+            "on_error": "continue"
+          }
+        ],
+        "summary": {
+          "success_criteria": ["COMPLD received for all steps"],
+          "common_issues": [
+            "Connectivity timeout - check network path",
+            "Authentication failure - verify TID",
+            "Equipment alarms - review alarm list",
+            "Performance degradation - check PM statistics"
+          ]
+        }
+      },
+      "Loopback_Test": {
+        "name": "T1 Loopback Test Sequence",
+        "description": "Automated T1 loopback test - operates loopback, waits, then releases",
+        "category": "testing",
+        "estimated_time": "60 seconds",
+        "warning": "This test affects service - coordinate with operations",
+        "steps": [
+          {
+            "step": 1,
+            "name": "Operate T1 Loopback",
+            "command_id": "OPR-LPBK-T1",
+            "description": "Start loopback test on specified T1 facility",
+            "params": {
+              "TID": "$TID",
+              "AIDT1": "$AID",
+              "CTAG": "$CTAG",
+              "LOCN": "NEND",
+              "ORGN": "NEND",
+              "LPBKTYPE": "FACILITY"
+            },
+            "delay_after": 30,
+            "expected_responses": ["COMPLD"],
+            "on_error": "abort"
+          },
+          {
+            "step": 2,
+            "name": "Check Loopback Status",
+            "command_id": "RTRV-ALM-ALL",
+            "description": "Verify loopback is active and check for errors",
+            "params": {
+              "TID": "$TID",
+              "AID": "$AID",
+              "CTAG": "$CTAG"
+            },
+            "delay_after": 5,
+            "expected_responses": ["COMPLD"],
+            "on_error": "continue"
+          },
+          {
+            "step": 3,
+            "name": "Release T1 Loopback",
+            "command_id": "RLS-LPBK-T1",
+            "description": "Release the loopback test and restore normal operation",
+            "params": {
+              "TID": "$TID",
+              "AIDT1": "$AID", 
+              "CTAG": "$CTAG",
+              "LOCN": "NEND",
+              "ORGN": "NEND",
+              "LPBKTYPE": "FACILITY"
+            },
+            "delay_after": 2,
+            "expected_responses": ["COMPLD"],
+            "on_error": "continue"
+          }
+        ],
+        "summary": {
+          "success_criteria": ["All loopback operations complete successfully"],
+          "common_issues": [
+            "Loopback failed to operate - check facility status",
+            "Test showed errors - investigate circuit quality",
+            "Failed to release - manual intervention may be required"
+          ]
+        }
+      }
+    },
+    "Provisioning": {
+      "Cross_Connect_Wizard": {
+        "name": "STS-1 Cross Connect Provisioning",
+        "description": "Guided provisioning of STS-1 cross-connections with validation",
+        "category": "provisioning",
+        "estimated_time": "10 seconds",
+        "wizard_steps": [
+          {
+            "step": 1,
+            "name": "Service Type Selection",
+            "description": "Select the type of cross-connection service",
+            "fields": [
+              {
+                "name": "service_type",
+                "type": "enum",
+                "values": ["STS1", "VT15", "VT6"],
+                "description": "Type of service to provision",
+                "required": true
+              }
+            ]
+          },
+          {
+            "step": 2, 
+            "name": "Endpoint Configuration",
+            "description": "Configure source and destination endpoints",
+            "fields": [
+              {
+                "name": "source_aid",
+                "type": "string",
+                "pattern": "LG[1-2]-STS1-[1-48]",
+                "description": "Source facility identifier",
+                "required": true,
+                "example": "LG1-STS1-1"
+              },
+              {
+                "name": "dest_aid", 
+                "type": "string",
+                "pattern": "LG[1-2]-STS1-[1-48]",
+                "description": "Destination facility identifier",
+                "required": true,
+                "example": "LG2-STS1-1"
+              }
+            ]
+          },
+          {
+            "step": 3,
+            "name": "Connection Options",
+            "description": "Configure cross-connection parameters",
+            "fields": [
+              {
+                "name": "connection_type",
+                "type": "enum", 
+                "values": ["2WAY", "1WAY"],
+                "description": "Bidirectional or unidirectional connection",
+                "default": "2WAY",
+                "required": false
+              }
+            ]
+          },
+          {
+            "step": 4,
+            "name": "Confirmation",
+            "description": "Review configuration and confirm provisioning",
+            "command_id": "ENT-CRS-STS1",
+            "params": {
+              "TID": "$TID",
+              "CTAG": "$CTAG",
+              "AIDSTS1FROM": "$source_aid",
+              "AIDSTS1TO": "$dest_aid",
+              "CCT": "$connection_type"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "global_settings": {
+    "default_delay": 2,
+    "max_retries": 1,
+    "timeout_seconds": 30,
+    "auto_increment_ctag": true,
+    "log_level": "INFO"
+  }
+}

@@ -1,233 +1,448 @@
 {
   "metadata": {
-    "version": "1.0",
-    "last_updated": "2025-10-07",
-    "description": "Automated troubleshooting and diagnostic sequences"
+    "version": "2.0",
+    "lastUpdate": "2024-01-20",
+    "totalPlaybooks": 10
   },
-  "playbooks": {
-    "Troubleshooting": {
-      "Port_Check": {
-        "name": "Port Check Troubleshooting",
-        "description": "Comprehensive port diagnostic sequence - checks alarms, header info, equipment status, and basic connectivity",
-        "category": "diagnostics",
-        "estimated_time": "30 seconds",
-        "steps": [
-          {
-            "step": 1,
-            "name": "Retrieve System Header",
-            "command_id": "RTRV-HDR",
-            "description": "Get basic system information and verify connectivity",
-            "params": {
-              "TID": "$TID",
-              "CTAG": "$CTAG"
-            },
-            "delay_after": 2,
-            "expected_responses": ["COMPLD"],
-            "on_error": "continue"
-          },
-          {
-            "step": 2,
-            "name": "Check Active Alarms",
-            "command_id": "RTRV-ALM-ALL",
-            "description": "Retrieve all active alarms to identify issues",
-            "params": {
-              "TID": "$TID",
-              "CTAG": "$CTAG",
-              "NTFCNCOD": "ALL"
-            },
-            "delay_after": 3,
-            "expected_responses": ["COMPLD"],
-            "parse_response": true,
-            "on_error": "continue"
-          },
-          {
-            "step": 3,
-            "name": "Retrieve Equipment Status",
-            "command_id": "RTRV-EQPT",
-            "description": "Check equipment inventory and operational status",
-            "params": {
-              "TID": "$TID",
-              "AID": "ALL",
-              "CTAG": "$CTAG"
-            },
-            "delay_after": 2,
-            "expected_responses": ["COMPLD"],
-            "on_error": "continue"
-          },
-          {
-            "step": 4,
-            "name": "Performance Monitoring Check",
-            "command_id": "RTRV-PM-STS1",
-            "description": "Check recent performance statistics for main interfaces",
-            "params": {
-              "TID": "$TID",
-              "AIDSTS1": "$AID",
-              "CTAG": "$CTAG",
-              "TMPER": "15-MIN"
-            },
-            "delay_after": 2,
-            "expected_responses": ["COMPLD"],
-            "condition": "$AID != ''",
-            "on_error": "continue"
-          }
-        ],
-        "summary": {
-          "success_criteria": ["COMPLD received for all steps"],
-          "common_issues": [
-            "Connectivity timeout - check network path",
-            "Authentication failure - verify TID",
-            "Equipment alarms - review alarm list",
-            "Performance degradation - check PM statistics"
-          ]
+  "playbooks": [
+    {
+      "id": "System_Health_Check",
+      "name": "Complete System Health Check",
+      "description": "Comprehensive health assessment including alarms, performance, and configuration verification",
+      "category": "Health Check",
+      "estimatedTime": "2-3 minutes",
+      "platforms": ["1603_SM", "16034_SMX"],
+      "prerequisites": [
+        "Equipment must be online and accessible",
+        "Valid TID configured"
+      ],
+      "commands": [
+        {
+          "step": 1,
+          "command": "RTRV-HDR::{{TID}}:{{CTAG}}",
+          "description": "Get system information and verify connectivity"
+        },
+        {
+          "step": 2,
+          "command": "RTRV-ALM-ALL::{{TID}}:{{CTAG+1}}:{{ALMLEV}}",
+          "description": "Check for any active alarms"
+        },
+        {
+          "step": 3,
+          "command": "RTRV-PM-ALL::{{TID}}:{{CTAG+2}}",
+          "description": "Retrieve current performance metrics"
+        }
+      ],
+      "parameters": {
+        "TID": {
+          "type": "string",
+          "description": "Equipment target identifier",
+          "required": true
+        },
+        "CTAG": {
+          "type": "string",
+          "description": "Starting correlation tag number",
+          "required": true
+        },
+        "ALMLEV": {
+          "type": "string",
+          "description": "Alarm severity level filter",
+          "required": false
         }
       },
-      "Loopback_Test": {
-        "name": "T1 Loopback Test Sequence",
-        "description": "Automated T1 loopback test - operates loopback, waits, then releases",
-        "category": "testing",
-        "estimated_time": "60 seconds",
-        "warning": "This test affects service - coordinate with operations",
-        "steps": [
-          {
-            "step": 1,
-            "name": "Operate T1 Loopback",
-            "command_id": "OPR-LPBK-T1",
-            "description": "Start loopback test on specified T1 facility",
-            "params": {
-              "TID": "$TID",
-              "AIDT1": "$AID",
-              "CTAG": "$CTAG",
-              "LOCN": "NEND",
-              "ORGN": "NEND",
-              "LPBKTYPE": "FACILITY"
-            },
-            "delay_after": 30,
-            "expected_responses": ["COMPLD"],
-            "on_error": "abort"
-          },
-          {
-            "step": 2,
-            "name": "Check Loopback Status",
-            "command_id": "RTRV-ALM-ALL",
-            "description": "Verify loopback is active and check for errors",
-            "params": {
-              "TID": "$TID",
-              "AID": "$AID",
-              "CTAG": "$CTAG"
-            },
-            "delay_after": 5,
-            "expected_responses": ["COMPLD"],
-            "on_error": "continue"
-          },
-          {
-            "step": 3,
-            "name": "Release T1 Loopback",
-            "command_id": "RLS-LPBK-T1",
-            "description": "Release the loopback test and restore normal operation",
-            "params": {
-              "TID": "$TID",
-              "AIDT1": "$AID", 
-              "CTAG": "$CTAG",
-              "LOCN": "NEND",
-              "ORGN": "NEND",
-              "LPBKTYPE": "FACILITY"
-            },
-            "delay_after": 2,
-            "expected_responses": ["COMPLD"],
-            "on_error": "continue"
-          }
-        ],
-        "summary": {
-          "success_criteria": ["All loopback operations complete successfully"],
-          "common_issues": [
-            "Loopback failed to operate - check facility status",
-            "Test showed errors - investigate circuit quality",
-            "Failed to release - manual intervention may be required"
-          ]
+      "postConditions": [
+        "System connectivity verified",
+        "Alarm status assessed",
+        "Performance baseline established"
+      ]
+    },
+    {
+      "id": "Port_Connectivity_Test",
+      "name": "Port Connectivity Test",
+      "description": "Comprehensive port diagnostic - checks alarms, runs loopback tests, and verifies connectivity",
+      "category": "Troubleshooting",
+      "estimatedTime": "60 seconds",
+      "platforms": ["1603_SM", "16034_SMX"],
+      "commands": [
+        {
+          "step": 1,
+          "command": "RTRV-ALM::{{TID}}:{{CTAG}}:{{AID}}",
+          "description": "Check for alarms on specific port"
+        },
+        {
+          "step": 2,
+          "command": "TST-LPB::{{TID}}:{{CTAG}}:{{AID}}",
+          "description": "Run facility-level loopback test"
+        },
+        {
+          "step": 3,
+          "command": "RLS-LPB::{{TID}}:{{CTAG}}:{{AID}}",
+          "description": "Release loopback test"
+        }
+      ],
+      "parameters": {
+        "TID": {
+          "type": "string",
+          "description": "Equipment target identifier",
+          "required": true
+        },
+        "CTAG": {
+          "type": "string",
+          "description": "Correlation tag number",
+          "required": true
+        },
+        "AID": {
+          "type": "string",
+          "description": "Access Identifier (port/facility)",
+          "required": true
         }
       }
     },
-    "Provisioning": {
-      "Cross_Connect_Wizard": {
-        "name": "STS-1 Cross Connect Provisioning",
-        "description": "Guided provisioning of STS-1 cross-connections with validation",
-        "category": "provisioning",
-        "estimated_time": "10 seconds",
-        "wizard_steps": [
-          {
-            "step": 1,
-            "name": "Service Type Selection",
-            "description": "Select the type of cross-connection service",
-            "fields": [
-              {
-                "name": "service_type",
-                "type": "enum",
-                "values": ["STS1", "VT15", "VT6"],
-                "description": "Type of service to provision",
-                "required": true
-              }
-            ]
-          },
-          {
-            "step": 2, 
-            "name": "Endpoint Configuration",
-            "description": "Configure source and destination endpoints",
-            "fields": [
-              {
-                "name": "source_aid",
-                "type": "string",
-                "pattern": "LG[1-2]-STS1-[1-48]",
-                "description": "Source facility identifier",
-                "required": true,
-                "example": "LG1-STS1-1"
-              },
-              {
-                "name": "dest_aid", 
-                "type": "string",
-                "pattern": "LG[1-2]-STS1-[1-48]",
-                "description": "Destination facility identifier",
-                "required": true,
-                "example": "LG2-STS1-1"
-              }
-            ]
-          },
-          {
-            "step": 3,
-            "name": "Connection Options",
-            "description": "Configure cross-connection parameters",
-            "fields": [
-              {
-                "name": "connection_type",
-                "type": "enum", 
-                "values": ["2WAY", "1WAY"],
-                "description": "Bidirectional or unidirectional connection",
-                "default": "2WAY",
-                "required": false
-              }
-            ]
-          },
-          {
-            "step": 4,
-            "name": "Confirmation",
-            "description": "Review configuration and confirm provisioning",
-            "command_id": "ENT-CRS-STS1",
-            "params": {
-              "TID": "$TID",
-              "CTAG": "$CTAG",
-              "AIDSTS1FROM": "$source_aid",
-              "AIDSTS1TO": "$dest_aid",
-              "CCT": "$connection_type"
-            }
-          }
-        ]
+    {
+      "id": "Alarm_Investigation",
+      "name": "Alarm Investigation",
+      "description": "Systematic alarm analysis and acknowledgment sequence",
+      "category": "Troubleshooting",
+      "estimatedTime": "30 seconds",
+      "platforms": ["1603_SM", "16034_SMX"],
+      "commands": [
+        {
+          "step": 1,
+          "command": "RTRV-ALM-ALL::{{TID}}:{{CTAG}}",
+          "description": "Get complete alarm list for analysis"
+        },
+        {
+          "step": 2,
+          "command": "ACK-ALM::{{TID}}:{{CTAG}}",
+          "description": "Acknowledge all critical alarms"
+        },
+        {
+          "step": 3,
+          "command": "RTRV-ALM::{{TID}}:{{CTAG}}",
+          "description": "Confirm alarms have been acknowledged"
+        }
+      ],
+      "parameters": {
+        "TID": {
+          "type": "string",
+          "description": "Equipment target identifier",
+          "required": true
+        },
+        "CTAG": {
+          "type": "string",
+          "description": "Correlation tag number",
+          "required": true
+        }
+      }
+    },
+    {
+      "id": "Equipment_Reset_Recovery",
+      "name": "Equipment Reset Recovery",
+      "description": "Systematic equipment reset and recovery verification",
+      "category": "Maintenance",
+      "estimatedTime": "90 seconds",
+      "platforms": ["1603_SM", "16034_SMX"],
+      "commands": [
+        {
+          "step": 1,
+          "command": "RTRV-ALM::{{TID}}:{{CTAG}}:{{AID}}",
+          "description": "Document alarms before reset"
+        },
+        {
+          "step": 2,
+          "command": "RST-EQPT::{{TID}}:{{CTAG}}:{{AID}}",
+          "description": "Reset the specified equipment"
+        },
+        {
+          "step": 3,
+          "command": "RTRV-HDR::{{TID}}:{{CTAG}}",
+          "description": "Verify system is responsive after reset"
+        }
+      ],
+      "parameters": {
+        "TID": {
+          "type": "string",
+          "description": "Equipment target identifier",
+          "required": true
+        },
+        "CTAG": {
+          "type": "string",
+          "description": "Correlation tag number",
+          "required": true
+        },
+        "AID": {
+          "type": "string",
+          "description": "Access Identifier for equipment to reset",
+          "required": true
+        }
+      }
+    },
+    {
+      "id": "Performance_Monitoring_Analysis",
+      "name": "Performance Monitoring Analysis",
+      "description": "Comprehensive PM data collection and analysis",
+      "category": "Monitoring",
+      "estimatedTime": "40 seconds",
+      "platforms": ["1603_SM", "16034_SMX"],
+      "commands": [
+        {
+          "step": 1,
+          "command": "RTRV-PM::{{TID}}:{{CTAG}}:{{AID}}:::15MIN",
+          "description": "Get current 15-minute performance data"
+        },
+        {
+          "step": 2,
+          "command": "RTRV-PM::{{TID}}:{{CTAG}}:{{AID}}:::24HR",
+          "description": "Get 24-hour historical PM data"
+        },
+        {
+          "step": 3,
+          "command": "RTRV-PM::{{TID}}:{{CTAG}}:{{AID}}:::ES",
+          "description": "Focus on error seconds performance"
+        }
+      ],
+      "parameters": {
+        "TID": {
+          "type": "string",
+          "description": "Equipment target identifier",
+          "required": true
+        },
+        "CTAG": {
+          "type": "string",
+          "description": "Correlation tag number",
+          "required": true
+        },
+        "AID": {
+          "type": "string",
+          "description": "Access Identifier for monitoring",
+          "required": true
+        }
+      }
+    },
+    {
+      "id": "Cross_Connect_Wizard",
+      "name": "Cross Connect Creation Wizard",
+      "description": "Guided workflow for creating STS1 cross-connections with validation",
+      "category": "Cross Connect",
+      "estimatedTime": "30 seconds",
+      "platforms": ["1603_SM", "16034_SMX"],
+      "commands": [
+        {
+          "step": 1,
+          "command": "ENT-CRS-STS1::{{TID}}:{{CTAG}}:{{FROMAID}},{{TOAID}}",
+          "description": "Create the cross-connection"
+        },
+        {
+          "step": 2,
+          "command": "RTRV-NMAP::{{TID}}:{{CTAG}}",
+          "description": "Verify cross-connection was created"
+        }
+      ],
+      "parameters": {
+        "TID": {
+          "type": "string",
+          "description": "Equipment target identifier",
+          "required": true
+        },
+        "CTAG": {
+          "type": "string",
+          "description": "Correlation tag number",
+          "required": true
+        },
+        "FROMAID": {
+          "type": "string",
+          "description": "Source facility identifier",
+          "required": true
+        },
+        "TOAID": {
+          "type": "string",
+          "description": "Destination facility identifier",
+          "required": true
+        }
+      }
+    },
+    {
+      "id": "Service_Activation",
+      "name": "Service Activation Sequence",
+      "description": "Complete service turn-up including cross-connect creation and testing",
+      "category": "Provisioning",
+      "estimatedTime": "120 seconds",
+      "platforms": ["1603_SM", "16034_SMX"],
+      "commands": [
+        {
+          "step": 1,
+          "command": "RTRV-ALM::{{TID}}:{{CTAG}}",
+          "description": "Check for pre-existing alarms"
+        },
+        {
+          "step": 2,
+          "command": "ENT-CRS-STS1::{{TID}}:{{CTAG}}:{{FROMAID}},{{TOAID}}",
+          "description": "Create the primary cross-connection"
+        },
+        {
+          "step": 3,
+          "command": "TST-LPB::{{TID}}:{{CTAG}}:{{FROMAID}}",
+          "description": "Test end-to-end connectivity"
+        },
+        {
+          "step": 4,
+          "command": "RLS-LPB::{{TID}}:{{CTAG}}:{{FROMAID}}",
+          "description": "Release connectivity test"
+        }
+      ],
+      "parameters": {
+        "TID": {
+          "type": "string",
+          "description": "Equipment target identifier",
+          "required": true
+        },
+        "CTAG": {
+          "type": "string",
+          "description": "Correlation tag number",
+          "required": true
+        },
+        "FROMAID": {
+          "type": "string",
+          "description": "Source facility identifier",
+          "required": true
+        },
+        "TOAID": {
+          "type": "string",
+          "description": "Destination facility identifier",
+          "required": true
+        }
+      }
+    },
+    {
+      "id": "Service_Deactivation",
+      "name": "Service Deactivation Sequence",
+      "description": "Safe service removal with verification steps",
+      "category": "Provisioning",
+      "estimatedTime": "60 seconds",
+      "platforms": ["1603_SM", "16034_SMX"],
+      "commands": [
+        {
+          "step": 1,
+          "command": "RTRV-PM::{{TID}}:{{CTAG}}:{{FROMAID}}",
+          "description": "Document service status before removal"
+        },
+        {
+          "step": 2,
+          "command": "RMV-CRS-STS1::{{TID}}:{{CTAG}}:{{FROMAID}},{{TOAID}}",
+          "description": "Remove the existing cross-connection"
+        },
+        {
+          "step": 3,
+          "command": "RTRV-NMAP::{{TID}}:{{CTAG}}",
+          "description": "Confirm cross-connection has been removed"
+        }
+      ],
+      "parameters": {
+        "TID": {
+          "type": "string",
+          "description": "Equipment target identifier",
+          "required": true
+        },
+        "CTAG": {
+          "type": "string",
+          "description": "Correlation tag number",
+          "required": true
+        },
+        "FROMAID": {
+          "type": "string",
+          "description": "Source facility identifier",
+          "required": true
+        },
+        "TOAID": {
+          "type": "string",
+          "description": "Destination facility identifier",
+          "required": true
+        }
+      }
+    },
+    {
+      "id": "Database_Backup",
+      "name": "Database Backup Procedure",
+      "description": "Complete database backup with verification",
+      "category": "Maintenance",
+      "estimatedTime": "45 seconds",
+      "platforms": ["1603_SM", "16034_SMX"],
+      "commands": [
+        {
+          "step": 1,
+          "command": "RTRV-HDR::{{TID}}:{{CTAG}}",
+          "description": "Verify system stability before backup"
+        },
+        {
+          "step": 2,
+          "command": "CPY-MEM::{{TID}}:{{CTAG}}",
+          "description": "Copy running configuration to backup"
+        },
+        {
+          "step": 3,
+          "command": "RTRV-HDR::{{TID}}:{{CTAG}}",
+          "description": "Verify system remained stable during backup"
+        }
+      ],
+      "parameters": {
+        "TID": {
+          "type": "string",
+          "description": "Equipment target identifier",
+          "required": true
+        },
+        "CTAG": {
+          "type": "string",
+          "description": "Correlation tag number",
+          "required": true
+        }
+      }
+    },
+    {
+      "id": "Bulk_Cross_Connect_Creation",
+      "name": "Bulk Cross Connect Creation",
+      "description": "Automated creation of multiple cross-connections with progress tracking",
+      "category": "Provisioning",
+      "estimatedTime": "Variable based on count",
+      "platforms": ["1603_SM", "16034_SMX"],
+      "commands": [
+        {
+          "step": 1,
+          "command": "RTRV-HDR::{{TID}}:{{CTAG}}",
+          "description": "Verify system readiness for bulk operations"
+        },
+        {
+          "step": 2,
+          "command": "ENT-CRS-STS1::{{TID}}:{{CTAG}}:{{FROMAID}},{{TOAID}}",
+          "description": "Create cross-connections from bulk list"
+        },
+        {
+          "step": 3,
+          "command": "RTRV-NMAP::{{TID}}:{{CTAG}}",
+          "description": "Verify all connections were created successfully"
+        }
+      ],
+      "parameters": {
+        "TID": {
+          "type": "string",
+          "description": "Equipment target identifier",
+          "required": true
+        },
+        "CTAG": {
+          "type": "string",
+          "description": "Correlation tag number",
+          "required": true
+        },
+        "FROMAID": {
+          "type": "string",
+          "description": "Source facility identifier",
+          "required": true
+        },
+        "TOAID": {
+          "type": "string",
+          "description": "Destination facility identifier",
+          "required": true
+        }
       }
     }
-  },
-  "global_settings": {
-    "default_delay": 2,
-    "max_retries": 1,
-    "timeout_seconds": 30,
-    "auto_increment_ctag": true,
-    "log_level": "INFO"
-  }
+  ]
 }

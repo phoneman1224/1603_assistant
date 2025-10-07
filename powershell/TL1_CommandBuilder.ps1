@@ -57,11 +57,8 @@ if (!(Test-Path $AppDataDir)) {
 }
 
 # Set up logging
-$LogsDir = Join-Path $AppDataDir "logs"
-if (!(Test-Path $LogsDir)) { 
-    New-Item -ItemType Directory -Path $LogsDir | Out-Null 
-}
-$LogFile = Join-Path $LogsDir ("app-{0}.log" -f (Get-Date -Format "yyyyMMdd"))
+# Initialize structured logging system
+Initialize-StructuredLogging
 
 # Settings with safe defaults - store in script directory for portability
 $SettingsPath = Join-Path $ScriptDir "appsettings.json"
@@ -83,12 +80,214 @@ try {
   if ($Settings.Window -and $Settings.Window.Height) { $h = $Settings.Window.Height -as [int]; if ($h -gt 0) { $WinHeight = $h } }
 } catch {}
 
-# Simple logger
+# Enhanced structured logging system with background job support
 $global:ConsoleBox=$null
-function Write-Log([string]$Message,[string]$Level="INFO"){
-  $line="[${((Get-Date).ToString('yyyy-MM-dd HH:mm:ss'))}] [$Level] $Message"
-  Add-Content -Path $LogFile -Value $line
-  if($global:ConsoleBox){ $global:ConsoleBox.AppendText("$line`r`n"); $global:ConsoleBox.ScrollToEnd() }
+$global:LogQueue = [System.Collections.Concurrent.ConcurrentQueue[string]]::new()
+$global:BackgroundJobs = @{}
+
+function Initialize-StructuredLogging {
+    # Ensure logs directory exists with year-month structure
+    $LogYear = (Get-Date).ToString("yyyy")
+    $LogMonth = (Get-Date).ToString("yyyy-MM")
+    $LogDir = Join-Path $PSScriptRoot "logs\$LogMonth"
+    
+    if (-not (Test-Path $LogDir)) {
+        New-Item -Path $LogDir -ItemType Directory -Force | Out-Null
+    }
+    
+    $global:LogFile = Join-Path $LogDir "tl1_$((Get-Date).ToString('yyyy-MM-dd')).log"
+    
+    # Start background log processor
+    Start-LogProcessor
+}
+
+function Write-Log {
+    param(
+        [string]$Message,
+        [string]$Level = "INFO",
+        [string]$Context = "",
+        [hashtable]$Metadata = @{}
+    )
+    
+    $timestamp = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss.fff')
+    $pid = $PID
+    $thread = [System.Threading.Thread]::CurrentThread.ManagedThreadId
+    
+    # Build structured log entry
+    $logEntry = @{
+        timestamp = $timestamp
+        level = $Level.ToUpper()
+        message = $Message
+        context = $Context
+        process_id = $pid
+        thread_id = $thread
+        metadata = $Metadata
+    }
+    
+    # Format for file output
+    $fileOutput = "[$timestamp] [$Level] "
+    if ($Context) { $fileOutput += "[$Context] " }
+    $fileOutput += $Message
+    if ($Metadata.Count -gt 0) {
+        $metaStr = ($Metadata.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join ", "
+        $fileOutput += " | $metaStr"
+    }
+    
+    # Format for console output
+    $consoleOutput = "[$timestamp] [$Level] $Message"
+    
+    # Queue for background processing
+    $global:LogQueue.Enqueue($fileOutput)
+    
+    # Update GUI console immediately
+    if ($global:ConsoleBox) {
+        try {
+            $global:ConsoleBox.Dispatcher.Invoke([System.Windows.Threading.DispatcherPriority]::Normal, [System.Action]{
+                $global:ConsoleBox.AppendText("$consoleOutput`r`n")
+                $global:ConsoleBox.ScrollToEnd()
+            })
+        } catch {
+            # Fallback if dispatcher not available
+            $global:ConsoleBox.AppendText("$consoleOutput`r`n")
+            $global:ConsoleBox.ScrollToEnd()
+        }
+    }
+}
+
+function Start-LogProcessor {
+    if ($global:LogProcessorJob) {
+        Stop-Job -Job $global:LogProcessorJob -ErrorAction SilentlyContinue
+        Remove-Job -Job $global:LogProcessorJob -ErrorAction SilentlyContinue
+    }
+    
+    $global:LogProcessorJob = Start-Job -ScriptBlock {
+        param($LogFile, $LogQueue)
+        
+        while ($true) {
+            $items = @()
+            while ($LogQueue.TryDequeue([ref]$item)) {
+                $items += $item
+            }
+            
+            if ($items.Count -gt 0) {
+                try {
+                    Add-Content -Path $LogFile -Value $items -ErrorAction SilentlyContinue
+                } catch {
+                    # Ignore file access errors
+                }
+            }
+            
+            Start-Sleep -Milliseconds 100
+        }
+    } -ArgumentList $global:LogFile, $global:LogQueue
+}
+
+function Start-TL1BackgroundCommand {
+    param(
+        [string]$Command,
+        [string]$JobName,
+        [hashtable]$Parameters = @{},
+        [scriptblock]$OnComplete = {},
+        [scriptblock]$OnError = {}
+    )
+    
+    $jobId = [System.Guid]::NewGuid().ToString("N")[0..7] -join ""
+    
+    Write-Log "Starting background TL1 command" "SEND" "Background" @{
+        command = $Command
+        job_id = $jobId
+        parameters = ($Parameters.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join ", "
+    }
+    
+    $job = Start-Job -ScriptBlock {
+        param($Command, $Parameters, $JobId)
+        
+        # Simulate TL1 command execution
+        Start-Sleep -Seconds (Get-Random -Minimum 1 -Maximum 5)
+        
+        # Return result
+        @{
+            JobId = $JobId
+            Command = $Command
+            Status = "COMPLD"
+            Response = "M $($Parameters.CTAG) COMPLD`n;"
+            Timestamp = Get-Date
+            Duration = (Get-Random -Minimum 500 -Maximum 3000)
+        }
+    } -ArgumentList $Command, $Parameters, $jobId
+    
+    $global:BackgroundJobs[$jobId] = @{
+        Job = $job
+        Command = $Command
+        StartTime = Get-Date
+        OnComplete = $OnComplete
+        OnError = $OnError
+        Parameters = $Parameters
+    }
+    
+    return $jobId
+}
+
+function Monitor-BackgroundJobs {
+    $completedJobs = @()
+    
+    foreach ($jobEntry in $global:BackgroundJobs.GetEnumerator()) {
+        $jobId = $jobEntry.Key
+        $jobInfo = $jobEntry.Value
+        $job = $jobInfo.Job
+        
+        if ($job.State -eq "Completed") {
+            try {
+                $result = Receive-Job -Job $job
+                $duration = ((Get-Date) - $jobInfo.StartTime).TotalMilliseconds
+                
+                Write-Log "Background command completed" "RECV" "Background" @{
+                    job_id = $jobId
+                    command = $jobInfo.Command
+                    status = $result.Status
+                    duration_ms = [int]$duration
+                }
+                
+                # Execute completion callback
+                if ($jobInfo.OnComplete) {
+                    & $jobInfo.OnComplete $result
+                }
+                
+                $completedJobs += $jobId
+            } catch {
+                Write-Log "Background command failed: $($_.Exception.Message)" "ERROR" "Background" @{
+                    job_id = $jobId
+                    command = $jobInfo.Command
+                }
+                
+                if ($jobInfo.OnError) {
+                    & $jobInfo.OnError $_
+                }
+                
+                $completedJobs += $jobId
+            } finally {
+                Remove-Job -Job $job -ErrorAction SilentlyContinue
+            }
+        }
+        elseif ($job.State -eq "Failed") {
+            Write-Log "Background job failed" "ERROR" "Background" @{
+                job_id = $jobId
+                command = $jobInfo.Command
+            }
+            
+            if ($jobInfo.OnError) {
+                & $jobInfo.OnError "Job failed"
+            }
+            
+            Remove-Job -Job $job -ErrorAction SilentlyContinue
+            $completedJobs += $jobId
+        }
+    }
+    
+    # Remove completed jobs from tracking
+    foreach ($jobId in $completedJobs) {
+        $global:BackgroundJobs.Remove($jobId)
+    }
 }
 
 # Load TL1 commands from the data-driven catalog
