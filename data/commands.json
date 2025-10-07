@@ -603,21 +603,22 @@
       "object": "USER",
       "modifier": null,
       "description": "Activate a user account with specified privileges",
-      "syntax": "ACT-USER:TID:UID:STAG::PID;",
+      "syntax": "ACT-USER:[tid]:uid:[ctag]::pid,[pst];",
       "requires": [
         "TID",
-        "UID", 
-        "STAG"
+        "UID",
+        "CTAG"
       ],
       "optional": [
-        "PID"
+        "PID",
+        "PST"
       ],
-      "response_format": "M STAG COMPLD\n;",
+      "response_format": "M [ctag] COMPLD\n;",
       "safety_level": "critical",
       "service_affecting": false,
       "examples": [
-        "ACT-USER:SITE01:admin:123::admin123;",
-        "ACT-USER:SITE02:user1:456::user123;"
+        "ACT-USER:SITE01:admin:123::admin123,UNRESTRICTED;",
+        "ACT-USER:::456:user1:user123,READONLY;"
       ],
       "paramSchema": {
         "TID": {
