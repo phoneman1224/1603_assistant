@@ -388,116 +388,6 @@ function Load-TL1Commands {
     Write-Log "Loaded $($AllCommands.Keys.Count) categories with $totalCommands total commands for $selectedPlatform"
     return $AllCommands
 }
-                        
-                        if (-not $AllCommands.Contains($categoryName)) {
-                            $AllCommands[$categoryName] = @()
-                        }
-                        
-                        # Filter and add commands for selected platform
-                        $commands | ForEach-Object {
-                            $cmd = $_
-                            
-                            # Check if command is applicable to selected platform
-                            $isApplicable = $false
-                            if ($cmd.platforms) {
-                                $isApplicable = $platformIds | Where-Object { $cmd.platforms -contains $_ }
-                            } elseif ($cmd.applicable_models) {
-                                $isApplicable = $platformIds | Where-Object { $cmd.applicable_models -contains $_ }
-                            } else {
-                                # If no platform info, include for all platforms
-                                $isApplicable = $true
-                            }
-                            
-                            if ($isApplicable) {
-                                # Only add if command doesn't already exist from PDF extraction
-                                $exists = $AllCommands[$categoryName] | Where-Object { $_.Name -eq $cmd.command_code }
-                                if (-not $exists) {
-                                    $AllCommands[$categoryName] += @{
-                                        Name = $cmd.command_code
-                                        Desc = $cmd.description
-                                        Required = if ($cmd.parameters.required) { $cmd.parameters.required } else { @() }
-                                        Optional = if ($cmd.parameters.optional) { $cmd.parameters.optional } else { @() }
-                                        Syntax = if ($cmd.syntax) { $cmd.syntax } else { "" }
-                                        SafetyLevel = if ($cmd.safety_level) { $cmd.safety_level } else { "safe" }
-                                        ServiceAffecting = if ($cmd.service_affecting) { $cmd.service_affecting } else { $false }
-                                        Platform = $selectedPlatform
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } elseif ($content -is [Array]) {
-                    # Array format with platform filtering
-                    $content | ForEach-Object {
-                        $cmd = $_
-                        
-                        # Check if command is applicable to selected platform
-                        $isApplicable = $false
-                        if ($cmd.platforms) {
-                            $isApplicable = $platformIds | Where-Object { $cmd.platforms -contains $_ }
-                        } elseif ($cmd.applicable_models) {
-                            $isApplicable = $platformIds | Where-Object { $cmd.applicable_models -contains $_ }
-                        } else {
-                            $isApplicable = $true
-                        }
-                        
-                        if ($isApplicable) {
-                            $categoryName = if ($cmd.category) { $cmd.category } else { "General" }
-                            
-                            if (-not $AllCommands.Contains($categoryName)) {
-                                $AllCommands[$categoryName] = @()
-                            }
-                            
-                            # Only add if command doesn't already exist
-                            $exists = $AllCommands[$categoryName] | Where-Object { $_.Name -eq $cmd.command_code }
-                            if (-not $exists) {
-                                $requiredParams = @()
-                                $optionalParams = @()
-                                
-                                if ($cmd.parameters) {
-                                    $cmd.parameters.PSObject.Properties | ForEach-Object {
-                                        if ($_.Value.required -eq $true) {
-                                            $requiredParams += $_.Name
-                                        } else {
-                                            $optionalParams += $_.Name
-                                        }
-                                    }
-                                }
-                                
-                                $AllCommands[$categoryName] += @{
-                                    Name = $cmd.command_code
-                                    Desc = if ($cmd.command_name) { $cmd.command_name } else { $cmd.description }
-                                    Required = $requiredParams
-                                    Optional = $optionalParams
-                                    Syntax = if ($cmd.syntax) { $cmd.syntax } else { "" }
-                                    SafetyLevel = if ($cmd.safety_level) { $cmd.safety_level } else { "safe" }
-                                    ServiceAffecting = if ($cmd.service_affecting) { $cmd.service_affecting } else { $false }
-                                    Platform = $selectedPlatform
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch {
-                Write-Log "Error loading shared catalog $($_.Name): $_" "ERROR"
-            }
-        }
-    }
-    
-    if ($AllCommands.Keys.Count -eq 0) {
-        Write-Log "No commands loaded for $selectedPlatform - using fallback" "WARN"
-        return @{
-            "System Management" = @(
-                @{Name="ACT-USER";Desc="Activate User";Required=@("UID");Optional=@("PID");Platform=$selectedPlatform},
-                @{Name="CANC-USER";Desc="Cancel User Session";Required=@("UID");Optional=@();Platform=$selectedPlatform}
-            )
-        }
-    }
-    
-    $totalCommands = ($AllCommands.Values | ForEach-Object { $_.Count } | Measure-Object -Sum).Sum
-    Write-Log "Loaded $($AllCommands.Keys.Count) categories with $totalCommands total commands for $selectedPlatform"
-    return $AllCommands
-}
 
 # Settings persistence functions
 function Load-Settings {
@@ -653,7 +543,7 @@ function Invoke-Playbook {
         }
         
         Write-Log "Step $stepCount/$($playbook.steps.Count): $($step.name)" "TROUBLESHOOT"
-        $global:ConsoleBox.AppendText("[TROUBLESHOOT] Step $stepCount: $($step.name)`r`n")
+        $global:ConsoleBox.AppendText("[TROUBLESHOOT] Step ${stepCount}: $($step.name)`r`n")
         $global:ConsoleBox.ScrollToEnd()
         
         # Find the command
@@ -1262,7 +1152,7 @@ $SystemBox.Add_SelectionChanged({
                 $CmdDesc.Text = "Platform changed to $newPlatform. Select a category to view commands."
                 $CmdDesc.Foreground = "#15803d"  # Green
             } catch {
-                Write-Log "Error loading commands for $newPlatform: $_" "ERROR"
+                Write-Log "Error loading commands for ${newPlatform}: $_" "ERROR"
                 $CmdDesc.Text = "Error loading commands for $newPlatform. Check debug log."
                 $CmdDesc.Foreground = "#dc2626"  # Red
             }
