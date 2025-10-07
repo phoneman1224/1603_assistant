@@ -19,7 +19,6 @@ const App: React.FC = () => {
     selectedPlatform,
     setCommands,
     setCategories,
-    settings,
     setSettings,
     preview,
     addConsoleLine,
