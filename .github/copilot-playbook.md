@@ -32,3 +32,4 @@
 2) “@workspace Implement BE-01 and BE-02 (routers, models, tolerant builder + tests).”
 3) “@workspace Implement FE-01 and FE-02 (Wizard, console, wire to `/build` & `/send`).”
 4) “@workspace Implement BE-03 and QA-01 (transport read, `/log`, pytest, CI workflow).”
+<- Pytest for builder ; CI workflow  runs Python tests +  2025-10-08T15:32:34-04:00 -->
