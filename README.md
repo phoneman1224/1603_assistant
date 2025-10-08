@@ -1,6 +1,34 @@
-# 1603 Assistant - Hybrid Platform
+# 1603 Assistant - Hybrid TL1 Platform
 
-A comprehensive TL1 command man## 📁 Repository Structure
+A comprehensive TL1 command management system with intelligent startup and dual interface options.
+
+## 🚀 One-Click Start (Windows)
+
+**For the easiest experience, just double-click `CLICK_TO_START.cmd`!**
+
+This will automatically:
+- Set up Python virtual environment
+- Install all dependencies  
+- Detect your system capabilities
+- Launch the best available interface
+
+## 📖 Quick Reference
+
+- **📘 [STARTUP_GUIDE.md](STARTUP_GUIDE.md)** - Complete startup options and troubleshooting
+- **📗 [QUICK_START.md](QUICK_START.md)** - Simple getting started guide
+- **📕 This README** - Comprehensive platform documentation
+
+## 🎯 Available Interfaces
+
+### Web Interface (Recommended)
+- **Modern React-based GUI** with advanced features
+- **Requires**: Node.js (automatically detected)
+- **Access**: http://localhost:8000 after startup
+
+### Desktop Interface (Automatic Fallback)  
+- **Python Tkinter GUI** for basic operations
+- **Requires**: Only Python (always available)
+- **Launches**: Automatically if Node.js not found## 📁 Repository Structure
 
 ```
 .

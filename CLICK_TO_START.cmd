@@ -7,6 +7,9 @@ echo ====================================================
 echo.
 echo This will install all dependencies and start the application.
 echo.
+echo NOTE: If Node.js is not installed, the desktop GUI will launch.
+echo For the modern web interface, install Node.js from nodejs.org
+echo.
 echo Press any key to continue, or close this window to cancel...
 pause >nul
 
@@ -31,5 +34,10 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
-echo Installation and launch complete!
+echo [SUCCESS] TL1 Assistant is now running!
+echo.
+echo To get the modern web interface:
+echo 1. Install Node.js from https://nodejs.org/
+echo 2. Run this script again
+echo.
 pause

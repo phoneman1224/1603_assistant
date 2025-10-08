@@ -140,9 +140,11 @@ if (-not $SkipValidation) {
 # Step 5: Check Node.js and install UI dependencies
 Write-Host ""
 Write-Host "[5/6] Checking Node.js and UI dependencies..." -ForegroundColor Yellow
+$nodeAvailable = $false
 try {
     $nodeVersion = node --version 2>&1
     Write-Host "[OK] Node.js found: $nodeVersion" -ForegroundColor Green
+    $nodeAvailable = $true
     
     $webuiPath = Join-Path $rootPath "webui"
     if (Test-Path $webuiPath) {
@@ -158,7 +160,13 @@ try {
     }
 } catch {
     Write-Host "[WARN] Node.js not found. Web UI will not be available." -ForegroundColor Yellow
-    Write-Host "[INFO] Install Node.js 18+ to enable Web UI" -ForegroundColor Yellow
+    Write-Host "[INFO] Falling back to desktop GUI interface." -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "To enable the modern Web UI:" -ForegroundColor Cyan
+    Write-Host "1. Download Node.js from: https://nodejs.org/" -ForegroundColor White
+    Write-Host "2. Install Node.js 18 or higher" -ForegroundColor White
+    Write-Host "3. Run this script again" -ForegroundColor White
+    Write-Host ""
 }
 
 # Step 6: Launch desktop or web
@@ -166,10 +174,16 @@ Write-Host ""
 Write-Host "[6/6] Launching application..." -ForegroundColor Yellow
 Write-Host ""
 
-if ($LaunchDesktop) {
-    Write-Host "[INFO] Launching Desktop GUI..." -ForegroundColor Cyan
+if ($LaunchDesktop -or (-not $nodeAvailable)) {
+    if (-not $nodeAvailable) {
+        Write-Host "[INFO] Launching Desktop GUI (Node.js not available)..." -ForegroundColor Cyan
+    } else {
+        Write-Host "[INFO] Launching Desktop GUI..." -ForegroundColor Cyan
+    }
+    
     $desktopScript = Join-Path $rootPath "powershell\TL1_CommandBuilder.ps1"
     if (Test-Path $desktopScript) {
+        Write-Host "[INFO] Starting PowerShell GUI..." -ForegroundColor Green
         & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $desktopScript
     } else {
         Write-Host "[ERROR] Desktop GUI script not found: $desktopScript" -ForegroundColor Red
