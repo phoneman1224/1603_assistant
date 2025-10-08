@@ -91,3 +91,16 @@ class Category(BaseModel):
     description: str
     icon: str
     count: int
+
+
+class LogRequest(BaseModel):
+    command: str
+    response: str
+    host: str
+    port: int
+
+
+class LogResponse(BaseModel):
+    status: str
+    message: str
+    log_file: str

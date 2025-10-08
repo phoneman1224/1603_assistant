@@ -9,7 +9,7 @@ from pathlib import Path
 
 from .logging_conf import setup_logging, get_logger
 from .services.registry import registry
-from .routers import commands, settings, playbooks, send
+from .routers import commands, settings, playbooks, send, tl1
 from .models.schemas import HealthResponse
 
 # Initialize logging
@@ -54,6 +54,7 @@ app.include_router(commands.router)
 app.include_router(settings.router)
 app.include_router(playbooks.router)
 app.include_router(send.router)
+app.include_router(tl1.router)
 
 
 @app.get("/api/health", response_model=HealthResponse)
