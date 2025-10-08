@@ -39,3 +39,16 @@ secrets/
 
 # Backup files
 cleanup_backups/
+
+# Node/React
+node_modules/
+webui/dist/
+webui/node_modules/
+*.lock
+package-lock.json
+yarn.lock
+
+# Log files
+logs/*.log
+logs/**/*.log
+!logs/.gitkeep
