@@ -1,54 +1,23 @@
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-*.log
-
-# Virtual envs
-.venv/
-env/
-venv/
-
-# Build / dist
-dist/
-*.zip
-
-# Editors/OS
+# OS / IDE
 .DS_Store
-.vscode/
-.idea/
+Thumbs.db
+*.log
+*.tmp
 
-# Caches
-*.egg-info/
-.cache/
-.mypy_cache/
-.pytype/
-.pytest_cache/
-logs/
-*.bak-*
-
-# Credentials and secrets
-credentials.json
-service-account.json
-*.key
-*.pem
-.env.local
-.env.production
-secrets/
-
-# Backup files
-cleanup_backups/
-
-# Node/React
+# Node / Python / build artefacts (if added later)
 node_modules/
-webui/dist/
-webui/node_modules/
-*.lock
-package-lock.json
-yarn.lock
+venv/
+__pycache__/
+dist/
+build/
 
-# Log files
-logs/*.log
-logs/**/*.log
-!logs/.gitkeep
+# Local tooling and secrets
+.env
+*.local.*
+secrets*/
+
+# Archives and dumps
+*.zip
+*.tar
+*.bak
+
