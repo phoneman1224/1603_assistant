@@ -6,16 +6,17 @@
 - `webui/` — Vite + React + TypeScript web UI
 
 ## API
-- GET `/health` → `{ "status": "ok" }`
-- GET `/commands` → list of command objects
-- GET `/playbooks` → playbook scenarios
-- POST `/build` → `{ command: "<built TL1>" }`
-- POST `/send` → `{ ok: true, response: "<raw device reply>" }` (socket stub)
+- `GET /health` → `{ "status": "ok" }`
+- `GET /commands` → list of command objects
+- `GET /playbooks` → playbook scenarios
+- `POST /build` → `{ "command": "<built TL1>" }`
+- `POST /send` → `{ "ok": true, "response": "<raw device reply>" }` (socket stub)
 
 ## TL1 Builder Rules (forgiving)
 - `<AID>` and `<CTAG>` are substituted if provided
 - Optional fields in `[brackets]` are preserved if passed raw
 - Ensures trailing `;` if missing
+- Avoids over-validation; do not reject missing optional fields
 
 ## Quick run (dev)
 
@@ -30,18 +31,25 @@ npm install
 npm run dev                            # http://127.0.0.1:5173
 
 
----
-
-### 3) Add Copilot hints (optional, recommended)
+### 2) Add Copilot guidance in `.github/`
 ```bash
 mkdir -p .github
 cat > .github/copilot-instructions.md <<'MD'
 # Copilot Hints
-- Treat `data/commands.json` and `data/playbooks.json` as the source of truth.
-- Backend lives under `src/webapi`; add routers under `src/webapi/routers` as needed.
-- Web UI uses React + Vite in `webui/`. Prefer Axios for API calls.
-- Endpoints to use:
-  - GET /commands, GET /playbooks
-  - POST /build (payload: { command, aid?, ctag?, raw? })
-  - POST /send (payload: { host, port, command })
-- TL1 builder must be tolerant of optional `[ ]` sections; do not hard-fail on missing optionals.
+
+**Data is the source of truth**
+- Use `data/commands.json` and `data/playbooks.json`.
+
+**Backend**
+- FastAPI under `src/webapi`.
+- Add routers under `src/webapi/routers/` as the app grows.
+- Endpoints:
+  - `GET /commands`, `GET /playbooks`
+  - `POST /build` with `{ command, aid?, ctag?, raw? }`
+  - `POST /send` with `{ host, port, command }`
+- TL1 builder must be tolerant of optional `[ ]` sections; do not hard-fail when optionals are omitted.
+
+**Frontend**
+- React + Vite in `webui/`.
+- Prefer Axios for HTTP calls.
+- Default API base: `http://127.0.0.1:8000`.
