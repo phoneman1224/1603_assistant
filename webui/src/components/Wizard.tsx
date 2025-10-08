@@ -9,6 +9,7 @@ import { CategoryList } from './CategoryList';
 import { CommandList } from './CommandList';
 import { DynamicForm } from './DynamicForm';
 import { Preview } from './Preview';
+import './Wizard.css';
 
 interface WizardProps {
   className?: string;
@@ -19,7 +20,9 @@ export const Wizard: React.FC<WizardProps> = ({ className = '' }) => {
     selectedPlatform,
     selectedCategory,
     selectedCommand,
-    formData,
+    tid,
+    aid,
+    ctag,
     preview
   } = useAppStore();
 
@@ -28,7 +31,7 @@ export const Wizard: React.FC<WizardProps> = ({ className = '' }) => {
     if (!selectedPlatform) return 1;
     if (!selectedCategory) return 2;
     if (!selectedCommand) return 3;
-    if (!formData.CTAG) return 4;
+    if (!ctag) return 4;
     return 5;
   };
 
@@ -117,7 +120,7 @@ export const Wizard: React.FC<WizardProps> = ({ className = '' }) => {
                 <div className="panel-section">
                   <h3>4. Command Parameters</h3>
                   <div className="command-info">
-                    <h4>{selectedCommand.displayName}</h4>
+                    <h4>{selectedCommand.id}</h4>
                     <p>{selectedCommand.description}</p>
                     
                     {selectedCommand.service_affecting && (
@@ -136,7 +139,7 @@ export const Wizard: React.FC<WizardProps> = ({ className = '' }) => {
                   <DynamicForm />
                 </div>
 
-                {formData.CTAG && (
+                {ctag && (
                   <div className="panel-section">
                     <h3>5. Command Preview</h3>
                     <Preview />
