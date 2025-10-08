@@ -15,9 +15,38 @@ Write-Host ""
 
 # Get script directory and root
 $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
-$rootPath = Split-Path -Parent $scriptPath
+$rootPath = $scriptPath  # Script is now in root directory
 
+Write-Host "[INFO] Script directory: $scriptPath" -ForegroundColor Green
 Write-Host "[INFO] Root directory: $rootPath" -ForegroundColor Green
+Write-Host ""
+
+# Change to root directory to ensure we're in the right place
+Set-Location $rootPath
+Write-Host "[INFO] Working directory set to: $(Get-Location)" -ForegroundColor Green
+
+# Verify we're in the correct directory by checking for key files
+$keyFiles = @("requirements.txt", "data\commands.json", "webui\package.json")
+$missingFiles = @()
+
+foreach ($file in $keyFiles) {
+    if (-not (Test-Path $file)) {
+        $missingFiles += $file
+    }
+}
+
+if ($missingFiles.Count -gt 0) {
+    Write-Host "[ERROR] Not in correct directory! Missing files:" -ForegroundColor Red
+    foreach ($missing in $missingFiles) {
+        Write-Host "  - $missing" -ForegroundColor Red
+    }
+    Write-Host "[ERROR] Please ensure you're running this script from the 1603_assistant directory." -ForegroundColor Red
+    Write-Host "Current directory: $(Get-Location)" -ForegroundColor Red
+    Read-Host "Press Enter to exit"
+    exit 1
+}
+
+Write-Host "[OK] Directory validation passed" -ForegroundColor Green
 Write-Host ""
 
 # Step 1: Check Python

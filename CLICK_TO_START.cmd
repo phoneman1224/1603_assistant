@@ -11,6 +11,12 @@ echo Press any key to continue, or close this window to cancel...
 pause >nul
 
 echo.
+echo [INFO] Setting working directory to script location...
+
+REM Change to the directory where this script is located
+cd /d "%~dp0"
+
+echo [INFO] Working directory: %CD%
 echo [INFO] Starting PowerShell bootstrap script...
 echo.
 
