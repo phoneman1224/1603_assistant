@@ -14,6 +14,49 @@ if [ ! -f "requirements.txt" ]; then
     exit 1
 fi
 
+# Function to install Node.js on Linux
+install_nodejs() {
+    echo "[INFO] Installing Node.js..."
+    
+    # Detect Linux distribution
+    if [ -f /etc/debian_version ]; then
+        # Debian/Ubuntu
+        echo "[INFO] Detected Debian/Ubuntu system"
+        if command -v apt &> /dev/null; then
+            echo "[INFO] Installing Node.js via apt..."
+            sudo apt update
+            sudo apt install -y nodejs npm
+            return 0
+        fi
+    elif [ -f /etc/redhat-release ]; then
+        # RedHat/CentOS/Fedora
+        echo "[INFO] Detected RedHat/CentOS/Fedora system"
+        if command -v dnf &> /dev/null; then
+            echo "[INFO] Installing Node.js via dnf..."
+            sudo dnf install -y nodejs npm
+            return 0
+        elif command -v yum &> /dev/null; then
+            echo "[INFO] Installing Node.js via yum..."
+            sudo yum install -y nodejs npm
+            return 0
+        fi
+    elif [ -f /etc/arch-release ]; then
+        # Arch Linux
+        echo "[INFO] Detected Arch Linux system"
+        if command -v pacman &> /dev/null; then
+            echo "[INFO] Installing Node.js via pacman..."
+            sudo pacman -S --noconfirm nodejs npm
+            return 0
+        fi
+    fi
+    
+    # Fallback: Use NodeSource repository (universal)
+    echo "[INFO] Using NodeSource repository for installation..."
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+    sudo apt-get install -y nodejs
+    return 0
+}
+
 # Step 1: Check Python
 echo "[1/6] Checking Python..."
 if command -v python3 &> /dev/null; then
@@ -57,15 +100,43 @@ echo "[4/6] Checking Node.js..."
 if command -v node &> /dev/null; then
     NODE_VERSION=$(node --version)
     echo "[OK] Node.js found: $NODE_VERSION"
+else
+    echo "[WARNING] Node.js not found. Attempting to install..."
     
+    # Attempt to install Node.js
+    if install_nodejs; then
+        echo "[OK] Node.js installation completed"
+        # Check if Node.js is now available
+        if command -v node &> /dev/null; then
+            NODE_VERSION=$(node --version)
+            echo "[OK] Node.js successfully installed: $NODE_VERSION"
+        else
+            echo "[WARNING] Node.js installed but not yet available in PATH"
+            echo "[INFO] You may need to restart your terminal or run: source ~/.bashrc"
+        fi
+    else
+        echo "[ERROR] Failed to install Node.js automatically"
+        echo ""
+        echo "To enable the Web UI manually:"
+        echo "1. Install Node.js 18+ from: https://nodejs.org/"
+        echo "2. Or use your package manager:"
+        echo "   - Ubuntu/Debian: sudo apt install nodejs npm"
+        echo "   - CentOS/RHEL: sudo dnf install nodejs npm"
+        echo "   - Arch: sudo pacman -S nodejs npm"
+        echo "3. Run this script again"
+        echo ""
+    fi
+fi
+
+# Install frontend dependencies if Node.js is available
+if command -v node &> /dev/null && command -v npm &> /dev/null; then
     echo "[INFO] Installing frontend dependencies..."
     cd webui
     npm install
     cd ..
     echo "[OK] Frontend dependencies installed"
 else
-    echo "[WARNING] Node.js not found. Web UI will not be available."
-    echo "Install Node.js 18+ to use the web interface."
+    echo "[WARNING] Skipping frontend dependencies (Node.js not available)"
 fi
 
 # Step 5: Validate data files

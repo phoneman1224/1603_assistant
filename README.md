@@ -9,8 +9,23 @@ A comprehensive TL1 command management system with intelligent startup and dual 
 This will automatically:
 - Set up Python virtual environment
 - Install all dependencies  
+- **Auto-install Node.js** if not found (Windows 10/11)
 - Detect your system capabilities
 - Launch the best available interface
+
+### Alternative Quick Setup Options
+
+- **`QUICK_SETUP.bat`** - Simple batch script with Node.js auto-install
+- **`START_HERE.ps1`** - Full PowerShell launcher with advanced options
+- **Linux**: `./scripts/linux_bootstrap.sh` - Auto-install for Linux systems
+
+## 🔧 Auto-Installation Features
+
+The bootstrap scripts now automatically install Node.js if not found:
+
+**Windows**: Uses winget, chocolatey, or manual download
+**Linux**: Uses apt, dnf, yum, or pacman depending on distribution
+**Fallback**: Always provides desktop GUI if web components fail
 
 ## 📖 Quick Reference
 

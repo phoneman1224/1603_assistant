@@ -145,7 +145,118 @@ try {
     $nodeVersion = node --version 2>&1
     Write-Host "[OK] Node.js found: $nodeVersion" -ForegroundColor Green
     $nodeAvailable = $true
+} catch {
+    Write-Host "[WARN] Node.js not found. Attempting to install..." -ForegroundColor Yellow
     
+    # Function to install Node.js automatically
+    function Install-NodeJS {
+        Write-Host "[INFO] Installing Node.js LTS..." -ForegroundColor Yellow
+        
+        # Check if we have chocolatey, winget, or need to download manually
+        $installMethod = $null
+        
+        # Try winget first (Windows 10/11 package manager)
+        try {
+            winget --version | Out-Null
+            $installMethod = "winget"
+            Write-Host "[INFO] Using winget to install Node.js..." -ForegroundColor Green
+        } catch {
+            # Try chocolatey
+            try {
+                choco --version | Out-Null
+                $installMethod = "choco"
+                Write-Host "[INFO] Using chocolatey to install Node.js..." -ForegroundColor Green
+            } catch {
+                $installMethod = "manual"
+                Write-Host "[INFO] Using manual download to install Node.js..." -ForegroundColor Green
+            }
+        }
+        
+        switch ($installMethod) {
+            "winget" {
+                try {
+                    Write-Host "[INFO] Running: winget install OpenJS.NodeJS" -ForegroundColor Yellow
+                    winget install OpenJS.NodeJS --silent
+                    Write-Host "[OK] Node.js installed via winget" -ForegroundColor Green
+                    return $true
+                } catch {
+                    Write-Host "[WARN] winget installation failed, trying alternative..." -ForegroundColor Yellow
+                    return $false
+                }
+            }
+            
+            "choco" {
+                try {
+                    Write-Host "[INFO] Running: choco install nodejs" -ForegroundColor Yellow
+                    choco install nodejs -y
+                    Write-Host "[OK] Node.js installed via chocolatey" -ForegroundColor Green
+                    return $true
+                } catch {
+                    Write-Host "[WARN] Chocolatey installation failed, trying alternative..." -ForegroundColor Yellow
+                    return $false
+                }
+            }
+            
+            "manual" {
+                # Download and install Node.js manually
+                try {
+                    Write-Host "[INFO] Downloading Node.js installer..." -ForegroundColor Yellow
+                    $nodeUrl = "https://nodejs.org/dist/v20.9.0/node-v20.9.0-x64.msi"
+                    $tempPath = [System.IO.Path]::GetTempPath()
+                    $installerPath = Join-Path $tempPath "nodejs-installer.msi"
+                    
+                    Invoke-WebRequest -Uri $nodeUrl -OutFile $installerPath
+                    Write-Host "[INFO] Running Node.js installer..." -ForegroundColor Yellow
+                    
+                    # Run installer silently
+                    Start-Process msiexec.exe -ArgumentList "/i `"$installerPath`" /quiet /norestart" -Wait
+                    
+                    # Clean up
+                    Remove-Item $installerPath -Force -ErrorAction SilentlyContinue
+                    
+                    Write-Host "[OK] Node.js installer completed" -ForegroundColor Green
+                    return $true
+                } catch {
+                    Write-Host "[ERROR] Manual installation failed: $($_.Exception.Message)" -ForegroundColor Red
+                    return $false
+                }
+            }
+        }
+        return $false
+    }
+    
+    # Attempt to install Node.js
+    $installSuccess = Install-NodeJS
+    
+    if ($installSuccess) {
+        Write-Host "[INFO] Refreshing environment variables..." -ForegroundColor Yellow
+        # Refresh PATH environment variable
+        $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "User")
+        
+        # Test if Node.js is now available
+        try {
+            Start-Sleep -Seconds 3  # Give system time to update
+            $nodeVersion = node --version 2>&1
+            Write-Host "[OK] Node.js successfully installed: $nodeVersion" -ForegroundColor Green
+            $nodeAvailable = $true
+        } catch {
+            Write-Host "[WARN] Node.js installed but not yet available in PATH. Please restart your terminal." -ForegroundColor Yellow
+            Write-Host "[INFO] Falling back to desktop GUI for this session." -ForegroundColor Yellow
+        }
+    } else {
+        Write-Host "[WARN] Automatic Node.js installation failed." -ForegroundColor Yellow
+        Write-Host "[INFO] Falling back to desktop GUI interface." -ForegroundColor Yellow
+        Write-Host ""
+        Write-Host "To enable the modern Web UI manually:" -ForegroundColor Cyan
+        Write-Host "1. Download Node.js from: https://nodejs.org/" -ForegroundColor White
+        Write-Host "2. Install Node.js 18 or higher" -ForegroundColor White
+        Write-Host "3. Restart your terminal and run this script again" -ForegroundColor White
+        Write-Host ""
+    }
+}
+
+# Install Node dependencies if Node.js is available
+if ($nodeAvailable) {
     $webuiPath = Join-Path $rootPath "webui"
     if (Test-Path $webuiPath) {
         Push-Location $webuiPath
@@ -158,15 +269,6 @@ try {
         }
         Pop-Location
     }
-} catch {
-    Write-Host "[WARN] Node.js not found. Web UI will not be available." -ForegroundColor Yellow
-    Write-Host "[INFO] Falling back to desktop GUI interface." -ForegroundColor Yellow
-    Write-Host ""
-    Write-Host "To enable the modern Web UI:" -ForegroundColor Cyan
-    Write-Host "1. Download Node.js from: https://nodejs.org/" -ForegroundColor White
-    Write-Host "2. Install Node.js 18 or higher" -ForegroundColor White
-    Write-Host "3. Run this script again" -ForegroundColor White
-    Write-Host ""
 }
 
 # Step 6: Launch desktop or web
