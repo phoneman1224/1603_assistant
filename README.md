@@ -1,6 +1,36 @@
 # 1603 Assistant - Hybrid Platform
 
-A comprehensive TL1 command management system for Alcatel 1603 SM/SMX network equipment with both **Web UI** and **Desktop** interfaces.
+A comprehensive TL1 command man## 📁 Repository Structure
+
+```
+.
+├── CLICK_TO_START.cmd       # 🎯 MAIN LAUNCHER - Double-click to start!
+├── START_HERE.ps1           # PowerShell launcher (same functionality)
+├── QUICK_START.md           # Simple getting started guide
+├── README.md                # This comprehensive documentation
+├── requirements.txt         # Python dependencies
+├── settings.json            # Application configuration
+├── data/                    # Command catalogs and playbooks
+│   ├── commands.json        # 630+ TL1 commands database  
+│   └── playbooks.json       # Automated workflows
+├── webui/                   # Modern React frontend
+│   ├── src/components/      # UI components
+│   ├── src/api/            # API client
+│   └── package.json        # Node dependencies
+├── src/webapi/             # FastAPI backend
+│   ├── app.py              # Main API server
+│   ├── routers/            # API endpoints
+│   └── services/           # Business logic
+├── powershell/             # Desktop GUI components
+│   ├── TL1_CommandBuilder.ps1  # Legacy WPF interface
+│   └── send_tl1.ps1           # Network communication
+├── scripts/                # Utility and automation scripts
+│   ├── serve_web.ps1         # Development server
+│   ├── cleanup.sh            # Maintenance
+│   └── validate_data.py      # Data validation
+└── docs/                   # Project documentation
+    └── tl1_syntax.md       # TL1 command reference
+```Alcatel 1603 SM/SMX network equipment with both **Web UI** and **Desktop** interfaces.
 
 ## Architecture
 
@@ -15,42 +45,63 @@ This hybrid application provides:
 
 ## Quick Start
 
-### Prerequisites
+### 🚀 **ONE-CLICK START (Windows Users)**
 
-- Python 3.8+ (required)
-- Node.js 18+ (required for Web UI)
-- PowerShell 5.1+ (required for desktop GUI and scripts)
+**Simply double-click:** `CLICK_TO_START.cmd`
 
-### Installation and Launch
-
-**Option 1: Web UI (Recommended)**
-
-```powershell
-# Bootstrap script - installs everything and launches web interface
-.\scripts\windows_bootstrap.ps1
-```
-
-This will:
-1. Create Python virtual environment
-2. Install all dependencies (Python + Node)
+This single file will:
+1. Install Python virtual environment  
+2. Install all dependencies (Python + Node.js packages)
 3. Validate data files and documentation
 4. Start FastAPI backend on http://127.0.0.1:8000
-5. Start Vite dev server on http://127.0.0.1:5173
+5. Start React frontend on http://127.0.0.1:5173  
 6. Open your browser automatically
 
-**Option 2: Desktop GUI**
+**That's it!** No technical knowledge required.
 
+### Alternative Methods
+
+**PowerShell Users:**
 ```powershell
-.\scripts\windows_bootstrap.ps1 -LaunchDesktop
+.\START_HERE.ps1
 ```
 
-**Option 3: Production Build**
-
+**Advanced Options:**
 ```powershell
-.\scripts\windows_bootstrap.ps1 -Production
+.\START_HERE.ps1 -LaunchDesktop    # For legacy PowerShell GUI
+.\START_HERE.ps1 -Production       # For production build
 ```
 
-This builds a static UI and serves everything from the API server.
+## 🎯 **For End Users (Network Engineers)**
+
+### Step 1: Get the Application
+1. Download or clone this repository to your Windows computer
+2. Extract to a folder like `C:\TL1_Assistant\`
+
+### Step 2: One-Click Launch  
+**Simply double-click:** `CLICK_TO_START.cmd`
+
+The application will:
+- ✅ Install Python virtual environment automatically
+- ✅ Download all required dependencies  
+- ✅ Validate command database
+- ✅ Start web servers
+- ✅ Open your browser to the application
+
+### Step 3: Connect to Your Equipment
+1. **Enter device IP** and port in the web interface
+2. **Select platform**: 1603 SM or 1603 SMX
+3. **Browse commands** by category
+4. **Fill in parameters** using the dynamic forms
+5. **Preview and send** TL1 commands
+
+### Step 4: Use Advanced Features
+- **Command History**: Review all sent commands
+- **Troubleshooting Playbooks**: Run diagnostic workflows
+- **Provisioning Wizards**: Step-by-step circuit setup
+- **Documentation Browser**: Access comprehensive guides
+
+---
 
 ## Features
 
